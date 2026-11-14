@@ -1,0 +1,16 @@
+# quickestate
+
+> quickestate.at ist ein Grundstücks- und Baucheck für Wien: Adresse eingeben und sofort sehen, was auf einem Grundstück gebaut werden darf – Flächenwidmung, Bauklasse, Besondere Bestimmungen und eine erste Kalkulation aus Bauträgersicht. Slogan: „See beyond.“ Die Seite befindet sich im Aufbau.
+
+Betreiber: Eduard Beches, Wien – Bauträger-Prüfungen abgelegt, rund 8 Jahre Erfahrung in der Projektabwicklung von Wiener Bauprojekten. Begleitende Videoserie: „Baue mit Shifty“ (kurze Erklärvideos zu Wiener Bauregeln).
+
+## Seiten
+
+- [Startseite](https://quickestate.at/): Überblick über den Grundstücks- und Baucheck für Wien
+
+## Themen
+
+- Flächenwidmungs- und Bebauungsplan Wien lesen
+- Bauklassen und zulässige Gebäudehöhe in Wien
+- Besondere Bestimmungen (BB) im Wiener Bebauungsplan
+- Residualwert: maximaler Grundstückspreis aus Bauträgersicht
