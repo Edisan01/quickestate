@@ -1,0 +1,149 @@
+@font-face{font-family:"QE Cond";src:url(fonts/oswald-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"QE Ital";src:url(fonts/playfair-display-latin-400-italic.woff2) format("woff2");font-style:italic;font-display:swap}
+:root{--beige:#EFE6D6;--sand:#DCCDB4;--blue:#03203D;--lagune:#A9C3DD;--stone:#639CC5;--red:#EB2F33;
+  --cond:"QE Cond","Arial Narrow",sans-serif;--ital:"QE Ital",Georgia,serif;--sans:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}
+html{background:var(--beige)}
+body{margin:0;min-height:100vh;color:var(--blue);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.skip{position:absolute;left:-999px;top:0;z-index:50;background:var(--blue);color:var(--beige);padding:.6rem 1rem}
+.skip:focus{left:1rem;top:1rem}
+.cond{font-family:var(--cond);text-transform:uppercase;font-weight:700;letter-spacing:.01em;line-height:.9;margin:0}
+.ital{font-family:var(--ital);font-style:italic;margin:0}
+
+.head{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:22px clamp(18px,3vw,40px);pointer-events:none}
+.head a{pointer-events:auto;text-decoration:none}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-size:15px}
+.mark{width:28px;height:38px;fill:none;stroke:currentColor;stroke-width:1.6}
+.head nav{display:flex;gap:24px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:13px}
+
+.stage{position:fixed;inset:0;z-index:1;overflow:hidden;background:var(--lagune)}
+.sky{position:absolute;inset:0;background:linear-gradient(180deg,#22488B 0%,#4F78B0 45%,var(--lagune) 100%)}
+#depth,#three{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.arch{position:absolute;left:50%;bottom:0;width:min(92vw,1100px,80vh);aspect-ratio:1/1.05;background:var(--lagune);border-radius:50% 50% 0 0/48% 48% 0 0;transform-origin:50% 100%}
+.arch-text{position:absolute;inset:0;width:100%;height:100%}
+.arch-text text{font-family:var(--cond);font-weight:700;font-size:58px;letter-spacing:14px;fill:var(--blue)}
+.layer{position:absolute;left:0;right:0;text-align:center;opacity:0;pointer-events:none}
+.t-hero{top:32vh;opacity:1}
+.t-hero .big{font-size:clamp(64px,13vw,190px);white-space:nowrap}
+.t-hero .ital{font-size:clamp(34px,6vw,86px);margin-top:-.25em}
+.t-ter{top:14vh}.t-ter .kick{font-family:var(--cond);text-transform:uppercase;letter-spacing:.3em;font-size:14px;margin:0 0 8px}
+.t-ter .ital{font-size:clamp(28px,3.4vw,46px)}
+.t-arch{top:58vh}.t-arch .cond{font-size:clamp(36px,4.6vw,64px)}.t-arch .ital{font-size:clamp(22px,2.6vw,36px);margin-top:8px}
+.t-lt{bottom:14vh;left:clamp(20px,6vw,90px);right:auto;text-align:left}.t-lt .cond{font-size:clamp(40px,5vw,72px)}.t-lt .ital{font-size:clamp(22px,2.4vw,34px)}
+.t-ven{bottom:14vh;color:var(--beige);text-shadow:0 2px 24px rgba(3,32,61,.55)}
+.t-ven .cond{font-size:clamp(40px,5.4vw,80px);margin-top:14px}
+.pill{display:inline-block;background:var(--red);color:#fff;font-family:var(--cond);text-transform:uppercase;font-weight:700;font-size:20px;letter-spacing:.06em;padding:6px 14px;text-shadow:none}
+.vis{position:absolute;right:clamp(18px,3vw,40px);bottom:20px;margin:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:0}
+.count{position:absolute;left:clamp(18px,3vw,40px);bottom:20px;margin:0;font-family:var(--cond);font-size:13px;letter-spacing:.24em}
+
+main{position:relative;z-index:5}
+.scroller{height:1000vh}
+.intro-text,.cards{position:relative;background:var(--beige)}
+.intro-text{padding:120px clamp(20px,8vw,140px) 40px;max-width:1100px;margin:0 auto}
+.intro-text h1{font-family:var(--cond);text-transform:uppercase;font-size:clamp(44px,6vw,84px);line-height:.95;margin:0 0 24px}
+.intro-text h1 span{display:block;font-family:var(--ital);font-style:italic;text-transform:none;font-weight:400;font-size:.7em}
+.intro-text p{font-size:19px;line-height:1.6;max-width:42em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2px;background:var(--sand);padding:0;margin:0}
+.cards article{background:var(--beige);padding:48px clamp(20px,4vw,48px) 56px}
+.cards h2{font-family:var(--cond);text-transform:uppercase;font-size:34px;margin:0 0 12px}
+.cards p{line-height:1.6;margin:0 0 24px}
+.btn{display:inline-block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:15px;padding:12px 18px;background:var(--red);color:#fff;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--blue)}
+.foot{position:relative;z-index:5;background:var(--blue);color:var(--beige);padding:28px clamp(18px,3vw,40px);font-size:13px}
+
+/* Ohne Bewegung: Szenen als Standbilder untereinander */
+body.no-motion .stage,body.no-motion .scroller{display:none}
+body.no-motion .head{position:absolute;color:var(--blue)}
+body.no-motion main{padding-top:40px}
+.still-hero{display:none;margin:0}
+body.no-motion .still-hero{display:block}
+.still-hero img{display:block;width:100%;height:auto}
+
+@media (max-width:700px){
+  .head nav{display:none}
+  .arch{width:118vw;aspect-ratio:1/1.5}
+  .arch-text text{font-size:64px;letter-spacing:10px}
+}
+
+/* v3: Bedienelemente */
+.head{align-items:flex-start}
+.seal{position:relative;display:block;width:92px;height:92px;color:var(--blue);pointer-events:auto}
+.seal-ring{position:absolute;inset:0;width:100%;height:100%;will-change:transform}
+.seal-ring text{font-family:var(--cond);font-weight:700;font-size:10.5px;letter-spacing:2.6px;fill:currentColor}
+.seal .mark{position:absolute;left:50%;top:50%;width:26px;height:36px;transform:translate(-50%,-52%)}
+.menu-btn{pointer-events:auto;display:flex;align-items:center;gap:10px;background:none;border:0;color:var(--blue);font-family:var(--cond);text-transform:uppercase;letter-spacing:.18em;font-size:14px;cursor:pointer;padding:10px 0}
+.menu-btn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6}
+.menu{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);background:var(--blue);color:var(--beige);z-index:30;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:0 48px;pointer-events:auto}
+.menu[hidden]{display:none}
+.menu a{font-family:var(--cond);text-transform:uppercase;font-size:40px;text-decoration:none}
+.menu a:hover{color:var(--lagune)}
+.cta,.hint{position:fixed;z-index:15}
+.cta{right:clamp(18px,3vw,40px);bottom:20px;display:flex;align-items:center;gap:10px;padding:13px 18px;background:var(--red);color:#fff;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:15px;text-decoration:none;overflow:hidden;isolation:isolate}
+.cta::before,.btn::before{content:"";position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.6,0,.2,1);z-index:-1}
+.cta:hover::before,.btn:hover::before{transform:scaleX(1)}
+.btn{position:relative;overflow:hidden;isolation:isolate}
+.btn.ghost:hover{color:var(--beige)}
+.cta svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.hint{left:50%;bottom:22px;transform:translateX(-50%);margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.3em;font-size:11px;color:var(--blue)}
+.hint i{display:block;width:1px;height:38px;background:currentColor;transform-origin:top;animation:hint 1.8s cubic-bezier(.6,0,.2,1) infinite}
+@keyframes hint{0%{transform:scaleY(0)}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.count{bottom:24px}
+.vis{bottom:auto;top:30px;right:50%;transform:translateX(50%)}
+.t-plan{top:12vh;color:var(--beige)}
+.t-plan .kick{font-family:var(--cond);text-transform:uppercase;letter-spacing:.3em;font-size:13px;margin:0 0 10px;color:var(--lagune)}
+.t-plan .cond{font-size:clamp(30px,3.6vw,52px)}
+.t-num{bottom:14vh;color:var(--beige)}
+.t-num .num{font-size:clamp(64px,9vw,140px)}
+.t-num .num span{font-size:.35em;margin-left:.15em}
+.t-num .ital{font-size:clamp(20px,2vw,30px);margin-top:6px}
+.t-num .note{font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin:12px 0 0;opacity:.75}
+
+/* X-Kreuzung */
+.cross{position:relative;height:100vh;background:var(--blue);overflow:hidden}
+.x-stage{position:absolute;inset:0}
+.tri{position:absolute;inset:0;display:block;color:var(--beige);text-decoration:none;background-size:cover;background-position:center;transition:filter .3s}
+.tri:focus-visible{outline-offset:-6px}
+.t-top{clip-path:polygon(0 0,100% 0,50% 50%);background:var(--lagune);color:var(--blue)}
+.t-left{clip-path:polygon(0 0,50% 50%,0 100%);background-image:linear-gradient(rgba(3,32,61,.35),rgba(3,32,61,.35)),url(img/folge-1-bauklassen.webp);background-position:center 62%}
+.t-right{clip-path:polygon(100% 0,100% 100%,50% 50%);background-image:linear-gradient(rgba(3,32,61,.3),rgba(3,32,61,.3)),url(img/over-the-rainbow-penthouse-601.webp)}
+.t-bottom{clip-path:polygon(0 100%,50% 50%,100% 100%);background:var(--beige);color:var(--blue);background-image:linear-gradient(var(--sand) 1px,transparent 1px),linear-gradient(90deg,var(--sand) 1px,transparent 1px);background-size:48px 48px}
+.tri .lab{position:absolute;transition:opacity .2s;display:flex;align-items:center;gap:12px;font-family:var(--cond);text-transform:uppercase;font-size:clamp(22px,2.4vw,34px);letter-spacing:.04em}
+.tri .lab svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.8}
+.t-top .lab{left:50%;top:12%;transform:translateX(-50%);font-size:15px;letter-spacing:.24em}
+.t-top .lab svg{width:20px;height:20px}
+.t-left .lab{left:5%;top:50%;transform:translateY(-50%)}
+.t-right .lab{right:5%;top:50%;transform:translateY(-50%)}
+.t-bottom .lab{left:50%;bottom:12%;transform:translateX(-50%)}
+.tri:hover{filter:brightness(1.08)}
+.x-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--beige);padding:22px 34px;text-align:center;pointer-events:none;transition:opacity .4s}
+.x-center .cond{font-size:44px}.x-center .ital{font-size:18px;margin-top:4px}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}.tri{transition:none}}
+@media (max-width:700px){.seal{width:72px;height:72px}.cta{left:12px;right:12px;bottom:12px;justify-content:center}.hint{display:none}.count{bottom:72px}.tri .lab{font-size:18px}.x-center .cond{font-size:30px}}
+
+/* Sektor hinter dem aufgehenden Dreieck */
+.sec{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(760px,86vw);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;opacity:0;pointer-events:none}
+.sec-k{font-family:var(--cond);text-transform:uppercase;letter-spacing:.3em;font-size:13px}
+.sec-h{font-family:var(--cond);text-transform:uppercase;font-size:clamp(34px,5vw,72px);line-height:.95}
+.sec-t{font-family:var(--ital);font-style:italic;font-size:clamp(18px,1.8vw,24px);max-width:34em}
+.sec-b{display:inline-block;margin-top:8px;background:var(--red);color:#fff;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:15px;padding:12px 18px}
+.sec-v{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.sec-f{display:flex;align-items:stretch;border:1px solid var(--blue);background:var(--beige);margin-top:8px}
+.sec-f > span:first-child{padding:12px 16px;min-width:min(340px,56vw);text-align:left;font-family:var(--sans);font-size:15px;color:#6b7280}
+.sec-f .sec-b{margin:0}
+.t-right .sec,.t-left .sec{color:var(--beige);text-shadow:0 2px 20px rgba(3,32,61,.5)}
+.t-right .sec-b,.t-left .sec-b,.t-left .pill{text-shadow:none}
+
+/* Himmel-Einstieg: helle Schrift auf tiefem Blau (wie bei Tag), danach Blau auf Lagune */
+body.on-sky .head,body.on-sky .seal,body.on-sky .menu-btn,body.on-sky .count,body.on-sky .hint,body.on-sky .vis{color:var(--beige)}
+.t-hero,.t-ter{color:var(--beige)}
+.t-ter{text-shadow:0 2px 18px rgba(3,32,61,.35)}
+.head,.seal,.menu-btn,.count,.hint{transition:color .5s}
+
+/* v3.11: Bogen-Text passt immer in den Bogen; Zähler/Credit auf Fotos lesbar */
+.t-arch .cond{font-size:clamp(30px,min(4.6vw,6vh),64px)}
+.count,.vis{text-shadow:0 0 10px rgba(239,230,214,.7)}
+body.on-sky .count,body.on-sky .vis{text-shadow:0 1px 10px rgba(3,32,61,.5)}
+@media (max-width:700px){.vis{top:auto;bottom:78px;right:12px;left:auto;transform:none;font-size:9px}}

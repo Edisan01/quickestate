@@ -3,54 +3,86 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'none'; base-uri 'self'; form-action 'none'">
-<meta name="referrer" content="strict-origin-when-cross-origin">
-<title>quickestate – Was darf ich auf meinem Grundstück in Wien bauen?</title>
-<meta name="description" content="quickestate: Adresse eingeben und sofort sehen, was man auf einem Grundstück in Wien bauen darf – Widmung, Bauklasse, Besondere Bestimmungen und Kalkulation. Bald online.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
+<title>QuickEstate – Was darf ich auf meinem Grundstück bauen? | Eduard Beches, Wien</title>
+<meta name="description" content="QuickEstate von Eduard Beches: Baurechner für Wiener Grundstücke, die Reel-Serie „Baue mit Shifty“ und ausgewählte Objekte wie die Skyview Penthouses am Börseplatz 1.">
+<meta name="robots" content="noindex">
 <link rel="canonical" href="https://quickestate.at/">
-<meta property="og:title" content="quickestate – See beyond.">
-<meta property="og:description" content="Adresse eingeben und sofort sehen, was man auf einem Grundstück in Wien bauen darf. Bald online.">
-<meta property="og:url" content="https://quickestate.at/">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#03203D">
+<meta property="og:title" content="QuickEstate – See beyond.">
+<meta property="og:description" content="Baurechner, Baue mit Shifty und Objekte in Wien.">
+<meta property="og:image" content="https://quickestate.at/img/skyview-penthouse-dachterrasse-stephansdom.webp">
+<link rel="preload" href="fonts/oswald-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="start.css">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"quickestate","url":"https://quickestate.at/","slogan":"See beyond.","inLanguage":"de-AT","description":"Grundstücks- und Baucheck für Wien: Adresse eingeben und sofort sehen, was man bauen darf.","publisher":{"@type":"Person","name":"Eduard Beches","address":{"@type":"PostalAddress","addressLocality":"Wien","addressCountry":"AT"}}}
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"QuickEstate","url":"https://quickestate.at/","slogan":"See beyond.","founder":{"@id":"#eduard"}},{"@type":"Person","@id":"#eduard","name":"Eduard Beches","alternateName":"Shifty","address":{"@type":"PostalAddress","addressLocality":"Wien","addressCountry":"AT"}}]}
 </script>
-<style>
-:root{--bg:#03203D;--stone:#639CC5;--red:#EB2F33;--beige:#EFE6D6}
-*{box-sizing:border-box;margin:0;padding:0}
-
-body{background:var(--bg);color:var(--beige);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;display:flex;flex-direction:column;min-height:100vh}
-main{flex:1;display:grid;grid-template-columns:1fr 1fr}
-.l{padding:8vw 6vw;display:flex;flex-direction:column;justify-content:center;gap:2rem}
-.r{background:var(--stone);position:relative;overflow:hidden}
-.r::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 39px,rgba(3,32,61,.18) 39px 40px),repeating-linear-gradient(90deg,transparent 0 39px,rgba(3,32,61,.18) 39px 40px)}
-.r span{position:absolute;left:8%;bottom:8%;font-weight:800;font-size:clamp(3rem,9vw,8rem);line-height:.9;color:var(--bg);letter-spacing:-.03em}
-.brand{font-weight:800;font-size:clamp(2.6rem,6vw,5rem);letter-spacing:-.03em;line-height:1}
-.slogan{font-size:1.1rem;letter-spacing:.2em;text-transform:uppercase;color:var(--stone)}
-h1{font-size:clamp(1.4rem,2.6vw,2.2rem);font-weight:600;line-height:1.25;max-width:22ch}
-p.lead{max-width:44ch;line-height:1.6;opacity:.85}
-.badge{align-self:flex-start;border:2px solid var(--red);color:var(--beige);padding:.7rem 1.2rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.85rem}
-footer{padding:1.2rem 6vw;font-size:.8rem;opacity:.7;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-@media(max-width:760px){main{grid-template-columns:1fr}.r{min-height:40vh}}
-</style>
 </head>
-<body>
-<main>
-<section class="l">
-<div>
-<div class="brand">quickestate</div>
-<div class="slogan">See beyond.</div>
+<body class="no-motion">
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+
+<header class="head">
+  <a class="seal" href="#top" id="seal" aria-label="QuickEstate – nach oben">
+    <svg class="seal-ring" id="sealRing" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="ring" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/></defs>
+      <text><textPath href="#ring">QUICKESTATE · SEE BEYOND · WIEN · </textPath></text></svg>
+    <svg class="mark" viewBox="0 0 46 62" aria-hidden="true"><path d="M23 4l-8 7h16zM16 11v5h14v-5M17 16l-3 38h18l-3-38M14 30h18M12 54h22M2 58c8-4 14-4 21-1s14 3 21-1"/><path d="M30 13l15-5M30 14l15 2"/></svg>
+  </a>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span>Menü</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18M3 16h18"/></svg></button>
+  <nav class="menu" id="menu" aria-label="Hauptnavigation" hidden>
+    <a href="/rechner/">Rechner</a><a href="/boerseplatz-1/">Börseplatz 1</a><a href="/folgen/">Baue mit Shifty</a><a href="/ueber-eduard/">Über Eduard</a>
+  </nav>
+</header>
+<span id="top"></span>
+
+<div class="stage" id="stage" aria-hidden="true">
+  <div class="sky"></div>
+  <canvas id="depth"></canvas>
+  <div class="arch" id="arch">
+    <svg viewBox="0 0 1000 1000" class="arch-text"><defs><path id="arc" d="M90 520 A410 410 0 0 1 910 520"/></defs>
+      <text><textPath href="#arc" startOffset="50%" text-anchor="middle">GRUNDSTÜCK · PLAN · HAUS</textPath></text></svg>
+  </div>
+  <canvas id="three"></canvas>
+  <div class="layer t-hero" id="tHero"><p class="cond big" id="heroWord">QuickEstate</p><p class="ital">See beyond.</p></div>
+  <div class="layer t-ter" id="tTer"><p class="kick">Börseplatz 1 · Wien</p><p class="ital">über den Dächern der Stadt</p></div>
+  <div class="layer t-arch" id="tArch"><p class="cond">Was darf ich hier bauen?</p><p class="ital">und was ist das Grundstück wert?</p></div>
+  <div class="layer t-lt" id="tLt"><p class="cond">Eduard Beches</p><p class="ital">Bauträger aus Wien</p></div>
+  <div class="layer t-plan" id="tPlan"><p class="kick">Der Plan wird zum Haus</p><p class="cond" id="planStep">Grundstück · 500 m²</p></div>
+  <div class="layer t-num" id="tNum"><p class="cond num">1.850 €<span>/m²</span></p><p class="ital">max. Grundstückspreis aus Bauträgersicht</p><p class="note">Beispielwert · Bauklasse II · 12 m Höhe</p></div>
+  <p class="vis" id="vis">Visualisierung: Wolf &amp; Sohn</p>
+  <p class="count" id="count">01 / 06</p>
 </div>
-<h1>Was darf ich auf meinem Grundstück in Wien bauen?</h1>
-<p class="lead">Adresse eingeben – und sofort sehen, was auf dem Grund möglich ist: Widmung, Bauklasse, Besondere Bestimmungen und eine erste Kalkulation. Alles auf einen Blick, statt mühsam aus dem Flächenwidmungsplan.</p>
-<div class="badge">Bald online</div>
-</section>
-<section class="r" aria-hidden="true"><span>Baue<br>mit<br>Shifty.</span></section>
+<a class="cta" id="cta" href="/rechner/"><span id="ctaText">Grundstück prüfen</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<p class="hint" id="hint" aria-hidden="true"><span>Scrollen</span><i></i></p>
+
+<main id="inhalt">
+  <div class="scroller" id="scroller"></div>
+  <section class="cross" id="kreuzung" aria-labelledby="crossH">
+    <h2 class="sr" id="crossH">Wohin möchtest du?</h2>
+    <div class="x-stage" id="xStage">
+      <a class="tri t-top" href="#top" aria-label="Zurück nach oben"><span class="lab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Zurück</span></a>
+      <a class="tri t-left" id="triLeft" href="/folgen/" data-dir="left"><span class="lab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Baue mit Shifty</span><span class="sec"><span class="pill">Baue mit Shifty</span><span class="sec-h">Wiener Bauordnung in 60 Sekunden</span><span class="sec-t">Folge 1 Bauklassen · Folge 2 und 3 Straßenbreite · gedreht in Venedig und Lignano</span><span class="sec-b">Alle Folgen ansehen</span></span></a>
+      <a class="tri t-right" id="triRight" href="/boerseplatz-1/" data-dir="right"><span class="lab">Börseplatz 1<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="sec"><span class="sec-k">Börseplatz 1 · 1010 Wien</span><span class="sec-h">Skyview Penthouses</span><span class="sec-t">Drei freie Penthouses · 245,94 bis 516,94 m² · je drei Ebenen mit Dachterrasse</span><span class="sec-b">Penthouses ansehen</span><span class="sec-v">Visualisierung: Wolf &amp; Sohn</span></span></a>
+      <a class="tri t-bottom" id="triBottom" href="/rechner/" data-dir="down"><span class="lab">Baurechner<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span><span class="sec"><span class="sec-k">Baurechner</span><span class="sec-h">Was darf ich auf meinem Grundstück bauen?</span><span class="sec-t">Bauklasse, Baufluchtlinie und Höhe prüfen – und sehen, welcher Grundstückspreis pro m² sich daraus ergibt.</span><span class="sec-f"><span>Adresse in Wien …</span><span class="sec-b">Rechnen</span></span></span></a>
+      <div class="x-center"><p class="cond">Wohin?</p><p class="ital">Scroll runter, nach links oder rechts</p></div>
+    </div>
+  </section>
+  <figure class="still-hero"><picture><source media="(max-width: 900px)" srcset="img/skyview-penthouse-dachterrasse-stephansdom-m.webp"><img src="img/skyview-penthouse-dachterrasse-stephansdom.webp" width="2400" height="1695" alt="Visualisierung: Dachterrasse am Börseplatz 1 mit Blick auf den Stephansdom (Wolf &amp; Sohn)"></picture></figure>
+  <section class="intro-text">
+    <h1>QuickEstate <span>See beyond.</span></h1>
+    <p>QuickEstate ist die Plattform von Eduard Beches, Bauträger aus Wien. Hier rechnest du aus, was auf einem Wiener Grundstück gebaut werden darf und was es aus Bauträgersicht wert ist, lernst in der Serie „Baue mit Shifty“ die Wiener Bauordnung kennen und findest ausgewählte Objekte.</p>
+  </section>
+  <section class="cards">
+    <article id="rechner"><h2>Baurechner</h2><p>Bauklasse, Baufluchtlinie, Höhe: Der Rechner zeigt Schritt für Schritt, wie viel Fläche entstehen darf und welcher Grundstückspreis pro m² sich daraus ergibt.</p><a class="btn" href="/rechner/">Zum Rechner</a></article>
+    <article id="objekte"><h2>Objekte</h2><p>Skyview Penthouses am Börseplatz 1 mit 245,94 bis 516,94 m², jedes über drei Ebenen mit Dachterrasse.</p><a class="btn ghost" href="/boerseplatz-1/">Börseplatz 1 ansehen</a></article>
+    <article id="folgen"><h2>Baue mit Shifty</h2><p>Kurze Folgen zu Bauklassen, Straßenbreite und Schutzzonen, gedreht in Venedig und Lignano.</p><a class="btn ghost" href="/folgen/">Alle Folgen</a></article>
+  </section>
 </main>
-<footer>
-<span><a href="/impressum.html" style="color:inherit">Impressum</a> · <a href="/datenschutz.html" style="color:inherit">Datenschutz</a></span>
-<span>© 2026 quickestate.at</span>
-</footer>
+
+<footer class="foot"><p>QuickEstate · Eduard Beches, Wien · <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a></p></footer>
+
+<script src="lib/gsap.min.js" defer></script>
+<script src="lib/ScrollTrigger.min.js" defer></script>
+<script src="lib/lenis.min.js" defer></script>
+<script type="module" src="start.js"></script>
 </body>
 </html>
