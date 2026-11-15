@@ -27,9 +27,17 @@
       <text><textPath href="#ring">QUICKESTATE · SEE BEYOND · WIEN · </textPath></text></svg>
     <svg class="mark" viewBox="0 0 46 62" aria-hidden="true"><path d="M23 4l-8 7h16zM16 11v5h14v-5M17 16l-3 38h18l-3-38M14 30h18M12 54h22M2 58c8-4 14-4 21-1s14 3 21-1"/><path d="M30 13l15-5M30 14l15 2"/></svg>
   </a>
-  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span>Menü</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18M3 16h18"/></svg></button>
+  <div class="head-r">
+    <nav class="topnav" aria-label="Schnellwahl">
+      <a class="tn-big roll" href="#rechner">Grundstück<br>prüfen</a>
+      <a class="tn-sm roll" href="#objekte">Wohnung wählen</a>
+      <a class="tn-sm roll" href="#folgen">Baue mit Shifty</a>
+      <a class="tn-sm roll" href="mailto:eb@quickestate.at">Kontakt</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span class="roll">Menü</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+  </div>
   <nav class="menu" id="menu" aria-label="Hauptnavigation" hidden>
-    <a href="/rechner/">Rechner</a><a href="/boerseplatz-1/">Börseplatz 1</a><a href="/folgen/">Baue mit Shifty</a><a href="/ueber-eduard/">Über Eduard</a>
+    <a href="#rechner">Grundstück prüfen</a><a href="#objekte">Wohnung wählen</a><a href="#folgen">Baue mit Shifty</a><a href="mailto:eb@quickestate.at">Kontakt</a>
   </nav>
 </header>
 <span id="top"></span>
@@ -42,7 +50,7 @@
       <text><textPath href="#arc" startOffset="50%" text-anchor="middle">GRUNDSTÜCK · PLAN · HAUS</textPath></text></svg>
   </div>
   <canvas id="three"></canvas>
-  <div class="layer t-hero" id="tHero"><p class="cond big" id="heroWord">QuickEstate</p><p class="ital">See beyond.</p></div>
+  <div class="layer t-hero" id="tHero"><p class="disp" id="heroWord" aria-label="QuickEstate">Quick<br>Estate</p><p class="sig">See beyond.</p></div>
   <div class="layer t-ter" id="tTer"><p class="kick">Börseplatz 1 · Wien</p><p class="ital">über den Dächern der Stadt</p></div>
   <div class="layer t-arch" id="tArch"><p class="cond">Was darf ich hier bauen?</p><p class="ital">und was ist das Grundstück wert?</p></div>
   <div class="layer t-lt" id="tLt"><p class="cond">Eduard Beches</p><p class="ital">Bauträger aus Wien</p></div>
@@ -51,7 +59,7 @@
   <p class="vis" id="vis">Visualisierung: Wolf &amp; Sohn</p>
   <p class="count" id="count">01 / 06</p>
 </div>
-<a class="cta" id="cta" href="/rechner/"><span id="ctaText">Grundstück prüfen</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<a class="cta" id="cta" href="#rechner"><svg class="cta-ring" viewBox="0 0 208 208" aria-hidden="true"><circle class="base" cx="104" cy="104" r="103.5"/><circle class="arc" cx="104" cy="104" r="103.5" transform="rotate(-150 104 104)"/><circle class="arc" cx="104" cy="104" r="103.5" transform="rotate(30 104 104)"/></svg><span id="ctaText">Grundstück prüfen</span></a>
 <p class="hint" id="hint" aria-hidden="true"><span>Scrollen</span><i></i></p>
 
 <main id="inhalt">

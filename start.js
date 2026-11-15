@@ -3,7 +3,7 @@ import * as THREE from './lib/three.module.min.js';
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const testGL = () => { try { const c = document.createElement('canvas'); return !!c.getContext('webgl'); } catch (e) { return false; } };
 const LAGUNE = [0xA9 / 255, 0xC3 / 255, 0xDD / 255];
-const SKY_TOP = [0x22 / 255, 0x48 / 255, 0x8B / 255];   // Himmel tief
+const SKY_TOP = [0x20 / 255, 0x3E / 255, 0x78 / 255];   // Himmel tief
 const BLUE = 0x03203D;
 
 if (!reduce && testGL() && window.gsap && window.ScrollTrigger && window.Lenis) start();
@@ -11,7 +11,7 @@ if (!reduce && testGL() && window.gsap && window.ScrollTrigger && window.Lenis) 
 function start() {
   document.body.classList.remove('no-motion'); document.body.classList.add('on-sky');
   const mobile = innerWidth < 900;
-  const S = { ter: 0, pan: 0, dolly: 0, lt: 0, water: 0, plan: 0 };
+  const S = { ter: 0, pan: 0, dolly: 0, lt: 0, water: 0, plan: 0, dusk: 0 };
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
 
   /* ---------- Szene Dachterrasse: Rendering mit Tiefe ---------- */
@@ -23,7 +23,7 @@ function start() {
   // Über dem Bildrand läuft derselbe Himmel weiter (oberste Bildzeile, weich gemittelt) – keine Kante.
   // Wolken ziehen: sauberer Himmel (ohne Gebäude, nahtlos kachelbar) wandert langsam nach rechts, Stadt bleibt fest davor (Himmelsmaske).
   // Über dem Bildrand läuft derselbe Wolkenhimmel weiter (kein Spiegeln), nach oben stufenlos ins tiefe Blau. Vogel: selten, klein, hinter den Türmen.
-  const FS = `precision highp float;varying vec2 v;uniform sampler2D im,dp,sk,cl;uniform vec2 cov,mouse;uniform vec4 cam;uniform vec3 skyTop,avgTop;uniform float imgTop,time;
+  const FS = `precision highp float;varying vec2 v;uniform sampler2D im,dp,sk,cl,li;uniform vec2 cov,mouse;uniform vec4 cam;uniform vec3 skyTop,avgTop;uniform float imgTop,time,dusk;
     float bird(vec2 p,float fl){float ax=abs(p.x);if(ax>1.)return 0.;
       float wy=-fl*.55*ax+.32*ax*ax;float th=.11*(1.-ax)+.025;
       float a=1.-smoothstep(0.,.07,abs(p.y-wy)-th);float b=1.-smoothstep(0.,.07,length(p*vec2(1.,1.5))-.13);return max(a,b);}
@@ -44,15 +44,33 @@ function start() {
       bA=max(bA,bird(vec2(q.x-bq.x+.022,(q.y-bq.y-.009)*1.416)/(s*.85),sin(time*8.5+1.7)*smoothstep(-.3,.3,sin(time*.8+.5))+.12));
       col=mix(col,vec3(.16,.2,.27),bA*.7*skyM*step(t,15.));
       float hv=imgTop+.5+(.40-.5)*cam.w/cov.y;                         // Horizont in Bildschirmhöhe
-      float k=pow(smoothstep(-.05,.95,hv-v.y),.85)*skyM;                   // Verlauf: am Horizont Original, nach oben satt
+      float k=pow(smoothstep(-.03,.6,hv-v.y),.7)*skyM;                   // Verlauf: am Horizont Original, nach oben satt
       vec3 graded=skyTop+(col-avgTop)*.8;
-      col=mix(col,graded,k*.96);
+      col=mix(col,graded,k);
+      if(dusk>0.){                                                       // Sonnenuntergang beim Scrollen: Abendrot → blaue Stunde (zurückscrollen = Sonnenaufgang)
+        float hh=clamp((hv-v.y)/.9,0.,1.);float lum=dot(col,vec3(.299,.587,.114));
+        vec3 sunset=mix(vec3(.99,.60,.33),mix(vec3(.82,.43,.47),vec3(.13,.13,.31),smoothstep(.25,.9,hh)),smoothstep(0.,.35,hh));
+        vec3 blueH=mix(vec3(.30,.32,.54),vec3(.05,.08,.20),smoothstep(0.,.8,hh));
+        float bh=smoothstep(.55,1.,dusk);
+        vec3 skyD=mix(sunset*(.72+.55*lum),blueH*(.8+.35*lum),bh);
+        float cld=smoothstep(.78,.94,dot(sky,vec3(.299,.587,.114)))*dw;              // Wolken bleiben: im Abendrot golden-rosa angeleuchtet, zur blauen Stunde schiefergrau
+        vec3 cloudD=mix(mix(vec3(1.,.78,.55),vec3(.98,.58,.62),smoothstep(.15,.8,hh)),vec3(.36,.34,.50),bh);
+        skyD=mix(skyD,cloudD*(.85+.3*lum),cld*.9);
+        vec3 cg=mix(col,vec3(lum),.6*smoothstep(.45,1.,dusk));             // nachts weniger Farbe (Patina-Grün leuchtet nicht mehr)
+        vec3 cityD=mix(col*vec3(1.06,.80,.60),cg*vec3(.40,.45,.62),smoothstep(.45,1.,dusk));
+        col=mix(col,mix(cityD,skyD,skyM),smoothstep(0.,.3,dusk));
+        float nt=smoothstep(.55,1.,dusk);
+        if(nt>0.&&q.y>0.){vec3 L=texture2D(li,qi).rgb;                  // Lichtkarte: R Fenster, G Einschaltzeitpunkt, B Wahrzeichen
+          float on=smoothstep(L.g,L.g+.07,nt*1.05);                        // Fenster gehen nacheinander an
+          col+=vec3(1.,.70,.36)*L.r*on*1.25;
+          float lb=L.b*smoothstep(.1,.6,nt);col=mix(col,vec3(dot(col,vec3(.299,.587,.114)))*vec3(1.,.9,.75),min(1.,lb*1.6));   // Patina-Grün im Flutlicht entsättigen
+          col*=mix(vec3(1.),vec3(4.2,3.1,1.7),lb);}}   // Stephansdom und Peterskirche: von unten rechts angestrahlt, Steinstruktur bleibt sichtbar
       col+=(fract(sin(dot(gl_FragCoord.xy+fract(time*7.)*91.,vec2(12.9898,78.233)))*43758.5453)-.5)*.016;   // feines Filmkorn gegen CG-Look
       gl_FragColor=vec4(col,1.);}`;
   const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
   const prog = gl.createProgram();
   gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
-  const U = {}; ['im', 'dp', 'sk', 'cl', 'cov', 'mouse', 'cam', 'skyTop', 'avgTop', 'imgTop', 'time'].forEach(n => U[n] = gl.getUniformLocation(prog, n));
+  const U = {}; ['im', 'dp', 'sk', 'cl', 'li', 'cov', 'mouse', 'cam', 'skyTop', 'avgTop', 'imgTop', 'time', 'dusk'].forEach(n => U[n] = gl.getUniformLocation(prog, n));
   const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
@@ -62,13 +80,16 @@ function start() {
     [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(p => gl.texParameteri(gl.TEXTURE_2D, p, rep ? gl.REPEAT : gl.CLAMP_TO_EDGE)); };
   const load = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
   let depthReady = false, heroLive = true, cloudBoost = 0;
+  let duskV = 0;   // angezeigter Sonnenstand: folgt dem Scrollziel S.dusk gedrosselt (voller Untergang ≥ ~4 s), damit schnelles Scrollen kein Aufblitzen erzeugt
   const t0 = performance.now(), CLOCK = () => (window.__heroT ?? (performance.now() - t0) / 1000);
-  Promise.all([load('img/skyview-penthouse-dachterrasse-stephansdom' + (mobile ? '-m' : '') + '.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-tiefe.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-himmel.webp'), load('img/skyview-himmel-wolken.webp')])
-    .then(([a, b, c, d]) => { glTex(a, 0); glTex(b, 1); glTex(c, 2); glTex(d, 3, true); gl.uniform1i(U.im, 0); gl.uniform1i(U.dp, 1); gl.uniform1i(U.sk, 2); gl.uniform1i(U.cl, 3); depthReady = true; kick(); });
+  Promise.all([load('img/skyview-penthouse-dachterrasse-stephansdom' + (mobile ? '-m' : '') + '.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-tiefe.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-himmel.webp'), load('img/skyview-himmel-wolken.webp'), load('img/skyview-lichter.webp')])
+    .then(([a, b, c, d, e]) => { glTex(a, 0); glTex(b, 1); glTex(c, 2); glTex(d, 3, true); glTex(e, 4); gl.uniform1i(U.li, 4); gl.uniform1i(U.im, 0); gl.uniform1i(U.dp, 1); gl.uniform1i(U.sk, 2); gl.uniform1i(U.cl, 3); depthReady = true; kick();
+      // Große/Retina-Bildschirme: danach still die scharfe 3600-px-Version nachladen und austauschen
+      if (!mobile && innerWidth * (devicePixelRatio || 1) > 2400) load('img/skyview-penthouse-dachterrasse-stephansdom-xl.webp').then(x => { glTex(x, 0); kick(); }).catch(() => {}); });
 
   function drawDepth() {
     if (!depthReady) return;
-    const dpr = Math.min(devicePixelRatio || 1, 1.75), w = Math.round(innerWidth * dpr), h = Math.round(innerHeight * dpr);
+    const dpr = Math.min(devicePixelRatio || 1, 2), w = Math.round(innerWidth * dpr), h = Math.round(innerHeight * dpr);
     if (dc.width !== w || dc.height !== h) { dc.width = w; dc.height = h; gl.viewport(0, 0, w, h); }
     const ia = 2400 / 1695, va = w / h, cov = va > ia ? [1, ia / va] : [va / ia, 1];
     gl.uniform2f(U.cov, cov[0], cov[1]);
@@ -77,7 +98,7 @@ function start() {
     gl.uniform3f(U.skyTop, SKY_TOP[0], SKY_TOP[1], SKY_TOP[2]); gl.uniform3f(U.avgTop, 0.618, 0.757, 0.883);
     // Start: nur Turmspitzen/Dachkante (Bild-y 0,405) am unteren Rand – Terrasse erst beim Scrollen
     const camW = 1.12 + S.dolly * 0.05, top0 = (va < 0.8 ? 0.90 : 1.0) - (0.5 + (0.405 - 0.5) * camW / cov[1]);
-    gl.uniform1f(U.imgTop, top0 * (1 - S.ter)); gl.uniform1f(U.time, CLOCK() + cloudBoost);
+    gl.uniform1f(U.imgTop, top0 * (1 - S.ter)); gl.uniform1f(U.time, CLOCK() + cloudBoost); gl.uniform1f(U.dusk, duskV);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -195,11 +216,27 @@ function start() {
   gsap.set('#arch', { xPercent: -50, yPercent: 100 });
   const tl = gsap.timeline({ defaults: { ease: 'none' }, onUpdate: () => kick(), scrollTrigger: { trigger: '#scroller', start: 'top top', end: 'bottom bottom', scrub: 1,
     onUpdate: st => { onProgress(st.progress); kick(); } } });
+  // Wortmarke: „See beyond.“ so setzen, dass die Oberkante vom S knapp unter der Grundlinie von ESTATE liegt (Abstand 6 % der Titelhöhe);
+  // Drehung 9°: S sitzt knapp unter ESTATE, nur das d lappt an einer Stelle leicht ins Wort (wie ERA).
+  const placeSig = () => {
+    const w = document.getElementById('heroWord'), sg = document.querySelector('.t-hero .sig'); if (!w || !sg) return;
+    const mk = el => { let m = el.querySelector('.bl'); if (!m) { m = document.createElement('span'); m.className = 'bl'; m.style.cssText = 'display:inline-block;width:0;height:0'; el.append(m); } return m; };
+    const mt = mk(w), ms = sg.querySelector('.bl0') || (() => { const m = document.createElement('span'); m.className = 'bl0'; m.style.cssText = 'display:inline-block;width:0;height:0'; sg.prepend(m); return m; })();
+    // Breite: „See beyond.“ so groß, dass es etwa so breit ist wie ESTATE (wie „Estepona“ unter ÄRA)
+    sg.style.fontSize = ''; const r0 = document.createRange(); r0.selectNodeContents(w); const lw = Math.max(...[...r0.getClientRects()].map(r => r.width));
+    const sw = sg.getBoundingClientRect().width; if (sw > 0) sg.style.fontSize = (parseFloat(getComputedStyle(sg).fontSize) * 1.0 * lw / sw) + 'px';
+    const F = parseFloat(getComputedStyle(sg).fontSize), T = parseFloat(getComputedStyle(w).fontSize) * 1.22;
+    const cur = parseFloat(sg.style.marginTop) || 0;
+    const want = mt.getBoundingClientRect().bottom + 0.1 * T + 0.79 * F;
+    sg.style.marginTop = (cur + want - ms.getBoundingClientRect().bottom) + 'px';
+  };
+  document.fonts.ready.then(() => { placeSig(); requestAnimationFrame(placeSig); }); addEventListener('resize', placeSig);
   gsap.from('#tHero', { y: 36, opacity: 0, filter: 'blur(10px)', duration: 1.8, ease: 'power3.out', delay: 0.25, clearProps: 'filter' });   // Einstieg: Titel taucht aus dem Himmel auf
   tl.to('#heroWord', { letterSpacing: '0.5em', opacity: 0, duration: 1 }, 0)
-    .to('#tHero .ital', { y: -40, opacity: 0, duration: 0.8 }, 0.1)
+    .to('#tHero .sig', { y: -40, opacity: 0, duration: 0.8 }, 0.1)
     .to(S, { ter: 1, duration: 1.6, ease: 'power1.inOut' }, 0.2)
     .to(S, { pan: 1, dolly: 1, duration: 2.6 }, 0.8)
+    .to(S, { dusk: 1, duration: 1.1, ease: 'none' }, 1.35)   // Sonne geht unter, bevor der blaue Bogen aufsteigt
     .to('#tTer', { opacity: 1, duration: 0.4 }, 1.3).to('#tTer', { opacity: 0, duration: 0.3 }, 2.4)
     .to('#vis', { opacity: 0.75, duration: 0.3 }, 1.2).to('#vis', { opacity: 0, duration: 0.3 }, 3.6)
     .to('#arch', { yPercent: 0, xPercent: -50, duration: 1.1, ease: 'power2.out' }, 2.4)
@@ -215,21 +252,36 @@ function start() {
     .to({}, { duration: 0.6 }, 9.6);
 
   const cta = $('cta'), ctaText = $('ctaText'), hint = $('hint'), sealRing = $('sealRing');
-  const CTAS = [[0, 'Grundstück prüfen', '/rechner/'], [0.06, 'Wohnung ansehen', '/boerseplatz-1/'], [0.4, 'Über Eduard', '/ueber-eduard/'], [0.68, 'Grundstück prüfen', '/rechner/']];
+  const CTAS = [[0, 'Grundstück prüfen', '#rechner'], [0.06, 'Wohnung wählen', '#objekte'], [0.4, 'Über Eduard', '#inhalt'], [0.68, 'Grundstück prüfen', '#rechner']];
   let ctaIdx = -1;
+  // Abroll-Effekt wie ERA: jeder Buchstabe rollt einzeln nach oben weg, die Kopie kommt von unten (leicht versetzt)
+  function rollify(el) {
+    const lines = el.innerHTML.split(/<br\s*\/?>/i).map(t => t.replace(/<[^>]+>/g, ''));
+    el.setAttribute('aria-label', lines.join(' ')); el.textContent = ''; let n = 0;
+    lines.forEach((t, li) => { if (li) el.append(document.createElement('br'));
+      t.split(' ').forEach((word, wi) => { if (wi) el.append(' '); const wd = document.createElement('span'); wd.style.whiteSpace = 'nowrap';   // Wörter nicht mitten im Wort umbrechen
+        for (const c of word) { const ch = document.createElement('span'); ch.className = 'ch'; ch.style.setProperty('--i', n++); ch.setAttribute('aria-hidden', 'true');
+          const in1 = document.createElement('span'); in1.textContent = c; const in2 = in1.cloneNode(true); const w = document.createElement('span'); w.append(in1, in2); ch.append(w); wd.append(ch); }
+        el.append(wd); }); });
+    if (!el.classList.contains('roll')) el.classList.add('roll');
+  }
+  document.querySelectorAll('.topnav .roll, .menu-btn .roll').forEach(rollify);
   function onProgress(p) {
     count.textContent = '0' + Math.min(6, 1 + Math.floor(p * 6)) + ' / 06';
     let i = 0; CTAS.forEach((c, k) => { if (p >= c[0]) i = k; });
-    if (i !== ctaIdx) { ctaIdx = i; ctaText.textContent = CTAS[i][1]; cta.href = CTAS[i][2]; }
+    if (i !== ctaIdx) { ctaIdx = i; ctaText.textContent = CTAS[i][1]; cta.href = CTAS[i][2]; rollify(ctaText); }
+    cta.classList.toggle('away', p > 0.05);   // Handy: Kreis nur im Einstieg (CSS greift nur ≤ 900 px)
     hint.style.opacity = p > 0.01 ? 0 : 1;
     document.body.classList.toggle('on-sky', p < 0.3); heroLive = p < 0.4;
   }
   let rot = 0;
+  gsap.ticker.add((t, dms) => { const d = S.dusk - duskV; if (Math.abs(d) > 0.0005) { const dt = Math.min(dms, 50) / 1000; duskV += Math.sign(d) * Math.min(Math.abs(d), dt * (0.16 + Math.abs(d) * 0.3)); kick(); } });
   gsap.ticker.add(() => { cloudBoost += Math.min(6, Math.abs(lenis.velocity || 0)) * 0.015; });             // Wolken ziehen beim Scrollen kurz schneller (Wind)
-  gsap.ticker.add(() => { rot += 0.12 + Math.min(6, Math.abs(lenis.velocity || 0)) * 0.35 * Math.sign(lenis.velocity || 1); sealRing.style.transform = 'rotate(' + rot.toFixed(2) + 'deg)'; });
+  gsap.ticker.add(() => { rot += -0.078 + Math.max(-20, Math.min(20, lenis.velocity || 0)) * 0.6; /* Ruhe: eine Runde ≈ 77 s gegen den Uhrzeiger (wie ERA); Scrollen dreht kräftig mit */ sealRing.style.transform = 'rotate(' + rot.toFixed(2) + 'deg)'; });
   const menuBtn = $('menuBtn'), menu = $('menu');
-  const setMenu = open => { menu.hidden = !open; menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.querySelector('span').textContent = open ? 'Schließen' : 'Menü'; open ? lenis.stop() : lenis.start(); };
+  const setMenu = open => { menu.hidden = !open; menuBtn.setAttribute('aria-expanded', String(open)); const ml = menuBtn.querySelector('.roll'); ml.textContent = open ? 'Schließen' : 'Menü'; rollify(ml); open ? lenis.stop() : lenis.start(); };
   menuBtn.addEventListener('click', () => setMenu(menu.hidden));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));   // Link im Menü schließt es
   addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
   $('seal').addEventListener('click', e => { e.preventDefault(); lenis.scrollTo(0, { duration: 2.2 }); });
 

@@ -19,7 +19,7 @@ a{color:inherit}
 .head nav{display:flex;gap:24px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:13px}
 
 .stage{position:fixed;inset:0;z-index:1;overflow:hidden;background:var(--lagune)}
-.sky{position:absolute;inset:0;background:linear-gradient(180deg,#22488B 0%,#4F78B0 45%,var(--lagune) 100%)}
+.sky{position:absolute;inset:0;background:linear-gradient(180deg,#203E78 0%,#2F529A 45%,var(--lagune) 100%)}
 #depth,#three{position:absolute;inset:0;width:100%;height:100%;display:block}
 
 .arch{position:absolute;left:50%;bottom:0;width:min(92vw,1100px,80vh);aspect-ratio:1/1.05;background:var(--lagune);border-radius:50% 50% 0 0/48% 48% 0 0;transform-origin:50% 100%}
@@ -121,7 +121,7 @@ body.no-motion .still-hero{display:block}
 .x-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--beige);padding:22px 34px;text-align:center;pointer-events:none;transition:opacity .4s}
 .x-center .cond{font-size:44px}.x-center .ital{font-size:18px;margin-top:4px}
 @media (prefers-reduced-motion:reduce){.hint i{animation:none}.tri{transition:none}}
-@media (max-width:700px){.seal{width:72px;height:72px}.cta{left:12px;right:12px;bottom:12px;justify-content:center}.hint{display:none}.count{bottom:72px}.tri .lab{font-size:18px}.x-center .cond{font-size:30px}}
+@media (max-width:700px){.seal{width:72px;height:72px}.hint{display:none}.count{bottom:72px}.tri .lab{font-size:18px}.x-center .cond{font-size:30px}}
 
 /* Sektor hinter dem aufgehenden Dreieck */
 .sec{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(760px,86vw);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;opacity:0;pointer-events:none}
@@ -147,3 +147,43 @@ body.on-sky .head,body.on-sky .seal,body.on-sky .menu-btn,body.on-sky .count,bod
 .count,.vis{text-shadow:0 0 10px rgba(239,230,214,.7)}
 body.on-sky .count,body.on-sky .vis{text-shadow:0 1px 10px rgba(3,32,61,.5)}
 @media (max-width:700px){.vis{top:auto;bottom:78px;right:12px;left:auto;transform:none;font-size:9px}}
+/* v3.12: Wortmarke Einstieg nach ERA-Prinzip (eigene freie Schriften): schmale Didone zweizeilig + Schreibschrift 12° überlappend */
+@font-face{font-family:"QE Disp";src:url(fonts/noto-serif-display-latin-wdth-normal.woff2) format("woff2");font-weight:100 900;font-stretch:62.5% 100%;font-display:swap}
+@font-face{font-family:"QE Sig";src:url(fonts/monsieur-la-doulaise-latin-400-normal.woff2) format("woff2");font-display:swap}
+.t-hero{top:18vh}
+.t-hero .disp{font-family:"QE Disp",Georgia,serif;font-stretch:62.5%;font-weight:640;white-space:nowrap;transform:scale(.7,1.22);transform-origin:50% 0;text-transform:uppercase;font-size:clamp(80px,min(24vw,17vh),210px);line-height:.92;letter-spacing:-.02em;margin:0}
+.t-hero .sig{display:inline-block;font-family:"QE Sig",cursive;font-size:clamp(70px,min(21vw,20vh),200px);line-height:1;transform:rotate(-9deg);transform-origin:0 80%;margin:0;white-space:nowrap}
+@media (max-width:700px){.t-hero{top:17vh}}
+
+/* v3.18: Kopf wie ERA-Prinzip – größeres Siegel, rechts Schnellwahl (groß + 3 klein) mit Abroll-Effekt; Kreis-Button statt roter Balken */
+.head{padding:clamp(22px,3.1vw,45px)}
+.seal{width:120px;height:120px}
+.seal .mark{width:34px;height:46px}
+.head-r{display:flex;align-items:flex-start;gap:26px;pointer-events:auto}
+.topnav{display:flex;flex-direction:column;align-items:flex-end;gap:7px;color:var(--blue);text-align:right}
+.topnav a{color:inherit;text-decoration:none}
+.tn-big{font-family:"QE Disp",Georgia,serif;font-stretch:62.5%;font-weight:600;text-transform:uppercase;font-size:27px;line-height:.95;letter-spacing:.01em;padding-bottom:4px;border-bottom:1px solid currentColor;margin-bottom:10px}
+.tn-sm{font-family:var(--sans);font-weight:600;text-transform:uppercase;font-size:10.5px;letter-spacing:.32em;margin-right:-.32em}
+.menu-btn{padding:4px 0}
+.menu-btn svg circle{fill:currentColor;stroke:none}
+body.on-sky .topnav{color:var(--beige)}
+.roll .ch{display:inline-block;overflow:hidden;vertical-align:top;height:1.3em;line-height:1.3;margin:-.12em 0}
+.roll .ch>span{display:block;transition:transform .45s cubic-bezier(.6,0,.2,1);transition-delay:calc(var(--i)*14ms)}
+.roll:hover .ch>span,.roll:focus-visible .ch>span,.menu-btn:hover .roll .ch>span,.cta:hover .roll .ch>span{transform:translateY(-50%)}
+.cta{right:clamp(22px,3.1vw,45px);bottom:clamp(22px,3.1vw,45px);width:150px;height:150px;padding:0;background:none;color:var(--blue);justify-content:center;text-align:center;border-radius:50%;overflow:visible;transition:opacity .4s}
+.cta::before{display:none}
+.cta-ring{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1;overflow:visible}
+.cta-ring .base{opacity:.35}
+.cta-ring .arc{stroke-width:1.4;stroke-dasharray:27 650.3;transition:stroke-dasharray .6s cubic-bezier(.6,0,.2,1)}
+.cta:hover .cta-ring .arc,.cta:focus-visible .cta-ring .arc{stroke-dasharray:325.2 650.3}
+#ctaText{max-width:72%;font-family:var(--sans);font-weight:600;text-transform:uppercase;font-size:10.5px;letter-spacing:.28em;line-height:1.7}
+body.on-sky .cta{color:var(--beige)}
+.hint{display:none}
+@media (max-width:900px){.topnav{display:none}.head{padding:22px}.seal{width:72px;height:72px}.seal .mark{width:22px;height:30px}.cta{width:118px;height:118px;left:auto;right:22px;bottom:22px}.cta.away{opacity:0;pointer-events:none}#ctaText{font-size:9.5px}}
+.roll .ch>span>span{display:block}
+.cta svg.cta-ring{width:100%;height:100%}
+/* v3.19: Laptop ohne Menü-Knopf (Schnellwahl reicht); Handy: Knopf liegt über dem offenen Menü, damit man es wieder schließen kann */
+.menu-btn{position:relative;z-index:31}
+body:has(.menu:not([hidden])) .menu-btn{color:var(--beige)}
+@media (min-width:901px){.menu-btn{display:none}}
+.head nav.menu:not([hidden]){display:flex}
