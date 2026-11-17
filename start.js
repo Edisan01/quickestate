@@ -619,9 +619,9 @@ function start() {
   function frontKante(bp, ref) { const K = (bp.kanten || []).filter(k => !k[2]), mx = 111320 * Math.cos(bp.polys[0][0][0][1] * Math.PI / 180), my = 110574, len = k => Math.hypot((k[1][0] - k[0][0]) * mx, (k[1][1] - k[0][1]) * my);
     if (!K.length || !ref) return null; let best = null, bd = 1e9; K.forEach(k => { if (len(k) < 1.5) return; const d = kSegAbst(ref, k[0], k[1]); if (d < bd) { bd = d; best = k; } }); if (!best) return null;
     const dir = k => { const l = len(k) || 1; return [(k[1][0] - k[0][0]) * mx / l, (k[1][1] - k[0][1]) * my / l]; }, d0 = dir(best), gleich = (p, q) => Math.hypot((p[0] - q[0]) * mx, (p[1] - q[1]) * my) < 0.3;
-    let von = best[0], bis = best[1], wachs = true;
-    while (wachs) { wachs = false; for (const k of K) { if (k === best) continue; const d = dir(k), par = Math.abs(d[0] * d0[0] + d[1] * d0[1]); if (par < 0.985) continue;
-      if (gleich(k[1], von) && !gleich(k[0], bis)) { von = k[0]; wachs = true; } else if (gleich(k[0], von) && !gleich(k[1], bis)) { von = k[1]; wachs = true; } else if (gleich(k[0], bis) && !gleich(k[1], von)) { bis = k[1]; wachs = true; } else if (gleich(k[1], bis) && !gleich(k[0], von)) { bis = k[0]; wachs = true; } } }
+    let von = best[0], bis = best[1], wachs = true, runden = 0; const genutzt = new Set([best]);
+    while (wachs && runden++ < 50) { wachs = false; for (const k of K) { if (genutzt.has(k)) continue; const d = dir(k), par = Math.abs(d[0] * d0[0] + d[1] * d0[1]); if (par < 0.985) continue; const vorher = von + '|' + bis;
+      if (gleich(k[1], von) && !gleich(k[0], bis)) { von = k[0]; wachs = true; } else if (gleich(k[0], von) && !gleich(k[1], bis)) { von = k[1]; wachs = true; } else if (gleich(k[0], bis) && !gleich(k[1], von)) { bis = k[1]; wachs = true; } else if (gleich(k[1], bis) && !gleich(k[0], von)) { bis = k[0]; wachs = true; } if (von + '|' + bis !== vorher) genutzt.add(k); } }
     return { von, bis, abstand: bd }; }
   function messRahmen(e, bp) { const pts = bp.polys.flatMap(pg => pg[0]), c = [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length];
     const m = 111320 * Math.cos(e.von[1] * Math.PI / 180), dx = (e.bis[0] - e.von[0]) * m, dy = (e.bis[1] - e.von[1]) * 110574, L0m = Math.hypot(dx, dy) || 1; let nx = -dy / L0m, ny = dx / L0m;
