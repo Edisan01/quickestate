@@ -556,13 +556,6 @@ function start() {
   mapEl.addEventListener('pointerup', dragEnde); mapEl.addEventListener('pointercancel', dragEnde);
 
   const flText = g => g.fl.toLocaleString('de-AT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-  /* Ergebnis als Karten in Alltagssprache: links „Was ist das?“, rechts „Was heißt das für dich?“ – Ampel grün/gelb, Fachbegriffe per „Was heißt das?“ */
-  const karte = (art, titel, text, mehr) => { const d = document.createElement('div'); d.className = 'g-card ' + art;
-    const h = document.createElement('p'); h.className = 'g-ct'; h.textContent = titel; d.append(h);
-    if (text) { const t = document.createElement('p'); t.className = 'g-cx'; t.textContent = text; d.append(t); }
-    if (mehr) { const x = document.createElement('details'), sm = document.createElement('summary'), b = document.createElement('p'); sm.textContent = 'Was heißt das?'; b.textContent = mehr; x.append(sm, b); d.append(x); }
-    return d; };
-  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; };
   /* Umfeld je Bauplatz (Punkt 11–13): Widmung + Bauklasse (GENFLWIDMUNGOGD), Schutzzone, Wohnzone, Bausperre, Bestand (GEBAEUDEINFOOGD), Straßenbäume (BAUMKATOGD) – Stadt Wien;
      Hochwasser HQ30/100/300 (LFRZ, Bund). Einmal je Bauplatz geladen und gemerkt. Fehlt eine Quelle → „nicht abrufbar“, nie „nein“. */
   const WFSB = (l, B, m, max) => hol('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:' + l + '&srsName=EPSG:4326&outputFormat=json&maxFeatures=' + (max || 300) + '&bbox='
