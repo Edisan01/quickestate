@@ -21,10 +21,14 @@ t = next(x for x in tab if 'grundst' in x.lower() and 'verz' in x.lower())
 cols = [r[1] for r in c.execute(f'pragma table_info("{t}")')]
 U = {x.upper(): x for x in cols}
 kgc = next(U[k] for k in ('KG', 'KG_NR', 'KGNR', 'KG-NR') if k in U)
-gc = next(U[k] for k in ('GNR', 'GST_NR', 'GST', 'GSTNR', 'GST-NR') if k in U)
+gc = next(U[k] for k in ('GSTNR', 'GNR', 'GST_NR', 'GST', 'GST-NR') if k in U)
 fc = next(U[k] for k in ('FLAECHE', 'FL', 'GESAMTFLAECHE') if k in U)
+print('Probe Ybbsstraße 7:')
+for r in c.execute(f'select * from "{t}" where cast("{kgc}" as integer) = 1657 and "{gc}" like \'1496/78%\''): print(r)
+print('Probe Gerstlgasse 18:')
+for r in c.execute(f'select * from "{t}" where cast("{kgc}" as integer) = 1609 and ("{gc}" = \'674\' or "{gc}" = \'675\')'): print(r)
 out = {}
-for kg, gnr, fl in c.execute(f'select "{kgc}", "{gc}", "{fc}" from "{t}" where cast("{kgc}" as text) like \'01%\' or cast("{kgc}" as integer) between 1000 and 1999'):
+for kg, gnr, fl in c.execute(f'select "{kgc}", "{gc}", "{fc}" from "{t}" where cast("{kgc}" as integer) between 1000 and 1999'):
     k = str(kg).zfill(5); g = str(gnr).strip()
     if fl is None: continue
     out.setdefault(k, {}); out[k][g] = out[k].get(g, 0) + float(fl)   # mehrere Nutzungszeilen → Summe = Gesamtfläche
