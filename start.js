@@ -504,7 +504,7 @@ function start() {
     .then(r => r.json()).then(fc => { const x = (fc.features || [])[0]; return x ? zugang(x.geometry.coordinates[0], x.geometry.coordinates[1], x.properties) : null; }).catch(() => null);
   // ganze Straße (ohne Hausnummer): alle Adressen der Straße holen und als Hausnummern zeigen
   const STR = (name, bez) => 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=1500&cql_filter='
-    + encodeURIComponent("NAME_STR='" + name.replace(/'/g, "''") + "'" + (bez ? " AND GEB_BEZIRK='" + String(bez).padStart(2, '0') + "'" : ''));
+    + encodeURIComponent("NAME_STR='" + name.replace(/'/g, "''") + "'" + (bez ? " AND GEB_BEZIRK IN (" + String(bez).split(/\s*,\s*/).filter(Boolean).map(b => "'" + b.padStart(2, '0') + "'").join(',') + ")" : ''));   // Straße über mehrere Bezirke: „16, 17“
   async function strasseZeigen(f) {
     const name = f.properties.StreetName || f.properties.Adresse, bez = f.properties.Bezirk; gMsg.textContent = 'Straße wird geladen …';
     let fc; try { fc = await fetch(STR(name, bez)).then(r => r.json()); } catch { fc = null; }
@@ -517,13 +517,14 @@ function start() {
       requestAnimationFrame(() => { [M.cx, M.cy] = kMerc(lon, lat); M.k = 2 ** 17.5; mapRender(); }); return; }
     const nrKey = n => { const m = /^(\d+)(.*)$/.exec(n) || [0, 1e6, n]; return [+m[1], m[2]]; };
     L.sort((a, b) => { const A = nrKey(a.nr), B = nrKey(b.nr); return A[0] - B[0] || A[1].localeCompare(B[1], 'de'); });
-    const seen = new Set(); M.marks = L.filter(m => !seen.has(m.nr) && seen.add(m.nr));
-    $('resAddr').textContent = name + (bez ? ', ' + bez + '. Bezirk' : ', Wien'); $('resInfo').textContent = 'Wähle oben deine Hausnummer – oder klick im Plan direkt auf ein Grundstück.';
+    const seen = new Set(), anz = {}; M.marks = L.filter(m => { const k = m.nr + '|' + m.f.properties.PostalCode; return !seen.has(k) && seen.add(k); });
+    M.marks.forEach(m => anz[m.nr] = (anz[m.nr] || 0) + 1); M.marks.forEach(m => { m.lab = anz[m.nr] > 1 ? m.nr + ' (' + m.f.properties.PostalCode + ')' : m.nr; });   // gleiche Nummer in 2 Bezirken
+    $('resAddr').textContent = name + (bez ? ', ' + String(bez).split(/\s*,\s*/).join('./') + '. Bezirk' : ', Wien'); $('resInfo').textContent = 'Wähle oben deine Hausnummer – oder klick im Plan direkt auf ein Grundstück.';
     $('resHint').textContent = ''; nummernZeigen(); zeigeBox();
     requestAnimationFrame(() => { const m0 = M.marks[0]; [M.cx, M.cy] = kMerc(m0.lon, m0.lat); M.k = 2 ** 18.3; mapRender(); }); }
   function nummernZeigen() {
     const box = $('numChips'); box.textContent = ''; gBox.classList.toggle('has-nums', M.marks.length > 0); $('resNums').hidden = !M.marks.length;
-    M.marks.forEach(m => { const b = document.createElement('button'); b.type = 'button'; b.textContent = m.nr; b.setAttribute('role', 'listitem'); m.btn = b;
+    M.marks.forEach(m => { const b = document.createElement('button'); b.type = 'button'; b.textContent = m.lab || m.nr; b.setAttribute('role', 'listitem'); m.btn = b;
       b.addEventListener('click', () => nummerWaehlen(m)); box.append(b); }); }
   function nummerWaehlen(m) { M.akt = m; M.marks.forEach(x => x.btn && x.btn.classList.toggle('on', x === m)); m.btn && m.btn.scrollIntoView({ block: 'nearest', inline: 'center' });
     [M.cx, M.cy] = kMerc(m.lon, m.lat); if (M.k < 2 ** 18) M.k = 2 ** 18.3; waehlen(m.f, true, m.ein); }
