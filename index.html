@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://maps.wien.gv.at; media-src 'self' blob:; font-src 'self'; connect-src 'self' https://data.wien.gv.at; base-uri 'self'; form-action 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://maps.wien.gv.at; media-src 'self' blob:; font-src 'self'; connect-src 'self' https://data.wien.gv.at https://kataster.bev.gv.at; base-uri 'self'; form-action 'self'; object-src 'none'">
 <title>QuickEstate – Was darf ich auf meinem Grundstück bauen? | Eduard Beches, Wien</title>
 <meta name="description" content="QuickEstate von Eduard Beches: Baurechner für Wiener Grundstücke, die Reel-Serie „Baue mit Shifty“ und ausgewählte Objekte wie die Skyview Penthouses am Börseplatz 1.">
 <meta name="robots" content="noindex">
@@ -13,7 +13,7 @@
 <meta property="og:description" content="Baurechner, Baue mit Shifty und Objekte in Wien.">
 <meta property="og:image" content="https://quickestate.at/img/skyview-penthouse-dachterrasse-stephansdom.webp">
 <link rel="preload" href="fonts/oswald-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="start.css?v=347">
+<link rel="stylesheet" href="start.css?v=348">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"QuickEstate","url":"https://quickestate.at/","slogan":"See beyond.","founder":{"@id":"#eduard"}},{"@type":"Person","@id":"#eduard","name":"Eduard Beches","alternateName":"Shifty","address":{"@type":"PostalAddress","addressLocality":"Wien","addressCountry":"AT"}}]}
 </script>
@@ -68,10 +68,12 @@
     <div class="g-res" id="gateRes" hidden>
       <p class="g-ra" id="resAddr"></p>
       <div class="g-nums" id="resNums" hidden><p class="g-nq">Welche Hausnummer?</p><div class="g-nrow"><div class="g-chips" id="numChips" role="list"></div><input id="numIn" type="text" inputmode="numeric" placeholder="Nr." aria-label="Hausnummer eintippen"></div></div>
-      <div class="g-map" id="resMap" role="img" aria-label="Ausschnitt Flächenwidmungsplan mit markiertem Grundstück"><div class="g-tiles" id="resTiles"></div><svg class="g-ov" id="resOv" aria-hidden="true"></svg><p class="g-load" id="resLoad">Plan wird geladen …</p><p class="g-tip" id="mapTip">Ziehen zum Verschieben · + / − zum Zoomen · Klick auf dein Grundstück</p><div class="g-zoom"><button type="button" id="mapIn" aria-label="Hineinzoomen">+</button><button type="button" id="mapOut" aria-label="Herauszoomen">−</button></div></div>
+      <div class="g-mapw">
+      <div class="g-map" id="resMap" role="img" aria-label="Ausschnitt Flächenwidmungsplan mit markiertem Grundstück"><div class="g-tiles" id="resTiles"></div><svg class="g-ov" id="resOv" aria-hidden="true"></svg><p class="g-load" id="resLoad">Plan wird geladen …</p><p class="g-tip" id="mapTip">Ziehen zum Verschieben · + / − zum Zoomen · Klick auf dein Grundstück</p></div>
+      <div class="g-zoom"><button type="button" id="mapIn" aria-label="Hineinzoomen">+</button><button type="button" id="mapOut" aria-label="Herauszoomen">−</button></div></div>
       <p class="g-hint" id="resHint"></p>
       <p class="g-pi" id="resInfo"></p>
-      <p class="g-src">Flächenwidmungsplan: Stadt Wien – data.wien.gv.at · Grundstücksgrenzen: BEV Kataster, Stand 01.10.2025 · CC BY 4.0 · Grenzen nicht vermessungsgenau</p>
+      <p class="g-src">Flächenwidmungsplan: Stadt Wien – data.wien.gv.at · Grundstücke &amp; Einlagezahlen: BEV – kataster.bev.gv.at · CC BY 4.0 · Grenzen nicht vermessungsgenau</p>
       <button type="button" class="g-back" id="resBack">Andere Adresse</button>
     </div>
     <p class="g-n">Unverbindliche Ersteinschätzung · keine Rechts- oder Bewertungsberatung · Daten: Stadt Wien · nichts wird gespeichert</p>
@@ -100,6 +102,7 @@
 <script src="lib/gsap.min.js" defer></script>
 <script src="lib/ScrollTrigger.min.js" defer></script>
 <script src="lib/lenis.min.js" defer></script>
-<script type="module" src="start.js?v=347"></script>
+<script src="mvt.js?v=348" defer></script>
+<script type="module" src="start.js?v=348"></script>
 </body>
 </html>

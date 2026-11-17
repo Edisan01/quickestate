@@ -315,3 +315,19 @@ body.gl-arch .arch{background:none}
 .g-f.swap{animation:qeSwap .45s cubic-bezier(.2,.7,.2,1)}
 @keyframes qeSwap{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.g-f.swap{animation:none}}
+/* v3.48 – Bauplatz aus EZ: Fläche, Außenrand durchgezogen, Grenzen dazwischen strichliert; Zoom-Knöpfe rechts neben dem Plan */
+.g-ov .gsf{fill:rgba(3,32,61,.16);stroke:none}
+.g-ov .gsa{fill:none;stroke:#03203D;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.g-ov .gsi{fill:none;stroke:#03203D;stroke-width:1.4;stroke-dasharray:5 4;opacity:.8}
+.g-mapw{position:relative;width:fit-content;margin:0 auto}
+.g-mapw .g-zoom{position:absolute;left:calc(100% + 10px);top:50%;right:auto;transform:translateY(-50%);box-shadow:none;gap:6px}
+.g-mapw .g-zoom button{background:var(--blue);color:var(--beige);border:0;border-radius:3px}
+.g-mapw .g-zoom button+button{border-top:0}
+.g-mapw .g-zoom button:hover,.g-mapw .g-zoom button:focus-visible{background:#0B3A66}
+@media (max-width:600px){.g-mapw .g-zoom{left:auto;right:6px;top:6px;transform:none}.g-mapw .g-zoom button{width:32px;height:32px}}
+.g-tip{right:10px}
+.g-mapw{width:min(100%,46vh,440px)}
+.g-mapw .g-map{width:100%}
+.g-in.has-nums .g-mapw{width:min(100%,38vh,420px)}
+.g-in.has-nums .g-mapw .g-map{width:100%}
+@media (max-width:900px){.g-mapw{width:min(100%,42vh)}}
