@@ -585,7 +585,9 @@ function start() {
       const u = {};
       if (wi.ok) { const an = p => wi.v.find(f => drin(f, p)); const f0 = an(p0) || wi.v.slice().sort((a, b) => Math.min(...fPolys(a.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9)))
           - Math.min(...fPolys(b.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9))))[0];
-        const alle = [...new Set(P.map(an).filter(Boolean).map(f => f.properties.WIDMUNG))]; u.wid = f0 ? f0.properties : null; u.widAlle = alle; u.widRand = !an(p0); u.widGeo = f0 ? f0.geometry : null; u.widPts = f0 ? P.filter(p => an(p) === f0) : []; }
+        const alle = [...new Set(P.map(an).filter(Boolean).map(f => f.properties.WIDMUNG))]; u.wid = f0 ? f0.properties : null; u.widAlle = alle; u.widRand = !an(p0); u.widGeo = f0 ? f0.geometry : null; u.widPts = f0 ? P.filter(p => an(p) === f0) : [];
+        const Z = new Map(); P.forEach(p => { const f = an(p); if (f) { if (!Z.has(f)) Z.set(f, []); Z.get(f).push(p); } });   // Widmungszonen im Bauplatz (Straßentrakt/Hof)
+        u.widZonen = [...Z].map(([f, pts]) => ({ w: f.properties, geo: f.geometry, pts })); }
       if (sz.ok) { const f = sz.v.find(f => P.some(p => drin(f, p))); u.schutz = f ? f.properties : false; u.schutzGeo = f ? f.geometry : null; }
       if (gz.ok) { const f = gz.v.find(f => f.properties.LAYER === 'DN_L-WZ' && P.some(p => drin(f, p))); u.wohnzone = !!f; u.wzGeo = f ? f.geometry : null; }
       if (b82.ok && b86.ok) { const f = b82.v.concat(b86.v).find(f => P.some(p => drin(f, p))); u.sperre = !!f; u.spGeo = f ? f.geometry : null; }
@@ -648,13 +650,20 @@ function start() {
     else {
       if (u.wid === undefined) L.append(karte('meta', 'Widmung gerade nicht abrufbar', 'Bitte im Plan ablesen (rote Schrift) oder später nochmal versuchen.'));
       else if (!u.wid) { L.append(karte('meta', 'Keine Widmung gefunden', 'Wahrscheinlich Straße oder Verkehrsfläche – bitte im Plan prüfen.')); gelb.push('Keine Widmung gefunden – bitte im Plan prüfen.'); }
-      else { const w = u.wid, kl = widKl(w), bk = +(String(w.WIDMUNG || '').match(/(\d)\s*$/) || [])[1] || 0, h = BKH[bk];
-        const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': höchstens ' + h[0] + ' m hoch (ca. ' + h[1] + ' Geschosse) – im Detailplan kann eine niedrigere Grenze stehen.' : '';
-        const gross1 = t => t.charAt(0).toUpperCase() + t.slice(1);
-        if (!kl) { L.append(karte('rot', w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland', 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.')); rot.push('Laut Flächenwidmung kein Bauland.'); }
-        else L.append(karte('', WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.', { kreise: [u.widPts && u.widPts.length ? u.widPts : alleP], polys: u.widGeo ? fPolys(u.widGeo) : [] }));
-        if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.');
-        if (u.widAlle.length > 1) gelb.push('Der Bauplatz hat mehrere Widmungen (' + u.widAlle.join(', ') + ').'); else if (u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
+      else {
+        // Mehrere Widmungen: Zone, die der Adresse (Eingang) am nächsten liegt = Straßentrakt, die übrigen = Hof (Stadt-Daten, Theresiengasse 47)
+        let Z = (u.widZonen && u.widZonen.length ? u.widZonen : [{ w: u.wid, geo: u.widGeo, pts: u.widPts }]).filter(z => z.pts.length >= 2 || (u.widZonen || []).length === 1);
+        if (!Z.length) Z = [{ w: u.wid, geo: u.widGeo, pts: u.widPts }];
+        const ref = M.pt, dmin = z => ref ? Math.min(...z.pts.map(p => Math.hypot((p[0] - ref[0]) * 74000, (p[1] - ref[1]) * 111200))) : 0;
+        if (Z.length > 1) Z.sort((a, b) => dmin(a) - dmin(b));
+        Z.forEach((z, zi) => { const w = z.w, kl = widKl(w), bk = +(String(w.WIDMUNG || '').match(/(\d)\s*$/) || [])[1] || 0, h = BKH[bk];
+          const vor = Z.length > 1 ? (zi === 0 ? 'Straßentrakt: ' : 'Hof: ') : '';
+          const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': höchstens ' + h[0] + ' m hoch (ca. ' + h[1] + ' Geschosse) – im Detailplan kann eine niedrigere Grenze stehen.' : '';
+          const gross1 = t => t.charAt(0).toUpperCase() + t.slice(1), zz = { kreise: [z.pts.length ? z.pts : alleP], polys: z.geo ? fPolys(z.geo) : [] };
+          if (!kl) { L.append(karte('rot', vor + (w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland'), 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.', zz)); if (zi === 0) rot.push('Laut Flächenwidmung kein Bauland.'); }
+          else L.append(karte('', vor + WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.', zz));
+          if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.'); });
+        if (Z.length === 1 && u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
       const sch = [];
       if (u.schutz) { sch.push('Schutzzone' + (u.schutz.SLANG ? ' „' + u.schutz.SLANG + '“' : '')); gelb.push('Schutzzone: Abbruch und Umbau der Fassade brauchen eine Bewilligung, Neues muss ins Stadtbild passen.'); }
       if (u.wohnzone) sch.push('Wohnzone');
