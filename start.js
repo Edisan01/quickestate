@@ -573,10 +573,10 @@ function start() {
     const gelb = o.hinweis || (g.gross ? 'Diese Grundbuch-Einlage ist sehr groß (' + g.gross + ' Grundstücke) – gezeigt wird nur dieses Grundstück.' : '')
       || (o.auch && o.auch.length ? 'Zu dieser Einlage gehören mehrere Häuser. Ist das wirklich dein Bauplatz?' : '') || (g.fl > 2000 ? 'Der Bauplatz ist ungewöhnlich groß. Ist das wirklich deiner?' : '');
     D.append(gelb ? karte('gelb', 'Bitte kurz prüfen', gelb + ' Bald kannst du den Bauplatz hier selbst anpassen.') : karte('gruen', 'Grundstück eindeutig gefunden', 'Fläche und Grenzen stammen aus dem amtlichen Kataster.'));
-    D.append(karte('bald', 'Wie viel darfst du hier bauen?', 'Erlaubte Höhe, Geschosse und Reserve in m² berechnen wir im nächsten Schritt.')); };
+    D.append(karte('bald', 'Wie viel darfst du hier bauen?', 'Erlaubte Höhe, Geschosse und Reserve in m² berechnen wir im nächsten Schritt.')); requestAnimationFrame(ueberlauf); };
   const ladeKg = () => { if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => (M.kg = j.kg)).catch(() => (M.kg = {})); return kgNamen; };
   const ueberlauf = () => gBox.toggleAttribute('data-lenis-prevent', gBox.scrollHeight > gBox.clientHeight + 2);   // nur wenn die Box selbst scrollen muss, sonst scrollt die Seite
-  if (window.ResizeObserver) new ResizeObserver(ueberlauf).observe(gRes);
+  if (window.ResizeObserver) { const ro = new ResizeObserver(() => requestAnimationFrame(ueberlauf)); ro.observe(gRes); ro.observe(gBox); } addEventListener('resize', () => requestAnimationFrame(ueberlauf));
   const zeigeBox = () => { const neu = gRes.hidden; gRes.hidden = false; gBox.classList.add('has-res'); if (neu) tipZeigen(); };
   // Adressen auf einem Grundstück: Stadt-Wien-Adressen im Umkreis holen, Gebäudepunkt (bzw. Eingang) muss im Grundstück liegen
   async function adressenAuf(g) {
