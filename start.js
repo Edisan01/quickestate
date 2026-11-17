@@ -606,8 +606,13 @@ function start() {
     const p = new Promise((ok, no) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => { try { const c = document.createElement('canvas'); c.width = c.height = 256; const cx = c.getContext('2d', { willReadFrequently: true }); cx.drawImage(im, 0, 0); ok(cx.getImageData(0, 0, 256, 256).data); } catch (e) { no(e); } };
       im.onerror = () => no(new Error('Kachel')); im.src = 'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/' + PLAN_Z + '/' + y + '/' + x + '.jpeg'; });
     PLAN_K.set(k, p); p.catch(() => PLAN_K.delete(k)); return p; }
-  async function planRot(lon, lat, eng) { const [px, py] = planPx(lon, lat);
-    for (const oy of eng ? [0] : [0, -1, 1]) for (const ox of eng ? [0] : [0, -1, 1]) { const X = Math.floor(px) + ox, Y = Math.floor(py) + oy, tx = Math.floor(X / 256), ty = Math.floor(Y / 256), d = await planKachel(tx, ty), i = ((Y - ty * 256) * 256 + (X - tx * 256)) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+  const PLAN_D = new Map();   // geladene Kacheldaten (synchron lesbar)
+  async function planLaden(bp) { const P = bp.polys.flatMap(pg => pg[0]), B = bbox(P), m = 0.0009, [x0, y0] = planPx(B[0] - m, B[3] + m * 0.67), [x1, y1] = planPx(B[2] + m, B[1] - m * 0.67), L = [];   // Bauplatz ± ~65 m
+    for (let tx = Math.floor(x0 / 256); tx <= Math.floor(x1 / 256); tx++) for (let ty = Math.floor(y0 / 256); ty <= Math.floor(y1 / 256); ty++) { const k = tx + '/' + ty; if (!PLAN_D.has(k)) L.push(planKachel(tx, ty).then(d => PLAN_D.set(k, d))); }
+    await Promise.all(L); }
+  function planRot(lon, lat, eng) { const [px, py] = planPx(lon, lat);
+    for (const oy of eng ? [0] : [0, -1, 1]) for (const ox of eng ? [0] : [0, -1, 1]) { const X = Math.floor(px) + ox, Y = Math.floor(py) + oy, tx = Math.floor(X / 256), ty = Math.floor(Y / 256), d = PLAN_D.get(tx + '/' + ty); if (!d) continue;
+      const i = ((Y - ty * 256) * 256 + (X - tx * 256)) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
       if (r > 140 && r - g > 50 && r - b > 50) return true; }
     return false; }
   // Straßenseite = äußere Kante des Bauplatzes, die dem Eingang am nächsten liegt; gerade Nachbarkanten werden angehängt
@@ -623,19 +628,19 @@ function start() {
     if (((c[0] - e.von[0]) * m * nx + (c[1] - e.von[1]) * 110574 * ny) < 0) { nx = -nx; ny = -ny; }   // Normale ins Grundstück
     return { L0m, pt: (f, t) => [e.von[0] + f * (e.bis[0] - e.von[0]) + nx * t / m, e.von[1] + f * (e.bis[1] - e.von[1]) + ny * t / 110574] }; }
   async function linienArt(pt, L0m, t) { const st = 0.2 / L0m, luecken = []; let an = 0, ges = 0, lauf = 0;
-    for (let f = -0.6; f <= 1.6 + 1e-9; f += st) { let r = false; for (const dt of [-0.3, 0, 0.3]) { const q = pt(f, t + dt); if (await planRot(q[0], q[1], true)) { r = true; break; } }
+    for (let f = -0.6; f <= 1.6 + 1e-9; f += st) { let r = false; for (const dt of [-0.3, 0, 0.3]) { const q = pt(f, t + dt); if (planRot(q[0], q[1], true)) { r = true; break; } }
       if (f >= 0.05 && f <= 0.95) { ges++; if (r) an++; } if (r) { if (lauf) luecken.push(lauf * 0.2); lauf = 0; } else lauf++; }
     const strich = luecken.filter(l => l >= 0.5 && l <= 2.2).length, anteil = ges ? an / ges : 0; return { anteil, strich, durch: anteil >= 0.85 && strich <= 1 }; }
   const FS9 = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], r1 = x => Math.round(x * 10) / 10, r2 = x => Math.round(x * 100) / 100;
   async function baulinieLesen(e, bp) { const { L0m, pt } = messRahmen(e, bp), treffer = [];                      // Abtretung: liegt die Baulinie (rot durchgehend) im Grundstück?
-    for (const f of FS9) for (let t = -4; t <= 15; t += 0.1) { const p = pt(f, t); if (!(await planRot(p[0], p[1]))) continue; let t2 = t; while (t2 + 0.1 <= t + 1.5) { const q = pt(f, t2 + 0.1); if (!(await planRot(q[0], q[1]))) break; t2 += 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 + 0.1; }
+    for (const f of FS9) for (let t = -4; t <= 15; t += 0.1) { const p = pt(f, t); if (!(planRot(p[0], p[1]))) continue; let t2 = t; while (t2 + 0.1 <= t + 1.5) { const q = pt(f, t2 + 0.1); if (!(planRot(q[0], q[1]))) break; t2 += 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 + 0.1; }
     const gesehen = [];
     for (const h of [...treffer].sort((a, b) => a.t - b.t)) { if (gesehen.some(t => Math.abs(t - h.t) <= 0.6)) continue; const g = treffer.filter(u => Math.abs(u.t - h.t) <= 0.6); if (new Set(g.map(u => u.f)).size < 5) continue;
       const t = g.reduce((a, u) => a + u.t, 0) / g.length; gesehen.push(t); const art = await linienArt(pt, L0m, t); if (!art.durch) continue;
       const tiefe = t > 1.0 ? r1(t) : 0; return { tiefe, laenge: r1(L0m), flaeche: tiefe ? r1(L0m * tiefe) : 0, t, geo: tiefe ? [[pt(0, 0), pt(1, 0), pt(1, t), pt(0, t), pt(0, 0)]] : [], linie: [pt(0, t), pt(1, t)] }; }
     throw new Error(treffer.length ? 'nur strichlierte Linien an der Straßenseite' : 'keine rote Linie an der Straßenseite'); }
   async function strasseLesen(e, bp, tb) { const { L0m, pt } = messRahmen(e, bp), treffer = [];                // Straßenbreite: eigene Baulinie bis zur Fluchtlinie gegenüber (rot durchgehend)
-    for (const f of FS9) for (let t = tb - 1.2; t >= tb - 60; t -= 0.1) { const p = pt(f, t); if (!(await planRot(p[0], p[1]))) continue; let t2 = t; while (t2 - 0.1 >= t - 1.5) { const q = pt(f, t2 - 0.1); if (!(await planRot(q[0], q[1]))) break; t2 -= 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 - 0.1; }
+    for (const f of FS9) for (let t = tb - 1.2; t >= tb - 60; t -= 0.1) { const p = pt(f, t); if (!(planRot(p[0], p[1]))) continue; let t2 = t; while (t2 - 0.1 >= t - 1.5) { const q = pt(f, t2 - 0.1); if (!(planRot(q[0], q[1]))) break; t2 -= 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 - 0.1; }
     const gesehen = [];
     for (const h of [...treffer].sort((a, b) => b.t - a.t)) { if (gesehen.some(t => Math.abs(t - h.t) <= 0.6)) continue; const g = treffer.filter(u => Math.abs(u.t - h.t) <= 0.6); if (new Set(g.map(u => u.f)).size < 5) continue;
       const t = g.reduce((a, u) => a + u.t, 0) / g.length; gesehen.push(t); if (!(await linienArt(pt, L0m, t)).durch) continue; const b = r2(tb - t); if (b < 3) continue;
@@ -643,9 +648,9 @@ function start() {
     throw new Error('keine Fluchtlinie gegenüber'); }
   async function tiefeLesen(e, bp, vg) { const { L0m, pt } = messRahmen(e, bp), drin = p => kInPoly(p, bp.polys), treffer = [];     // Baufluchtlinien hinter der Baulinie: Vorgarten (vorne) und Trakttiefe (hinten)
     for (const f of FS9) { let rot0 = true;
-      for (let t = vg + 0.5; t <= vg + 45; t += 0.1) { const p = pt(f, t); if (t > vg + 3 && !drin(p)) break; const r = await planRot(p[0], p[1]); if (!r) { rot0 = false; continue; } if (rot0 || t < vg + 2) continue;
-        let t2 = t; while (t2 + 0.1 <= t + 1.5) { const q = pt(f, t2 + 0.1); if (!(await planRot(q[0], q[1]))) break; t2 += 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 + 0.1; } }
-    const anteil = async (t, a, b) => { let an = 0, ges = 0; for (let f = a; f <= b; f += 0.2 / L0m) { ges++; for (const dt of [-0.3, 0, 0.3]) { const q = pt(f, t + dt); if (await planRot(q[0], q[1], true)) { an++; break; } } } return ges ? an / ges : 0; };
+      for (let t = vg + 0.5; t <= vg + 45; t += 0.1) { const p = pt(f, t); if (t > vg + 3 && !drin(p)) break; const r = planRot(p[0], p[1]); if (!r) { rot0 = false; continue; } if (rot0 || t < vg + 2) continue;
+        let t2 = t; while (t2 + 0.1 <= t + 1.5) { const q = pt(f, t2 + 0.1); if (!(planRot(q[0], q[1]))) break; t2 += 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 + 0.1; } }
+    const anteil = async (t, a, b) => { let an = 0, ges = 0; for (let f = a; f <= b; f += 0.2 / L0m) { ges++; for (const dt of [-0.3, 0, 0.3]) { const q = pt(f, t + dt); if (planRot(q[0], q[1], true)) { an++; break; } } } return ges ? an / ges : 0; };
     const linien = []; for (const h of [...treffer].sort((a, b) => a.t - b.t)) { const g = treffer.filter(u => Math.abs(u.t - h.t) <= 0.6), n = new Set(g.map(u => u.f)).size; if (n < 5 || linien.some(l => Math.abs(l.t - h.t) <= 0.6)) continue; const t = g.reduce((a, u) => a + u.t, 0) / g.length;
       const innen = await anteil(t, 0.05, 0.95), seite = Math.max(await anteil(t, -0.6, -0.05), await anteil(t, 1.05, 1.6)); if (innen >= 0.5 && (innen >= 0.65 || seite >= 0.65)) linien.push({ t, n }); }
     linien.sort((a, b) => a.t - b.t); if (!linien.length) throw new Error('keine Baufluchtlinie');
@@ -653,7 +658,7 @@ function start() {
     return { vorgarten: vorne ? r1(vorne.t - vg) : null, tiefe: hinten ? r1(hinten.t - vg) : null, linieV: vorne ? [pt(0, vorne.t), pt(1, vorne.t)] : null, linieH: hinten ? [pt(0, hinten.t), pt(1, hinten.t)] : null, n: hinten ? hinten.n : 0 }; }
   const leserC = new Map();
   async function leserLauf(bp, ref) { const key = bp.teile.map(t => t.kg + '|' + t.gnr).join(','); if (leserC.has(key)) return leserC.get(key);
-    const pr = (async () => { const e = frontKante(bp, ref); if (!e) return { fehler: 'Straßenseite nicht gefunden' }; const R = { front: e, laenge: null };
+    const pr = (async () => { const e = frontKante(bp, ref); if (!e) return { fehler: 'Straßenseite nicht gefunden' }; await planLaden(bp); const R = { front: e, laenge: null };
       try { R.abtr = await baulinieLesen(e, bp); } catch (x) { R.abtrFehler = String(x.message || x); }
       const tb = R.abtr ? R.abtr.t : 0;
       try { R.strasse = await strasseLesen(e, bp, tb); } catch (x) { R.strasseFehler = String(x.message || x); }
