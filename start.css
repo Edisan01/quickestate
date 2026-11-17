@@ -306,3 +306,12 @@ body.gl-arch .arch{background:none}
 .g-ov .hnt{fill:#F4F1EA;font:700 10px/1 var(--sans);text-anchor:middle;pointer-events:none}
 .g-tip{position:absolute;left:10px;right:56px;top:10px;z-index:5;margin:0;padding:8px 10px;background:rgba(3,32,61,.86);color:var(--beige);font:500 12px/1.35 var(--sans);text-align:left;border-radius:3px;opacity:0;transition:opacity .5s;pointer-events:none}
 .g-tip.on{opacity:1}
+/* v3.47 – Suchart Adresse | Grundstück */
+.g-tabs{display:flex;justify-content:center;gap:4px;margin:0 auto 14px}
+.g-tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:6px 12px;color:inherit;opacity:.5;font:600 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;cursor:pointer}
+.g-tabs button[aria-selected=true]{opacity:1;border-bottom-color:currentColor}
+.g-tabs button:hover{opacity:.85}
+.g-in.has-res .g-tabs{display:none}
+.g-f.swap{animation:qeSwap .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes qeSwap{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.g-f.swap{animation:none}}

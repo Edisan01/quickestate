@@ -13,7 +13,7 @@
 <meta property="og:description" content="Baurechner, Baue mit Shifty und Objekte in Wien.">
 <meta property="og:image" content="https://quickestate.at/img/skyview-penthouse-dachterrasse-stephansdom.webp">
 <link rel="preload" href="fonts/oswald-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="start.css?v=346">
+<link rel="stylesheet" href="start.css?v=347">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"QuickEstate","url":"https://quickestate.at/","slogan":"See beyond.","founder":{"@id":"#eduard"}},{"@type":"Person","@id":"#eduard","name":"Eduard Beches","alternateName":"Shifty","address":{"@type":"PostalAddress","addressLocality":"Wien","addressCountry":"AT"}}]}
 </script>
@@ -61,6 +61,7 @@
     <p class="g-k">Baurechner · Wien</p>
     <h2 class="g-h" id="gateH">Was darf ich hier bauen?</h2>
     <p class="g-t">Adresse eingeben – du siehst Bauklasse, erlaubte Höhe und den maximalen Grundstückspreis pro m² aus Bauträgersicht.</p>
+    <div class="g-tabs" role="tablist" aria-label="Suchart"><button type="button" role="tab" data-m="adr" aria-selected="true">Adresse</button><button type="button" role="tab" data-m="gst" aria-selected="false">Grundstück</button></div>
     <form class="g-f" id="gateForm" novalidate><label class="sr" for="gateAddr">Adresse in Wien</label><input id="gateAddr" name="adresse" type="text" autocomplete="street-address" placeholder="Stephansplatz 1, 1010 Wien"><button type="submit" class="g-b"><span>Prüfen</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
     <p class="g-m" id="gateMsg" role="status"></p>
     <ul class="g-sug" id="gateSug" role="listbox" aria-label="Adressvorschläge" hidden></ul>
@@ -99,6 +100,6 @@
 <script src="lib/gsap.min.js" defer></script>
 <script src="lib/ScrollTrigger.min.js" defer></script>
 <script src="lib/lenis.min.js" defer></script>
-<script type="module" src="start.js?v=346"></script>
+<script type="module" src="start.js?v=347"></script>
 </body>
 </html>

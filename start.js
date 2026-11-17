@@ -401,18 +401,48 @@ function start() {
   const adrSuche = q => fetch(ADR(q)).then(r => r.ok ? r.text() : '').then(t => { try { return (JSON.parse(t).features || []).filter(f => f.geometry && f.properties); } catch { return []; } });
   const adrText = f => f.properties.Adresse + (f.properties.PostalCode ? ', ' + f.properties.PostalCode + ' Wien' : ', Wien');
   const hatNr = f => !!f.properties.StreetNumber;
-  let sugList = [], sugT = 0, sugN = 0, kgNamen = null;
-  const sugZeigen = L => { sugList = L; gSug.textContent = ''; L.forEach((f, i) => { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.tabIndex = -1;
-      li.textContent = adrText(f) + (hatNr(f) ? '' : ' – Hausnummer fehlt'); li.addEventListener('mousedown', e => { e.preventDefault(); waehlen(f); }); gSug.append(li); });
-    gSug.hidden = !L.length; };
-  gIn.addEventListener('input', () => { gMsg.textContent = ''; clearTimeout(sugT); const q = gIn.value.trim(); if (q.length < 3) { sugZeigen([]); return; }
-    const n = ++sugN; sugT = setTimeout(() => adrSuche(q).then(L => { if (n === sugN && document.activeElement === gIn) sugZeigen(L.slice(0, 6)); }).catch(() => {}), 280); });
+  let sugList = [], sugT = 0, sugN = 0, kgNamen = null, modus = 'adr';
+  // Vorschlagsliste: Einträge {t: Text, w: Auswahl-Funktion}
+  const sugZeigen = L => { sugList = L; gSug.textContent = ''; L.forEach(x => { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.tabIndex = -1;
+      li.textContent = x.t; li.addEventListener('mousedown', e => { e.preventDefault(); x.w(); }); gSug.append(li); }); gSug.hidden = !L.length; };
+  const adrSug = L => L.map(f => ({ t: adrText(f) + (hatNr(f) ? '' : ' – ganze Straße zeigen'), w: () => waehlen(f) }));
+  // Grundstückssuche: „Jedlesee 675“, „01609 675/2“ – Katastralgemeinde (Name oder Nummer) + Grundstücksnummer
+  const gstTeile = q => { const m = /^(.*?)[\s,]+(\d+(?:\s*\/\s*\d+)?)\s*$/.exec(q.trim()); return m ? { kg: m[1].trim(), nr: m[2].replace(/\s+/g, '') } : { kg: q.trim(), nr: '' }; };
+  const kgNorm = t => t.toLowerCase().replace(/^kg\s+/, '').replace(/ß/g, 'ss').replace(/[^a-z0-9äöü]/g, '');
+  const kgTreffer = t => { const K = M.kg || {}, n = kgNorm(t); if (!n) return [];
+    return Object.keys(K).filter(c => c === t.trim() || kgNorm(K[c]).startsWith(n) || kgNorm(K[c]).includes(n)).sort((x, y) => (kgNorm(K[y]).startsWith(n) - kgNorm(K[x]).startsWith(n)) || K[x].localeCompare(K[y], 'de')); };
+  async function gstSuche(q) {
+    await ladeKg(); const { kg, nr } = gstTeile(q), T = kgTreffer(kg), K = M.kg || {};
+    const exakt = T.find(c => kgNorm(K[c]) === kgNorm(kg) || c === kg);
+    if (!T.length) { gMsg.textContent = 'Diese Katastralgemeinde kenne ich nicht – z. B. „Jedlesee 675“.'; return; }
+    if (!exakt && T.length > 1) { gMsg.textContent = 'Welche Katastralgemeinde meinst du?'; sugZeigen(T.slice(0, 6).map(c => ({ t: 'KG ' + K[c] + ' (' + c + ')', w: () => { gIn.value = K[c] + ' ' + nr; gMsg.textContent = ''; sugZeigen([]); if (nr) gstSuche(gIn.value); else gIn.focus(); } }))); return; }
+    const c = exakt || T[0]; if (!nr) { gMsg.textContent = 'Bitte noch die Grundstücksnummer dazuschreiben, z. B. „' + K[c] + ' 675“.'; return; }
+    gMsg.textContent = 'Grundstück wird gesucht …';
+    let idx; try { idx = await fetch('kataster/kg/' + c + '.json').then(r => r.json()); } catch { idx = null; }
+    const pt = idx && idx[nr]; if (!pt) { gMsg.textContent = 'Grundstück ' + nr + ' gibt es in der KG ' + K[c] + ' laut Kataster nicht.'; return; }
+    const [x, y] = kKachel(pt[0], pt[1], KZ), d = await katLaden(x, y), rec = d.find(r => r[0] === c && r[1] === nr);
+    if (!rec) { gMsg.textContent = 'Grundstück ' + nr + ' konnte ich nicht laden – bitte nochmal versuchen.'; return; }
+    const g = { kg: rec[0], gnr: rec[1], fl: +rec[2] || 0, polys: (rec[3] || []).map(pg => pg.map(kRing)) };
+    gMsg.textContent = ''; M.marks = []; M.akt = null; nummernZeigen(); zeigeBox();
+    requestAnimationFrame(() => { zoomAuf(bbox(g.polys.flatMap(pg => pg[0])), 0.5); grundstueckZeigen(g, ' · über Grundstücksnummer gesucht'); }); }
+  // Reiter Adresse | Grundstück – immer nur eine Suchart aktiv
+  const MODI = { adr: { ph: 'Stephansplatz 1, 1010 Wien', lab: 'Adresse in Wien' }, gst: { ph: 'Katastralgemeinde + Nr., z. B. Jedlesee 675', lab: 'Katastralgemeinde und Grundstücksnummer' } };
+  document.querySelectorAll('.g-tabs [role=tab]').forEach(t => t.addEventListener('click', () => { const m = t.dataset.m; if (m === modus) return; modus = m;
+    document.querySelectorAll('.g-tabs [role=tab]').forEach(x => x.setAttribute('aria-selected', x === t)); gIn.value = ''; gMsg.textContent = ''; sugZeigen([]);
+    gIn.placeholder = MODI[m].ph; document.querySelector('label[for=gateAddr]').textContent = MODI[m].lab; gIn.setAttribute('inputmode', 'text');
+    const f = $('gateForm'); f.classList.remove('swap'); void f.offsetWidth; f.classList.add('swap'); gIn.focus({ preventScroll: true }); if (m === 'gst') ladeKg(); }));
+  gIn.addEventListener('input', () => { gMsg.textContent = ''; clearTimeout(sugT); const q = gIn.value.trim();
+    if (modus === 'gst') { const { kg, nr } = gstTeile(q); if (nr || kg.length < 2) { sugZeigen([]); return; }
+      ladeKg().then(() => { const K = M.kg || {}; sugZeigen(kgTreffer(kg).slice(0, 6).map(c => ({ t: 'KG ' + K[c] + ' (' + c + ')', w: () => { gIn.value = K[c] + ' '; sugZeigen([]); gIn.focus(); } }))); }); return; }
+    if (q.length < 3) { sugZeigen([]); return; }
+    const n = ++sugN; sugT = setTimeout(() => adrSuche(q).then(L => { if (n === sugN && document.activeElement === gIn) sugZeigen(adrSug(L.slice(0, 6))); }).catch(() => {}), 280); });
   gIn.addEventListener('keydown', e => { const it = [...gSug.children]; if (gSug.hidden || !it.length) return; let i = it.indexOf(gSug.querySelector('.on'));
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); i = e.key === 'ArrowDown' ? Math.min(it.length - 1, i + 1) : Math.max(-1, i - 1); it.forEach((li, k) => li.classList.toggle('on', k === i)); }
-    else if (e.key === 'Enter' && i >= 0) { e.preventDefault(); waehlen(sugList[i]); } else if (e.key === 'Escape') sugZeigen([]); });
+    else if (e.key === 'Enter' && i >= 0) { e.preventDefault(); sugList[i].w(); } else if (e.key === 'Escape') sugZeigen([]); });
   gIn.addEventListener('blur', () => setTimeout(() => sugZeigen([]), 120));
   $('gateForm').addEventListener('submit', e => { e.preventDefault(); const q = gIn.value.trim(); if (q) wBoost = 140; sugZeigen([]);
-    if (!q) { gMsg.textContent = 'Bitte eine Adresse in Wien eingeben.'; gIn.focus(); return; }
+    if (!q) { gMsg.textContent = modus === 'gst' ? 'Bitte Katastralgemeinde und Grundstücksnummer eingeben, z. B. „Jedlesee 675“.' : 'Bitte eine Adresse in Wien eingeben.'; gIn.focus(); return; }
+    if (modus === 'gst') { gstSuche(q); return; }
     gMsg.textContent = 'Suche …';
     adrSuche(q).then(L => { const f = L.find(hatNr);
       if (!L.length) { gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
@@ -489,11 +519,28 @@ function start() {
   const zeigeInfo = (g, extra) => { $('resInfo').textContent = 'Grundstück ' + g.gnr + ' · KG ' + ((M.kg || {})[g.kg] || g.kg) + ' · ' + flText(g) + ' m² laut Kataster' + (extra || ''); };
   const ladeKg = () => { if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => (M.kg = j.kg)).catch(() => (M.kg = {})); return kgNamen; };
   const zeigeBox = () => { const neu = gRes.hidden; gRes.hidden = false; gBox.classList.add('has-res'); if (neu) tipZeigen(); };
+  // Adressen auf einem Grundstück: Stadt-Wien-Adressen im Umkreis holen, Gebäudepunkt (bzw. Eingang) muss im Grundstück liegen
+  async function adressenAuf(g) {
+    const B = bbox(g.polys.flatMap(pg => pg[0])), m = 0.00008;
+    let fc = null; try { fc = await fetch('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=300&bbox='
+      + [B[0] - m, B[1] - m, B[2] + m, B[3] + m].map(v => v.toFixed(6)).join(',') + ',EPSG:4326').then(r => r.json()); } catch { return []; }
+    const L = ((fc && fc.features) || []).map(x => { const c = x.geometry && x.geometry.coordinates, p = x.properties || {}; if (!c || !p.NAME_ONR) return null; const ein = zugang(c[0], c[1], p);
+      return (kInPoly(c, g.polys) || kInPoly(ein, g.polys)) ? { name: p.NAME, str: p.NAME_STR, nr: p.NAME_ONR, plz: p.PLZ, haupt: p.HAUPT_IDENT_PSEUDO === 'H', ein, geb: c } : null; }).filter(Boolean);
+    const nk = n => parseInt(n, 10) || 1e6; L.sort((a, b) => (b.haupt - a.haupt) || a.str.localeCompare(b.str, 'de') || nk(a.nr) - nk(b.nr));
+    const seen = new Set(); return L.filter(a => !seen.has(a.name) && seen.add(a.name)); }
+  const adrTitel = A => A.length ? A[0].name + (A[1] ? ' / ' + (A[1].str === A[0].str ? A[1].nr : A[1].name) : '') + (A.length > 2 ? ' u. a.' : '') + ', ' + A[0].plz + ' Wien' : '';
+  // Grundstück gewählt (Klick oder Grundstückssuche) → Adresse dazu suchen und oben anzeigen
+  async function grundstueckZeigen(g, wie) {
+    M.sel = g; M.pt = null; M.akt = null; M.marks.forEach(x => x.btn && x.btn.classList.remove('on'));
+    $('resAddr').textContent = 'Grundstück ' + g.gnr; zeigeInfo(g, ''); $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück'; mapKick();
+    const A = await adressenAuf(g); if (M.sel !== g) return;
+    if (!A.length) { $('resAddr').textContent = 'Grundstück ' + g.gnr; zeigeInfo(g, ' · ohne Adresse'); return; }
+    $('resAddr').textContent = adrTitel(A); zeigeInfo(g, wie || ''); M.pt = A[0].ein; gIn.value = A[0].name + ', ' + A[0].plz + ' Wien';
+    const mk = M.marks.find(x => x.f.properties.Adresse === A[0].name); if (mk) { M.akt = mk; M.marks.forEach(x => x.btn && x.btn.classList.toggle('on', x === mk)); mk.btn && mk.btn.scrollIntoView({ block: 'nearest', inline: 'center' }); }
+    mapKick(); }
   async function parzelleWaehlen(lon, lat) {
-    const r = await grundstueck(lon, lat); await ladeKg(); if (!r) return;
-    if (!r.genau) return;                                                    // Klick daneben (Straße ohne Kataster) → nichts ändern
-    M.sel = r.g; M.pt = null; M.akt = null; M.marks.forEach(x => x.btn && x.btn.classList.remove('on')); $('resAddr').textContent = 'Grundstück ' + r.g.gnr; zeigeInfo(r.g, ' · per Klick gewählt');
-    $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück'; mapKick(); }
+    const r = await grundstueck(lon, lat); await ladeKg(); if (!r || !r.genau) return;   // Klick auf Straße ohne Kataster → nichts ändern
+    grundstueckZeigen(r.g); }
 
   // Zugangspunkt (Eingang an der Straße) = Gebäudepunkt + Versatz ZUG − GEB (Gauß-Krüger, Meter) – Gebäudepunkt liegt mitten im Haus
   const zugang = (lon, lat, p) => { const dx = (+p.ZUG_X) - (+p.GEB_X), dy = (+p.ZUG_Y) - (+p.GEB_Y);
