@@ -36,3 +36,6 @@ for k in out:
     for g in out[k]: out[k][g] = round(out[k][g]) if abs(out[k][g] - round(out[k][g])) < 1e-6 else round(out[k][g], 2)
 json.dump({'quelle': 'BEV Grundstücksverzeichnis (CC BY 4.0)', 'stichtag': SRC.rsplit('_', 1)[-1].split('.')[0], 'kg': out}, open(OUT, 'w'), separators=(',', ':'), ensure_ascii=False)
 print('KGs', len(out), 'Grundstücke', sum(len(v) for v in out.values()), 'Test 01657 1496/78 =', out.get('01657', {}).get('1496/78'))
+import os
+os.makedirs(os.path.join(os.path.dirname(OUT), 'fl'), exist_ok=True)
+for k, v in out.items(): json.dump(v, open(os.path.join(os.path.dirname(OUT), 'fl', k + '.json'), 'w'), separators=(',', ':'), ensure_ascii=False)

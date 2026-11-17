@@ -495,9 +495,14 @@ function start() {
     const T = bp.teile, polys = T.flatMap(t => t.polys), kanten = [];
     T.forEach(t => t.polys.forEach(pg => pg.forEach(r => { for (let i = 0; i < r.length - 1; i++) { const a = r[i], b = r[i + 1], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
       const innen = T.some(u => u !== t && u.polys.some(pq => pq.some(rr => rr.some((c, j) => j < rr.length - 1 && kSegAbst(m, c, rr[j + 1]) < 0.3)))); kanten.push([a, b, innen]); } })));
-    return { kg: T[0].kg, gnr: T.map(t => t.gnr).join(' + '), fl: Math.round(T.reduce((s, t) => s + t.fl, 0) * 100) / 100, polys, kanten, teile: T, ez: bp.ez, kgez: bp.kgez, gross: bp.gross }; }
+    return { amtl: T.every(t => t.amtl), kg: T[0].kg, gnr: T.map(t => t.gnr).join(' + '), fl: Math.round(T.reduce((s, t) => s + t.fl, 0) * 100) / 100, polys, kanten, teile: T, ez: bp.ez, kgez: bp.kgez, gross: bp.gross }; }
   const mitTimeout = (pr, ms, ersatz) => Promise.race([pr, new Promise(r => setTimeout(() => r(ersatz), ms))]);
-  async function bauplatzFuer(g, lon, lat) { let bp; try { bp = await mitTimeout(bauplatz(g, lon, lat), 4000, { teile: [g], ez: null }); } catch { bp = { teile: [g], ez: null }; } return bauplatzObjekt(bp); }
+  /* Amtliche Fläche je Grundstück aus dem BEV-Grundstücksverzeichnis (= Grundbuch, CC BY 4.0), je KG eine Datei. Errechnete Fläche nur als Ersatz („ca.“). */
+  const flC = new Map();
+  const flAmt = kg => { if (!flC.has(kg)) flC.set(kg, hol('kataster/fl/' + kg + '.json').then(r => r.ok ? r.json() : {}).catch(() => { flC.delete(kg); return {}; })); return flC.get(kg); };
+  async function bauplatzFuer(g, lon, lat) { let bp; try { bp = await mitTimeout(bauplatz(g, lon, lat), 4000, { teile: [g], ez: null }); } catch { bp = { teile: [g], ez: null }; }
+    await Promise.all(bp.teile.map(async t => { if (t.amtl) return; const A = await mitTimeout(flAmt(t.kg), 3000, {}); if (A && A[t.gnr] != null) { t.flBer = t.fl; t.fl = A[t.gnr]; t.amtl = true; } }));
+    return bauplatzObjekt(bp); }
   const grundNr = a => (a.str || '') + ' ' + String(a.nr || '').split(/[/(\s]/)[0].replace(/[A-Za-z]+$/, '');
 
   // Plan als bewegliche Karte: Ziehen = verschieben, + / − = zoomen (kein Mausrad – das bleibt fürs Seiten-Scrollen), Klick = Grundstück bzw. Hausnummer wählen
@@ -534,7 +539,8 @@ function start() {
       const w = 10 + 6.2 * m.nr.length; if (m !== M.akt && belegt.some(b => Math.abs(b[0] - x) < (b[2] + w) / 2 + 2 && Math.abs(b[1] - y) < 17)) return; belegt.push([x, y, w]);
       const r = document.createElementNS(NS, 'rect'); r.setAttribute('x', (x - w / 2).toFixed(1)); r.setAttribute('y', (y - 8).toFixed(1)); r.setAttribute('width', w.toFixed(1)); r.setAttribute('height', 16); r.setAttribute('rx', 3); r.setAttribute('class', 'hn' + (m === M.akt ? ' on' : '')); ovEl.append(r);
       const t = document.createElementNS(NS, 'text'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', (y + 3.5).toFixed(1)); t.setAttribute('class', 'hnt'); t.textContent = m.nr; ovEl.append(t); });
-    if (M.pt) { const [x, y] = css(...kMerc(M.pt[0], M.pt[1])), c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', x.toFixed(1)); c.setAttribute('cy', y.toFixed(1)); c.setAttribute('r', 5); c.setAttribute('class', 'ap'); ovEl.append(c); } }
+    if (M.pt) { const [x, y] = css(...kMerc(M.pt[0], M.pt[1])), c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', x.toFixed(1)); c.setAttribute('cy', y.toFixed(1)); c.setAttribute('r', 5); c.setAttribute('class', 'ap'); ovEl.append(c); }
+    hlUpdate(css); }
   function aufraeumen() {                                                   // alte Zoomstufe erst entfernen, wenn die neue fertig ist
     if (!M.need) return; const fertig = [...M.need].every(k => { const im = M.tiles.get(k); return im && im.dataset.ok; });
     if (fertig) { ldEl.hidden = true; M.tiles.forEach((im, key) => { if (!M.need.has(key)) { im.remove(); M.tiles.delete(key); } }); } }
@@ -579,13 +585,13 @@ function start() {
       const u = {};
       if (wi.ok) { const an = p => wi.v.find(f => drin(f, p)); const f0 = an(p0) || wi.v.slice().sort((a, b) => Math.min(...fPolys(a.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9)))
           - Math.min(...fPolys(b.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9))))[0];
-        const alle = [...new Set(P.map(an).filter(Boolean).map(f => f.properties.WIDMUNG))]; u.wid = f0 ? f0.properties : null; u.widAlle = alle; u.widRand = !an(p0); }
-      if (sz.ok) u.schutz = (sz.v.find(f => P.some(p => drin(f, p))) || {}).properties || false;
-      if (gz.ok) u.wohnzone = gz.v.some(f => f.properties.LAYER === 'DN_L-WZ' && P.some(p => drin(f, p)));
-      if (b82.ok && b86.ok) u.sperre = b82.v.concat(b86.v).some(f => P.some(p => drin(f, p)));
+        const alle = [...new Set(P.map(an).filter(Boolean).map(f => f.properties.WIDMUNG))]; u.wid = f0 ? f0.properties : null; u.widAlle = alle; u.widRand = !an(p0); u.widGeo = f0 ? f0.geometry : null; u.widPts = f0 ? P.filter(p => an(p) === f0) : []; }
+      if (sz.ok) { const f = sz.v.find(f => P.some(p => drin(f, p))); u.schutz = f ? f.properties : false; u.schutzGeo = f ? f.geometry : null; }
+      if (gz.ok) { const f = gz.v.find(f => f.properties.LAYER === 'DN_L-WZ' && P.some(p => drin(f, p))); u.wohnzone = !!f; u.wzGeo = f ? f.geometry : null; }
+      if (b82.ok && b86.ok) { const f = b82.v.concat(b86.v).find(f => P.some(p => drin(f, p))); u.sperre = !!f; u.spGeo = f ? f.geometry : null; }
       if (geb.ok) { const H = geb.v.filter(f => f.geometry.type === 'Point' && kInPoly(f.geometry.coordinates, g.polys));   // Gebäudepunkte der Stadt im Bauplatz
         u.bestand = H.length ? { gesch: Math.max(0, ...H.map(f => +f.properties.GESCH_ANZ || 0)) || null, jahr: (H.find(f => f.properties.BAUJAHR) || {}).properties?.BAUJAHR || null, periode: (H.find(f => f.properties.L_BAUJ) || {}).properties?.L_BAUJ || null } : false; }
-      if (baum.ok) u.baeume = baum.v.filter(f => { const c = f.geometry.coordinates; return kInPoly(c, g.polys) || g.polys.some(pg => pg[0].some((a, i, R) => kSegAbst(c, a, R[(i + 1) % R.length]) < 8)); }).length;
+      if (baum.ok) { u.baumPts = baum.v.filter(f => { const c = f.geometry.coordinates; return kInPoly(c, g.polys) || g.polys.some(pg => pg[0].some((a, i, R) => kSegAbst(c, a, R[(i + 1) % R.length]) < 8)); }).map(f => f.geometry.coordinates); u.baeume = u.baumPts.length; }
       if (hq.ok) u.hq = hq.v;
       return u; });
     umfC.set(key, pr); pr.catch(() => umfC.delete(key)); return pr; }
@@ -597,16 +603,46 @@ function start() {
     return WTXT[k] ? k : /^SO/.test(k) ? 'SO' : null; };
   const widGF = w => /GF/.test(String(w.WIDMUNGSKLASSE || ''));
   /* Ergebnis als Karten in Alltagssprache: links „Was ist das?“, rechts „Was heißt das für dich?“ – Ampel grün/gelb/rot, Fachbegriffe per „Was heißt das?“ */
-  const karte = (art, titel, text, mehr) => { const d = document.createElement('div'); d.className = 'g-card ' + art;
+  const karte = (art, titel, text, mehr, zeig) => { const d = document.createElement('div'); d.className = 'g-card ' + art;
     const h = document.createElement('p'); h.className = 'g-ct'; h.textContent = titel; d.append(h);
     if (text) { const t = document.createElement('p'); t.className = 'g-cx'; t.textContent = text; d.append(t); }
     if (mehr) { const x = document.createElement('details'), sm = document.createElement('summary'), b = document.createElement('p'); sm.textContent = 'Was heißt das?'; b.textContent = mehr; x.append(sm, b); d.append(x); }
+    if (zeig) { d.classList.add('zeigbar'); d.tabIndex = 0; d.setAttribute('role', 'button'); d.setAttribute('aria-label', titel + ' – im Plan zeigen'); const z = () => zeigen(zeig, d);
+      d.addEventListener('click', e => { if (!e.target.closest('details')) z(); }); d.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('details')) { e.preventDefault(); z(); } });
+      const hz = document.createElement('span'); hz.className = 'g-zg'; hz.textContent = 'Im Plan zeigen'; d.append(hz); }
     return d; };
-  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; };
+  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; if (M.hl) { M.hl = null; mapKick(); } };
+  /* Einkreisen (Eduard 17.11.): Klick auf eine Karte → Stelle im Plan wird wie mit dem Bleistift eingekreist, leiser Bleistift-Ton. Geometrie aus den geprüften Daten. */
+  const hlEl = document.createElementNS(NS, 'svg'); hlEl.setAttribute('class', 'g-hl'); hlEl.setAttribute('aria-hidden', 'true'); mapEl.append(hlEl);
+  const wackel = (cx, cy, rx, ry, seed) => { let q = seed; const rnd = () => (q = (q * 9301 + 49297) % 233280) / 233280, N = 64, st = -2.2 + rnd() * 0.4, L = [];
+    for (let i = 0; i <= N * 1.1; i++) { const a = st + i / N * Math.PI * 2, f = 1 + (rnd() - 0.5) * 0.035 + i / N * 0.06; L.push((cx + Math.cos(a) * rx * f).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * f).toFixed(1)); }
+    return 'M' + L.join('L'); };
+  function hlUpdate(css) { const s = mapS(); hlEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); const H = M.hl; if (!H) { hlEl.textContent = ''; return; }
+    if (!H.els) { hlEl.textContent = ''; H.els = []; H.polys.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlf'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); });
+      H.kreise.forEach((K, j) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlk'); p.setAttribute('pathLength', '1'); p.style.animationDelay = (j * 0.18) + 's'; hlEl.append(p); H.els.push(p); }); }
+    let i = 0; const S = c => css(...kMerc(c[0], c[1]));
+    H.polys.forEach(pg => { H.els[i++].setAttribute('d', pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')); });
+    H.kreise.forEach((K, j) => { const P = K.map(S), xs = P.map(p => p[0]), ys = P.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      H.els[i++].setAttribute('d', wackel((x0 + x1) / 2, (y0 + y1) / 2, Math.max(13, (x1 - x0) * 0.68 + 7), Math.max(11, (y1 - y0) * 0.68 + 7), 11 + j * 17)); }); }
+  let tonCtx = null;
+  function bleistift() { try { tonCtx = tonCtx || new (window.AudioContext || window.webkitAudioContext)(); const ac = tonCtx, d = 0.55, n = Math.floor(ac.sampleRate * d), b = ac.createBuffer(1, n, ac.sampleRate), x = b.getChannelData(0);
+      for (let k = 0; k < n; k++) { const t = k / ac.sampleRate, hub = 0.5 + 0.5 * Math.abs(Math.sin(t * Math.PI * 2 * 6.5)); x[k] = (Math.random() * 2 - 1) * hub * (Math.random() < 0.06 ? 1.7 : 1); }
+      const src = ac.createBufferSource(), hp = ac.createBiquadFilter(), bp = ac.createBiquadFilter(), gn = ac.createGain(), t0 = ac.currentTime; src.buffer = b;
+      hp.type = 'highpass'; hp.frequency.value = 1600; bp.type = 'bandpass'; bp.frequency.value = 4300; bp.Q.value = 0.8;
+      gn.gain.setValueAtTime(0, t0); gn.gain.linearRampToValueAtTime(0.08, t0 + 0.04); gn.gain.setValueAtTime(0.08, t0 + d - 0.14); gn.gain.linearRampToValueAtTime(0, t0 + d);
+      src.connect(hp); hp.connect(bp); bp.connect(gn); gn.connect(ac.destination); src.start(); } catch (e) { /* ohne Ton weiter */ } }
+  function zeigen(spec, el) { document.querySelectorAll('.g-card.an').forEach(c => c.classList.remove('an'));
+    if (!spec || (el && M.hl && M.hl.el === el)) { M.hl = null; mapKick(); return; }                 // zweiter Klick auf dieselbe Karte = ausblenden
+    el && el.classList.add('an'); M.hl = { polys: spec.polys || [], kreise: (spec.kreise || []).filter(K => K && K.length), el };
+    const pts = M.hl.kreise.flat(); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
+      if ((x0 - M.cx) * M.k < -s || (x1 - M.cx) * M.k > s || (y0 - M.cy) * M.k < -s || (y1 - M.cy) * M.k > s) { M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; } }
+    mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
-    L.append(n > 1 ? karte('', 'Bauplatz ' + flText(g) + ' m²', 'Besteht aus ' + n + ' Grundstücken (' + g.gnr + '), die im Grundbuch zusammen geführt werden.', 'Ein Bauplatz ist die Fläche, auf der gebaut werden darf. Grundstücke mit derselben Grundbuch-Einlage (EZ) werden gemeinsam geführt und zählen zusammen.')
-      : karte('', 'Grundstück ' + g.gnr + ' · ' + flText(g) + ' m²', 'Ein einzelnes Grundstück laut amtlichem Kataster.', 'Die Grundstücksnummer und die Fläche stammen aus dem Kataster des Bundesamts für Eich- und Vermessungswesen (BEV).'));
+    const zG = { kreise: (g.teile || [g]).map(t => t.polys.flatMap(pg => pg[0])) }, alleP = zG.kreise.flat();
+    const ca = g.amtl === false ? 'ca. ' : '', flQ = g.amtl === false ? ' Fläche aus den Grenzen errechnet – amtlicher Wert gerade nicht abrufbar.' : ' Fläche laut Grundbuch.';
+    L.append(n > 1 ? karte('', 'Bauplatz ' + ca + flText(g) + ' m²', 'Besteht aus ' + n + ' Grundstücken, die im Grundbuch zusammen geführt werden: ' + g.teile.map(t => t.gnr + ' (' + (t.amtl ? '' : 'ca. ') + flText(t) + ' m²)').join(' + ') + '.' + flQ, 'Ein Bauplatz ist die Fläche, auf der gebaut werden darf. Grundstücke mit derselben Grundbuch-Einlage (EZ) werden gemeinsam geführt und zählen zusammen. Flächen aus dem amtlichen Grundstücksverzeichnis des BEV.', zG)
+      : karte('', 'Grundstück ' + g.gnr + ' · ' + ca + flText(g) + ' m²', 'Ein einzelnes Grundstück.' + flQ, 'Grundstücksnummer und Fläche stammen aus dem amtlichen Grundstücksverzeichnis des Bundesamts für Eich- und Vermessungswesen (BEV) – dieselbe Fläche wie im Grundbuch.', zG));
     L.append(karte('meta', 'KG ' + K + (g.ez ? ' · EZ ' + g.ez : ''), '', 'KG = Katastralgemeinde, der Vermessungsbezirk. EZ = Einlagezahl, die Nummer im Grundbuch.'));
     if (!u) L.append(karte('bald', 'Widmung, Schutz und Hochwasser werden geladen …', ''));
     else {
@@ -616,7 +652,7 @@ function start() {
         const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': höchstens ' + h[0] + ' m hoch (ca. ' + h[1] + ' Geschosse) – im Detailplan kann eine niedrigere Grenze stehen.' : '';
         const gross1 = t => t.charAt(0).toUpperCase() + t.slice(1);
         if (!kl) { L.append(karte('rot', w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland', 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.')); rot.push('Laut Flächenwidmung kein Bauland.'); }
-        else L.append(karte('', WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.'));
+        else L.append(karte('', WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.', { kreise: [u.widPts && u.widPts.length ? u.widPts : alleP], polys: u.widGeo ? fPolys(u.widGeo) : [] }));
         if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.');
         if (u.widAlle.length > 1) gelb.push('Der Bauplatz hat mehrere Widmungen (' + u.widAlle.join(', ') + ').'); else if (u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
       const sch = [];
@@ -624,7 +660,7 @@ function start() {
       if (u.wohnzone) sch.push('Wohnzone');
       if (u.sperre) { sch.push('Bausperre'); gelb.push('Bausperre: Der Plan wird gerade überarbeitet – Bauen ist nur eingeschränkt möglich.'); }
       const unbek = [u.schutz === undefined && 'Schutzzone', u.wohnzone === undefined && 'Wohnzone', u.sperre === undefined && 'Bausperre'].filter(Boolean);
-      L.append(sch.length ? karte('gelb-k', sch.join(' · '), u.schutz ? 'Das Stadtbild ist hier geschützt.' : u.wohnzone ? 'Hier müssen vorwiegend Wohnungen entstehen.' : 'Der Plan wird überarbeitet.', 'Schutzzone: Gebäude prägen das Stadtbild, Abbruch braucht eine Bewilligung. Wohnzone: Büros und Geschäfte sind nur eingeschränkt erlaubt. Bausperre: Bis der neue Plan gilt, wird nur eingeschränkt bewilligt.')
+      L.append(sch.length ? karte('gelb-k', sch.join(' · '), u.schutz ? 'Das Stadtbild ist hier geschützt.' : u.wohnzone ? 'Hier müssen vorwiegend Wohnungen entstehen.' : 'Der Plan wird überarbeitet.', 'Schutzzone: Gebäude prägen das Stadtbild, Abbruch braucht eine Bewilligung. Wohnzone: Büros und Geschäfte sind nur eingeschränkt erlaubt. Bausperre: Bis der neue Plan gilt, wird nur eingeschränkt bewilligt.', { kreise: [alleP], polys: [u.schutzGeo, u.wzGeo, u.spGeo].filter(Boolean).flatMap(fPolys) })
         : karte('gruen-k', 'Keine Schutzzone, Wohnzone oder Bausperre', unbek.length ? unbek.join(', ') + ' gerade nicht abrufbar.' : ''));
       if (u.hq === undefined) L.append(karte('meta', 'Hochwasser gerade nicht abrufbar', ''));
       else if (u.hq.length) { const t = u.hq[0]; L.append(karte(t === 'HQ300' ? 'meta' : 'gelb-k', 'Hochwassergebiet ' + t, t === 'HQ30' ? 'Statistisch alle 30 Jahre überflutet.' : t === 'HQ100' ? 'Statistisch alle 100 Jahre überflutet.' : 'Nur bei sehr seltenem Hochwasser (alle 300 Jahre) betroffen.', 'Daten: Hochwasser-Überflutungsflächen des Bundes (LFRZ), Genauigkeit ca. 15 m. Im 30-jährlichen Gebiet braucht ein Neubau zusätzlich eine wasserrechtliche Bewilligung.'));
@@ -632,7 +668,7 @@ function start() {
       else L.append(karte('gruen-k', 'Kein Hochwassergebiet', 'Auch nicht bei sehr seltenem Hochwasser (300 Jahre). Starkregen ist hier nicht erfasst.'));
       if (u.baeume === undefined) L.append(karte('meta', 'Bäume gerade nicht abrufbar', ''));
       else L.append(karte(u.baeume ? '' : 'meta', u.baeume ? u.baeume + (u.baeume === 1 ? ' städtischer Baum' : ' städtische Bäume') + ' direkt am Grundstück' : 'Keine städtischen Bäume direkt am Grundstück',
-        u.baeume ? 'Bei Zufahrt oder Baustelle müssen sie geschützt werden.' : '', 'Erfasst sind nur Bäume der Stadt (Straße, Park). Bäume auf privatem Grund stehen ebenfalls unter Schutz (Wiener Baumschutzgesetz) – Fällen nur mit Bewilligung und Ersatzpflanzung.'));
+        u.baeume ? 'Bei Zufahrt oder Baustelle müssen sie geschützt werden.' : '', 'Erfasst sind nur Bäume der Stadt (Straße, Park). Bäume auf privatem Grund stehen ebenfalls unter Schutz (Wiener Baumschutzgesetz) – Fällen nur mit Bewilligung und Ersatzpflanzung.', u.baeume ? { kreise: u.baumPts.map(c => [c]) } : null));
     }
     if (o.auch && o.auch.length) L.append(karte('', 'Auf diesem Bauplatz auch', o.auch.slice(0, 4).join(', ') + (o.auch.length > 4 ? ' und weitere' : '')));
     if (o.ohneAdr) L.append(karte('meta', 'Ohne Adresse', 'Diesem Grundstück ist keine Hausnummer zugeordnet.'));

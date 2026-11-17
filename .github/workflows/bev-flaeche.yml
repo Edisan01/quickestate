@@ -37,6 +37,6 @@ jobs:
           python3 tools/bev_flaeche.py /mnt/$f kataster/flaeche.json
           ls -la kataster/flaeche.json
           git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
-          git add kataster/flaeche.json
+          git add kataster/flaeche.json kataster/fl
           git commit -m "Amtliche Grundstücksflächen Wien (BEV Grundstücksverzeichnis ${{ github.event.inputs.stichtag }}, CC BY 4.0)" || echo nichts
           git pull --rebase -q origin main && git push -q origin main
