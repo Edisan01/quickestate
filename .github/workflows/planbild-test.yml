@@ -1,0 +1,21 @@
+name: Planbild-Testbilder holen (Branch planbild-test, nicht Webseite)
+on:
+  workflow_dispatch:
+    inputs:
+      zoom: { default: "19" }
+      radius: { default: "3" }
+permissions:
+  contents: write
+jobs:
+  holen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q pillow
+      - run: python3 tools/planbild_holen.py tools/planbild_faelle.json /tmp/pb ${{ github.event.inputs.zoom }} ${{ github.event.inputs.radius }}
+      - name: Auf eigenen Branch legen
+        run: |
+          git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
+          git checkout --orphan planbild-test; git rm -rq --cached . ; rm -rf ./* .github
+          cp /tmp/pb/* .; git add *.png *.json
+          git commit -qm "Planbild-Testbilder (Stadt Wien, CC BY 4.0)"; git push -fq origin planbild-test
