@@ -581,7 +581,7 @@ function start() {
       if (sz.ok) u.schutz = (sz.v.find(f => P.some(p => drin(f, p))) || {}).properties || false;
       if (gz.ok) u.wohnzone = gz.v.some(f => f.properties.LAYER === 'DN_L-WZ' && P.some(p => drin(f, p)));
       if (b82.ok && b86.ok) u.sperre = b82.v.concat(b86.v).some(f => P.some(p => drin(f, p)));
-      if (geb.ok) { const H = geb.v.filter(f => fPolys(f.geometry).some(pg => { const c = bbox(pg[0]); return kInPoly([(c[0] + c[2]) / 2, (c[1] + c[3]) / 2], g.polys); }));
+      if (geb.ok) { const H = geb.v.filter(f => f.geometry.type === 'Point' && kInPoly(f.geometry.coordinates, g.polys));   // Gebäudepunkte der Stadt im Bauplatz
         u.bestand = H.length ? { gesch: Math.max(0, ...H.map(f => +f.properties.GESCH_ANZ || 0)) || null, jahr: (H.find(f => f.properties.BAUJAHR) || {}).properties?.BAUJAHR || null, periode: (H.find(f => f.properties.L_BAUJ) || {}).properties?.L_BAUJ || null } : false; }
       if (baum.ok) u.baeume = baum.v.filter(f => { const c = f.geometry.coordinates; return kInPoly(c, g.polys) || g.polys.some(pg => pg[0].some((a, i, R) => kSegAbst(c, a, R[(i + 1) % R.length]) < 8)); }).length;
       if (hq.ok) u.hq = hq.v;
@@ -591,7 +591,9 @@ function start() {
   const WTXT = { W: 'Wohngebiet – hier darf man Wohnhäuser bauen.', WGV: 'Wohngebiet mit Geschäftsviertel – Wohnhäuser, das Erdgeschoss ist für Geschäfte gedacht.',
     GB: 'Gemischtes Baugebiet – Wohnungen und Betriebe sind erlaubt.', GBGV: 'Gemischtes Baugebiet mit Geschäftsviertel – Wohnungen und Geschäfte, das Erdgeschoss ist für Geschäfte gedacht.',
     GBBG: 'Betriebsbaugebiet – vor allem für Betriebe, Wohnungen nur eingeschränkt.', GS: 'Gartensiedlungsgebiet – kleine Wohnhäuser mit Garten.', IG: 'Industriegebiet – für Betriebe, keine Wohnungen.', SO: 'Sondergebiet – nur für den im Plan festgelegten Zweck.' };
-  const widKl = w => { const k = String(w.WIDMUNGSKLASSE || '').toUpperCase().replace(/[\s-]/g, ''); return WTXT[k] ? k : /^SO/.test(k) ? 'SO' : null; };
+  const widKl = w => { const k = String(w.WIDMUNGSKLASSE || '').toUpperCase().replace(/[\s-]/g, '').replace(/^WO/, 'W').replace('GF', '');   // Stadt: WO, WOGV, WOGF, GBGFGV … (GF = geförderter Wohnbau)
+    return WTXT[k] ? k : /^SO/.test(k) ? 'SO' : null; };
+  const widGF = w => /GF/.test(String(w.WIDMUNGSKLASSE || ''));
   /* Ergebnis als Karten in Alltagssprache: links „Was ist das?“, rechts „Was heißt das für dich?“ – Ampel grün/gelb/rot, Fachbegriffe per „Was heißt das?“ */
   const karte = (art, titel, text, mehr) => { const d = document.createElement('div'); d.className = 'g-card ' + art;
     const h = document.createElement('p'); h.className = 'g-ct'; h.textContent = titel; d.append(h);
@@ -611,7 +613,7 @@ function start() {
       else { const w = u.wid, kl = widKl(w), bk = +(String(w.WIDMUNG || '').match(/(\d)\s*$/) || [])[1] || 0, h = BKH[bk];
         const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': bis ' + h[0] + ' m hoch, also ca. ' + h[1] + ' Geschosse.' : '';
         if (!kl) { L.append(karte('rot', w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland', 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.')); rot.push('Laut Flächenwidmung kein Bauland.'); }
-        else L.append(karte('', WTXT[kl].split(' – ')[0], WTXT[kl].split(' – ')[1] + (bkT ? ' ' + bkT : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.'));
+        else L.append(karte('', WTXT[kl].split(' – ')[0], WTXT[kl].split(' – ')[1] + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.'));
         if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.');
         if (u.widAlle.length > 1) gelb.push('Der Bauplatz hat mehrere Widmungen (' + u.widAlle.join(', ') + ').'); else if (u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
       if (u.bestand) L.append(karte('', 'Steht heute drauf', 'Gebäude' + (u.bestand.jahr ? ' von ' + u.bestand.jahr : u.bestand.periode ? ' aus ' + u.bestand.periode : '') + (u.bestand.gesch ? ', ' + u.bestand.gesch + ' Geschosse' : '') + '.', 'Laut Gebäudeinformation der Stadt Wien. Baujahr und Geschosszahl sind Richtwerte.'));
