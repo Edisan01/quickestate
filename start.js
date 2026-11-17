@@ -480,7 +480,7 @@ function start() {
   const dragEnde = e => { if (!drag) return; const d = drag; drag = null; mapEl.classList.remove('drag'); if (d.moved || e.type === 'pointercancel') return;
     const r = mapEl.getBoundingClientRect(), s = mapS(), px = e.clientX - r.left, py = e.clientY - r.top;
     const hit = Math.log2(M.k) >= 15.5 && M.marks.find(m => { const [mx, my] = kMerc(m.lon, m.lat); return Math.hypot((mx - M.cx) * M.k + s / 2 - px, (my - M.cy) * M.k + s / 2 - py) < 12; });
-    if (hit) { waehlen(hit.f, true); return; }
+    if (hit) { waehlen(hit.f, true, hit.ein); return; }
     const [lon, lat] = kGeo(M.cx + (px - s / 2) / M.k, M.cy + (py - s / 2) / M.k); parzelleWaehlen(lon, lat); };
   mapEl.addEventListener('pointerup', dragEnde); mapEl.addEventListener('pointercancel', dragEnde);
 
@@ -494,14 +494,21 @@ function start() {
     M.sel = r.g; M.pt = null; $('resAddr').textContent = 'Grundstück ' + r.g.gnr; zeigeInfo(r.g, ' · per Klick gewählt');
     $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück'; mapKick(); }
 
+  // Zugangspunkt (Eingang an der Straße) = Gebäudepunkt + Versatz ZUG − GEB (Gauß-Krüger, Meter) – Gebäudepunkt liegt mitten im Haus
+  const zugang = (lon, lat, p) => { const dx = (+p.ZUG_X) - (+p.GEB_X), dy = (+p.ZUG_Y) - (+p.GEB_Y);
+    if (!isFinite(dx) || !isFinite(dy) || Math.hypot(dx, dy) > 80) return [lon, lat];
+    return [lon + dx / (111320 * Math.cos(lat * Math.PI / 180)), lat + dy / 110540]; };
+  const WFSADR = cql => 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=1500&cql_filter=' + encodeURIComponent(cql);
+  const eingangFuer = f => fetch(WFSADR("NAME='" + f.properties.Adresse.replace(/'/g, "''") + "'" + (f.properties.PostalCode ? " AND PLZ='" + f.properties.PostalCode + "'" : '')))
+    .then(r => r.json()).then(fc => { const x = (fc.features || [])[0]; return x ? zugang(x.geometry.coordinates[0], x.geometry.coordinates[1], x.properties) : null; }).catch(() => null);
   // ganze Straße (ohne Hausnummer): alle Adressen der Straße holen und als Hausnummern zeigen
   const STR = (name, bez) => 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=1500&cql_filter='
     + encodeURIComponent("NAME_STR='" + name.replace(/'/g, "''") + "'" + (bez ? " AND GEB_BEZIRK='" + String(bez).padStart(2, '0') + "'" : ''));
   async function strasseZeigen(f) {
     const name = f.properties.StreetName || f.properties.Adresse, bez = f.properties.Bezirk; gMsg.textContent = 'Straße wird geladen …';
     let fc; try { fc = await fetch(STR(name, bez)).then(r => r.json()); } catch { fc = null; }
-    const L = ((fc && fc.features) || []).filter(x => x.geometry && x.properties && x.properties.NAME_ONR).map(x => ({ lon: x.geometry.coordinates[0], lat: x.geometry.coordinates[1], nr: x.properties.NAME_ONR,
-      f: { geometry: { coordinates: x.geometry.coordinates }, properties: { Adresse: x.properties.NAME, PostalCode: x.properties.PLZ, StreetNumber: x.properties.NAME_ONR, StreetName: x.properties.NAME_STR } } }));
+    const L = ((fc && fc.features) || []).filter(x => x.geometry && x.properties && x.properties.NAME_ONR).map(x => { const [elon, elat] = zugang(x.geometry.coordinates[0], x.geometry.coordinates[1], x.properties); return { lon: elon, lat: elat, nr: x.properties.NAME_ONR, ein: [elon, elat],
+      f: { geometry: { coordinates: x.geometry.coordinates }, properties: { Adresse: x.properties.NAME, PostalCode: x.properties.PLZ, StreetNumber: x.properties.NAME_ONR, StreetName: x.properties.NAME_STR } } }; });
     await ladeKg(); gMsg.textContent = ''; M.marks = L; M.sel = null; M.pt = null;
     if (!L.length) {                                                      // Flurname/Platz ohne Hausnummern (z. B. Wiese, Park): nur Ausschnitt zeigen, nichts vorwählen
       const [lon, lat] = f.geometry.coordinates; $('resAddr').textContent = name; $('resInfo').textContent = 'Kein Ort mit Hausnummern – klick auf das Grundstück, das du meinst';
@@ -511,7 +518,7 @@ function start() {
     $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen'; zeigeBox();
     requestAnimationFrame(() => { zoomAuf(bbox(L.map(m => [m.lon, m.lat])), 0.85); mapRender(); }); }
 
-  async function waehlen(f, ausKarte) {
+  async function waehlen(f, ausKarte, ein) {
     sugZeigen([]); if (!hatNr(f)) { gIn.value = f.properties.Adresse; return strasseZeigen(f); }
     gIn.value = adrText(f); if (!ausKarte) gMsg.textContent = 'Grundstück wird gesucht …';
     const [lon, lat] = f.geometry.coordinates;
@@ -520,7 +527,8 @@ function start() {
       if (!r) { gMsg.textContent = 'An dieser Adresse habe ich kein Grundstück gefunden – bitte eine andere Hausnummer probieren.'; return; }
       gMsg.textContent = ''; $('resAddr').textContent = adrText(f); zeigeInfo(r.g, r.genau ? '' : ' · Adresspunkt liegt knapp außerhalb – nächstes Grundstück gewählt');
       $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück';
-      M.sel = r.g; M.pt = [lon, lat]; if (!ausKarte) M.marks = []; zeigeBox();
+      M.sel = r.g; M.pt = ein || [lon, lat]; if (!ausKarte) M.marks = []; zeigeBox();
+      if (!ein) eingangFuer(f).then(e => { if (e && M.sel === r.g) { M.pt = e; mapKick(); } });
       requestAnimationFrame(() => { if (!ausKarte) zoomAuf(bbox(r.g.polys.flatMap(pg => pg[0])), 0.5); mapRender(); });
     } catch (err) { gMsg.textContent = 'Das Grundstück konnte gerade nicht geladen werden – bitte nochmal versuchen.'; } }
 
