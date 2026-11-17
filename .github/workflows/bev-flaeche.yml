@@ -1,0 +1,39 @@
+name: BEV amtliche Grundstücksflächen Wien (Grundstücksverzeichnis, CC BY 4.0)
+on:
+  workflow_dispatch:
+    inputs:
+      modus:
+        description: "liste = nur Verzeichnis zeigen · holen = CSV laden und Wien-Flächen schreiben"
+        default: "liste"
+      datei:
+        description: "CSV-Dateiname im Verzeichnis (bei holen)"
+        default: ""
+      stichtag:
+        default: "20260401"
+permissions:
+  contents: write
+jobs:
+  lauf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verzeichnis zeigen
+        if: ${{ github.event.inputs.modus == 'liste' }}
+        run: |
+          for d in csv/${{ github.event.inputs.stichtag }} csv; do
+            echo "=== $d"; curl -sS -m 60 "https://data.bev.gv.at/download/Kataster/$d/" | grep -oE 'href="[^"]+"[^<]*</a>[^<]{0,80}' | sed -E 's/<[^>]+>//g' | head -80
+          done
+      - name: CSV holen und Wien-Flächen schreiben
+        if: ${{ github.event.inputs.modus == 'holen' }}
+        run: |
+          set -e
+          f="${{ github.event.inputs.datei }}"
+          curl -sS -m 1500 -o roh "https://data.bev.gv.at/download/Kataster/csv/${{ github.event.inputs.stichtag }}/$f"
+          ls -la roh; file roh
+          if file roh | grep -qi zip; then unzip -o -q roh -d roh_d; ls -la roh_d; src=$(ls roh_d/*.csv | head -1); else src=roh; fi
+          head -3 "$src" | iconv -f latin1 -t utf-8 || head -3 "$src"
+          python3 tools/bev_flaeche.py "$src" kataster/flaeche.json
+          git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
+          git add kataster/flaeche.json
+          git commit -m "Amtliche Grundstücksflächen Wien (BEV Grundstücksverzeichnis ${{ github.event.inputs.stichtag }}, CC BY 4.0)" || echo nichts
+          git pull --rebase -q origin main && git push -q origin main
