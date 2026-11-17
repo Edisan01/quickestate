@@ -677,6 +677,7 @@ function start() {
       for (const x of R.ecke) { try { x.strasse = await strasseLesen(x.front, bp, x.abtr.t); } catch (_) { } }
       return R; })();
     leserC.set(key, pr); pr.catch(() => leserC.delete(key)); return pr; }
+  if (/[?&]leser=1/.test(location.search)) window.QE_ZONEN = async () => { if (!M.sel) return { fehler: 'kein Bauplatz' }; const L = await import('./planleser.js?v=1'); return L.zonenLesen(M.sel.polys.map(pg => pg[0]), planKachel, 40); };   // Testmodus Zonen-Leser
   if (/[?&]leser=1/.test(location.search)) window.QE_LESER = () => M.sel ? leserLauf(M.sel, M.pt) : Promise.resolve({ fehler: 'kein Bauplatz' });   // Testmodus (nicht für Kunden)
   const ROEM = ['', 'I', 'II', 'III', 'IV', 'V', 'VI'], BKH = { 1: [9, 3], 2: [12, 4], 3: [16, 5], 4: [21, 7], 5: [26, 8] };   // Wiener Bauordnung § 75: Höchsthöhe je Bauklasse
   const WTXT = { W: 'Wohngebiet – hier darf man Wohnhäuser bauen.', WGV: 'Wohngebiet mit Geschäftsviertel – Wohnhäuser, das Erdgeschoss muss für Geschäfte genutzt werden (Wohnungen erst ab 3,5 m Fußbodenhöhe).',
