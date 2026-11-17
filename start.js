@@ -701,12 +701,17 @@ function start() {
     for (let i = 0; i <= N * 1.1; i++) { const a = st + i / N * Math.PI * 2, f = 1 + (rnd() - 0.5) * 0.035 + i / N * 0.06; L.push((cx + Math.cos(a) * rx * f).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * f).toFixed(1)); }
     return 'M' + L.join('L'); };
   function hlUpdate(css) { const s = mapS(); hlEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); const H = M.hl; if (!H) { hlEl.textContent = ''; return; }
-    if (!H.els) { hlEl.textContent = ''; H.els = []; H.polys.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlf'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); });
+    if (!H.els) { hlEl.textContent = ''; H.els = [];
+      if (H.clip) { const df = document.createElementNS(NS, 'defs'), cp = document.createElementNS(NS, 'clipPath'), cpp = document.createElementNS(NS, 'path'); cp.setAttribute('id', 'qeHlClip'); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); df.append(cp); hlEl.append(df); H.clipEl = cpp; }
+      H.zonen.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlz'); p.setAttribute('fill-rule', 'evenodd'); if (H.clip) p.setAttribute('clip-path', 'url(#qeHlClip)'); hlEl.append(p); H.els.push(p); });
+      H.polys.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlf'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); });
       H.kreise.forEach((K, j) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlk'); p.setAttribute('pathLength', '1'); p.style.animationDelay = (j * 0.18) + 's'; hlEl.append(p); H.els.push(p); }); }
-    let i = 0; const S = c => css(...kMerc(c[0], c[1]));
+    let i = 0; const S = c => css(...kMerc(c[0], c[1])), D = pg => pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('');
+    if (H.clipEl) H.clipEl.setAttribute('d', H.clip.map(D).join(''));
+    H.zonen.forEach(pg => { H.els[i++].setAttribute('d', D(pg)); });
     H.polys.forEach(pg => { H.els[i++].setAttribute('d', pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')); });
     H.kreise.forEach((K, j) => { const P = K.map(S), xs = P.map(p => p[0]), ys = P.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-      H.els[i++].setAttribute('d', wackel((x0 + x1) / 2, (y0 + y1) / 2, Math.max(13, (x1 - x0) * 0.68 + 7), Math.max(11, (y1 - y0) * 0.68 + 7), 11 + j * 17)); }); }
+      H.els[i++].setAttribute('d', wackel((x0 + x1) / 2, (y0 + y1) / 2, Math.max(H.klein || 24, (x1 - x0) * 0.6 + 6), Math.max(H.klein ? H.klein * 0.62 : 15, (y1 - y0) * 0.6 + 6), 11 + j * 17)); }); }
   let tonCtx = null;
   function bleistift() { try { tonCtx = tonCtx || new (window.AudioContext || window.webkitAudioContext)(); const ac = tonCtx, d = 0.55, n = Math.floor(ac.sampleRate * d), b = ac.createBuffer(1, n, ac.sampleRate), x = b.getChannelData(0);
       for (let k = 0; k < n; k++) { const t = k / ac.sampleRate, hub = 0.5 + 0.5 * Math.abs(Math.sin(t * Math.PI * 2 * 6.5)); x[k] = (Math.random() * 2 - 1) * hub * (Math.random() < 0.06 ? 1.7 : 1); }
@@ -716,13 +721,13 @@ function start() {
       src.connect(hp); hp.connect(bp); bp.connect(gn); gn.connect(ac.destination); src.start(); } catch (e) { /* ohne Ton weiter */ } }
   function zeigen(spec, el) { document.querySelectorAll('.g-card.an').forEach(c => c.classList.remove('an'));
     if (!spec || (el && M.hl && M.hl.el === el)) { M.hl = null; mapKick(); return; }                 // zweiter Klick auf dieselbe Karte = ausblenden
-    el && el.classList.add('an'); M.hl = { polys: spec.polys || [], kreise: (spec.kreise || []).filter(K => K && K.length), el };
-    const pts = M.hl.kreise.flat(); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
+    el && el.classList.add('an'); M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), el };
+    const pts = M.hl.kreise.flat().concat(M.hl.clip ? M.hl.clip.flatMap(pg => pg[0]) : []); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
       if ((x0 - M.cx) * M.k < -s || (x1 - M.cx) * M.k > s || (y0 - M.cy) * M.k < -s || (y1 - M.cy) * M.k > s) { M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; } }
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
-    const zG = { kreise: (g.teile || [g]).map(t => t.polys.flatMap(pg => pg[0])) }, alleP = zG.kreise.flat();
+    const zG = { zonen: (g.teile || [g]).flatMap(t => t.polys), kreise: (g.teile || [g]).map(t => [proben({ polys: t.polys })[0]]) }, alleP = (g.teile || [g]).flatMap(t => t.polys.flatMap(pg => pg[0]));
     const ca = g.amtl === false ? 'ca. ' : '', flQ = g.amtl === false ? ' Fläche aus den Grenzen errechnet – amtlicher Wert gerade nicht abrufbar.' : ' Fläche laut Grundbuch.';
     L.append(n > 1 ? karte('', 'Bauplatz ' + ca + flText(g) + ' m²', 'Besteht aus ' + n + ' Grundstücken, die im Grundbuch zusammen geführt werden: ' + g.teile.map(t => t.gnr + ' (' + (t.amtl ? '' : 'ca. ') + flText(t) + ' m²)').join(' + ') + '.' + flQ, 'Ein Bauplatz ist die Fläche, auf der gebaut werden darf. Grundstücke mit derselben Grundbuch-Einlage (EZ) werden gemeinsam geführt und zählen zusammen. Flächen aus dem amtlichen Grundstücksverzeichnis des BEV.', zG)
       : karte('', 'Grundstück ' + g.gnr + ' · ' + ca + flText(g) + ' m²', 'Ein einzelnes Grundstück.' + flQ, 'Grundstücksnummer und Fläche stammen aus dem amtlichen Grundstücksverzeichnis des Bundesamts für Eich- und Vermessungswesen (BEV) – dieselbe Fläche wie im Grundbuch.', zG));
@@ -738,9 +743,9 @@ function start() {
         const ref = M.pt, dmin = z => ref ? Math.min(...z.pts.map(p => Math.hypot((p[0] - ref[0]) * 74000, (p[1] - ref[1]) * 111200))) : 0;
         if (Z.length > 1) Z.sort((a, b) => dmin(a) - dmin(b));
         Z.forEach((z, zi) => { const w = z.w, kl = widKl(w), bk = +(String(w.WIDMUNG || '').match(/(\d)\s*$/) || [])[1] || 0, h = BKH[bk];
-          const vor = Z.length > 1 ? (zi === 0 ? 'Straßentrakt: ' : 'Hof: ') : '';
+          const vor = Z.length < 2 ? '' : zi === 0 ? 'Straßentrakt: ' : Z.length === 2 ? 'Hof: ' : Z.length === 3 ? (zi === 1 ? 'Hof vorne: ' : 'Hof hinten: ') : 'Hof ' + zi + ': ';
           const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': höchstens ' + h[0] + ' m hoch (ca. ' + h[1] + ' Geschosse) – im Detailplan kann eine niedrigere Grenze stehen.' : '';
-          const gross1 = t => t.charAt(0).toUpperCase() + t.slice(1), zz = { kreise: [z.pts.length ? z.pts : alleP], polys: z.geo ? fPolys(z.geo) : [] };
+          const gross1 = t => t.charAt(0).toUpperCase() + t.slice(1), zz = { zonen: z.geo ? fPolys(z.geo) : [], clip: g.polys };
           if (!kl) { L.append(karte('rot', vor + (w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland'), 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.', zz)); if (zi === 0) rot.push('Laut Flächenwidmung kein Bauland.'); }
           else L.append(karte('', vor + WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.', zz));
           if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.'); });
@@ -750,7 +755,7 @@ function start() {
       if (u.wohnzone) sch.push('Wohnzone');
       if (u.sperre) { sch.push('Bausperre'); gelb.push('Bausperre: Der Plan wird gerade überarbeitet – Bauen ist nur eingeschränkt möglich.'); }
       const unbek = [u.schutz === undefined && 'Schutzzone', u.wohnzone === undefined && 'Wohnzone', u.sperre === undefined && 'Bausperre'].filter(Boolean);
-      L.append(sch.length ? karte('gelb-k', sch.join(' · '), u.schutz ? 'Das Stadtbild ist hier geschützt.' : u.wohnzone ? 'Hier müssen vorwiegend Wohnungen entstehen.' : 'Der Plan wird überarbeitet.', 'Schutzzone: Gebäude prägen das Stadtbild, Abbruch braucht eine Bewilligung. Wohnzone: Büros und Geschäfte sind nur eingeschränkt erlaubt. Bausperre: Bis der neue Plan gilt, wird nur eingeschränkt bewilligt.', { kreise: [alleP], polys: [u.schutzGeo, u.wzGeo, u.spGeo].filter(Boolean).flatMap(fPolys) })
+      L.append(sch.length ? karte('gelb-k', sch.join(' · '), u.schutz ? 'Das Stadtbild ist hier geschützt.' : u.wohnzone ? 'Hier müssen vorwiegend Wohnungen entstehen.' : 'Der Plan wird überarbeitet.', 'Schutzzone: Gebäude prägen das Stadtbild, Abbruch braucht eine Bewilligung. Wohnzone: Büros und Geschäfte sind nur eingeschränkt erlaubt. Bausperre: Bis der neue Plan gilt, wird nur eingeschränkt bewilligt.', { zonen: [u.schutzGeo, u.wzGeo, u.spGeo].filter(Boolean).flatMap(fPolys), clip: g.polys })
         : karte('gruen-k', 'Keine Schutzzone, Wohnzone oder Bausperre', unbek.length ? unbek.join(', ') + ' gerade nicht abrufbar.' : ''));
       if (u.hq === undefined) L.append(karte('meta', 'Hochwasser gerade nicht abrufbar', ''));
       else if (u.hq.length) { const t = u.hq[0]; L.append(karte(t === 'HQ300' ? 'meta' : 'gelb-k', 'Hochwassergebiet ' + t, t === 'HQ30' ? 'Statistisch alle 30 Jahre überflutet.' : t === 'HQ100' ? 'Statistisch alle 100 Jahre überflutet.' : 'Nur bei sehr seltenem Hochwasser (alle 300 Jahre) betroffen.', 'Daten: Hochwasser-Überflutungsflächen des Bundes (LFRZ), Genauigkeit ca. 15 m. Im 30-jährlichen Gebiet braucht ein Neubau zusätzlich eine wasserrechtliche Bewilligung.'));
