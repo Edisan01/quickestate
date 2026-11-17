@@ -656,13 +656,25 @@ function start() {
     linien.sort((a, b) => a.t - b.t); if (!linien.length) throw new Error('keine Baufluchtlinie');
     const vorne = linien[0].t - vg <= 8 ? linien[0] : null, hinten = vorne ? linien[1] : linien[0];
     return { vorgarten: vorne ? r1(vorne.t - vg) : null, tiefe: hinten ? r1(hinten.t - vg) : null, linieV: vorne ? [pt(0, vorne.t), pt(1, vorne.t)] : null, linieH: hinten ? [pt(0, hinten.t), pt(1, hinten.t)] : null, n: hinten ? hinten.n : 0 }; }
+  // Alle geraden Außenseiten des Bauplatzes (zusammenhängende, gleich gerichtete Außenkanten)
+  function seitenListe(bp) { const K = (bp.kanten || []).filter(k => !k[2]), S = [], frei = new Set(K);
+    for (const k of K) { if (!frei.has(k)) continue; const mitte = [(k[0][0] + k[1][0]) / 2, (k[0][1] + k[1][1]) / 2], e = frontKante({ ...bp, kanten: [...frei].map(x => [x[0], x[1], false]) }, mitte); if (!e) continue;
+      [...frei].forEach(x => { if (kSegAbst([(x[0][0] + x[1][0]) / 2, (x[0][1] + x[1][1]) / 2], e.von, e.bis) < 0.3) frei.delete(x); }); frei.delete(k);
+      const mx = 111320 * Math.cos(e.von[1] * Math.PI / 180), L = Math.hypot((e.bis[0] - e.von[0]) * mx, (e.bis[1] - e.von[1]) * 110574); if (L >= 4) S.push({ von: e.von, bis: e.bis, laenge: L }); }
+    return S; }
   const leserC = new Map();
   async function leserLauf(bp, ref) { const key = bp.teile.map(t => t.kg + '|' + t.gnr).join(','); if (leserC.has(key)) return leserC.get(key);
-    const pr = (async () => { const e = frontKante(bp, ref); if (!e) return { fehler: 'Straßenseite nicht gefunden' }; await planLaden(bp); const R = { front: e, laenge: null };
-      try { R.abtr = await baulinieLesen(e, bp); } catch (x) { R.abtrFehler = String(x.message || x); }
+    const pr = (async () => { await planLaden(bp);
+      // Straßenseite = Seite mit durchgehender Baulinie im Plan (nur zur Straße hin); mehrere → Eckgrundstück, die nächste zum Eingang zuerst
+      const S = seitenListe(bp).map(e => { try { return { e, b: null }; } catch (x) { return null; } }).filter(Boolean);
+      for (const x of S) { try { x.b = await baulinieLesen(x.e, bp); } catch (_) { x.b = null; } }
+      const mitBL = S.filter(x => x.b), dist = x => ref ? kSegAbst(ref, x.e.von, x.e.bis) : 0; mitBL.sort((a, b) => dist(a) - dist(b));
+      if (!mitBL.length) return { fehler: 'keine Baulinie an einer Grundstücksseite gefunden', seiten: S.length };
+      const e = mitBL[0].e, R = { front: { ...e, abstand: dist(mitBL[0]) }, abtr: mitBL[0].b, ecke: mitBL.slice(1).map(x => ({ front: x.e, abtr: x.b })) };
       const tb = R.abtr ? R.abtr.t : 0;
       try { R.strasse = await strasseLesen(e, bp, tb); } catch (x) { R.strasseFehler = String(x.message || x); }
       try { R.tiefe = await tiefeLesen(e, bp, R.abtr ? R.abtr.tiefe : 0); } catch (x) { R.tiefeFehler = String(x.message || x); }
+      for (const x of R.ecke) { try { x.strasse = await strasseLesen(x.front, bp, x.abtr.t); } catch (_) { } }
       return R; })();
     leserC.set(key, pr); pr.catch(() => leserC.delete(key)); return pr; }
   if (/[?&]leser=1/.test(location.search)) window.QE_LESER = () => M.sel ? leserLauf(M.sel, M.pt) : Promise.resolve({ fehler: 'kein Bauplatz' });   // Testmodus (nicht für Kunden)
