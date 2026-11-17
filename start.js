@@ -597,6 +597,70 @@ function start() {
       if (hq.ok) u.hq = hq.v;
       return u; });
     umfC.set(key, pr); pr.catch(() => umfC.delete(key)); return pr; }
+  /* ── Planbild-Leser (übernommen aus Rechner v204, Messtest 26.10.2026: Straßenbreite ±0,3 m) ──────────────────────────────────────────
+     Liest die rote Planzeichnung (WMTS flwbplmzk/rot, Zoom 19, ~0,2 m je Pixel) entlang von Messlinien senkrecht zur Straßenseite:
+     Baulinie = rot durchgehend, Baufluchtlinie = rot strichliert. Ergebnis: Abtretung, Straßenbreite, Vorgarten, Trakttiefe (Straßentrakt). */
+  const PLAN_Z = 19, PLAN_K = new Map();
+  const planPx = (lon, lat) => { const n = 256 * 2 ** PLAN_Z, r = lat * Math.PI / 180; return [(lon + 180) / 360 * n, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n]; };
+  function planKachel(x, y) { const k = x + '/' + y; if (PLAN_K.has(k)) return PLAN_K.get(k);
+    const p = new Promise((ok, no) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => { try { const c = document.createElement('canvas'); c.width = c.height = 256; const cx = c.getContext('2d', { willReadFrequently: true }); cx.drawImage(im, 0, 0); ok(cx.getImageData(0, 0, 256, 256).data); } catch (e) { no(e); } };
+      im.onerror = () => no(new Error('Kachel')); im.src = 'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/' + PLAN_Z + '/' + y + '/' + x + '.jpeg'; });
+    PLAN_K.set(k, p); p.catch(() => PLAN_K.delete(k)); return p; }
+  async function planRot(lon, lat, eng) { const [px, py] = planPx(lon, lat);
+    for (const oy of eng ? [0] : [0, -1, 1]) for (const ox of eng ? [0] : [0, -1, 1]) { const X = Math.floor(px) + ox, Y = Math.floor(py) + oy, tx = Math.floor(X / 256), ty = Math.floor(Y / 256), d = await planKachel(tx, ty), i = ((Y - ty * 256) * 256 + (X - tx * 256)) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+      if (r > 140 && r - g > 50 && r - b > 50) return true; }
+    return false; }
+  // Straßenseite = äußere Kante des Bauplatzes, die dem Eingang am nächsten liegt; gerade Nachbarkanten werden angehängt
+  function frontKante(bp, ref) { const K = (bp.kanten || []).filter(k => !k[2]), mx = 111320 * Math.cos(bp.polys[0][0][0][1] * Math.PI / 180), my = 110574, len = k => Math.hypot((k[1][0] - k[0][0]) * mx, (k[1][1] - k[0][1]) * my);
+    if (!K.length || !ref) return null; let best = null, bd = 1e9; K.forEach(k => { if (len(k) < 1.5) return; const d = kSegAbst(ref, k[0], k[1]); if (d < bd) { bd = d; best = k; } }); if (!best) return null;
+    const dir = k => { const l = len(k) || 1; return [(k[1][0] - k[0][0]) * mx / l, (k[1][1] - k[0][1]) * my / l]; }, d0 = dir(best), gleich = (p, q) => Math.hypot((p[0] - q[0]) * mx, (p[1] - q[1]) * my) < 0.3;
+    let von = best[0], bis = best[1], wachs = true;
+    while (wachs) { wachs = false; for (const k of K) { if (k === best) continue; const d = dir(k), par = Math.abs(d[0] * d0[0] + d[1] * d0[1]); if (par < 0.985) continue;
+      if (gleich(k[1], von) && !gleich(k[0], bis)) { von = k[0]; wachs = true; } else if (gleich(k[0], von) && !gleich(k[1], bis)) { von = k[1]; wachs = true; } else if (gleich(k[0], bis) && !gleich(k[1], von)) { bis = k[1]; wachs = true; } else if (gleich(k[1], bis) && !gleich(k[0], von)) { bis = k[0]; wachs = true; } } }
+    return { von, bis, abstand: bd }; }
+  function messRahmen(e, bp) { const pts = bp.polys.flatMap(pg => pg[0]), c = [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length];
+    const m = 111320 * Math.cos(e.von[1] * Math.PI / 180), dx = (e.bis[0] - e.von[0]) * m, dy = (e.bis[1] - e.von[1]) * 110574, L0m = Math.hypot(dx, dy) || 1; let nx = -dy / L0m, ny = dx / L0m;
+    if (((c[0] - e.von[0]) * m * nx + (c[1] - e.von[1]) * 110574 * ny) < 0) { nx = -nx; ny = -ny; }   // Normale ins Grundstück
+    return { L0m, pt: (f, t) => [e.von[0] + f * (e.bis[0] - e.von[0]) + nx * t / m, e.von[1] + f * (e.bis[1] - e.von[1]) + ny * t / 110574] }; }
+  async function linienArt(pt, L0m, t) { const st = 0.2 / L0m, luecken = []; let an = 0, ges = 0, lauf = 0;
+    for (let f = -0.6; f <= 1.6 + 1e-9; f += st) { let r = false; for (const dt of [-0.3, 0, 0.3]) { const q = pt(f, t + dt); if (await planRot(q[0], q[1], true)) { r = true; break; } }
+      if (f >= 0.05 && f <= 0.95) { ges++; if (r) an++; } if (r) { if (lauf) luecken.push(lauf * 0.2); lauf = 0; } else lauf++; }
+    const strich = luecken.filter(l => l >= 0.5 && l <= 2.2).length, anteil = ges ? an / ges : 0; return { anteil, strich, durch: anteil >= 0.85 && strich <= 1 }; }
+  const FS9 = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], r1 = x => Math.round(x * 10) / 10, r2 = x => Math.round(x * 100) / 100;
+  async function baulinieLesen(e, bp) { const { L0m, pt } = messRahmen(e, bp), treffer = [];                      // Abtretung: liegt die Baulinie (rot durchgehend) im Grundstück?
+    for (const f of FS9) for (let t = -4; t <= 15; t += 0.1) { const p = pt(f, t); if (!(await planRot(p[0], p[1]))) continue; let t2 = t; while (t2 + 0.1 <= t + 1.5) { const q = pt(f, t2 + 0.1); if (!(await planRot(q[0], q[1]))) break; t2 += 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 + 0.1; }
+    const gesehen = [];
+    for (const h of [...treffer].sort((a, b) => a.t - b.t)) { if (gesehen.some(t => Math.abs(t - h.t) <= 0.6)) continue; const g = treffer.filter(u => Math.abs(u.t - h.t) <= 0.6); if (new Set(g.map(u => u.f)).size < 5) continue;
+      const t = g.reduce((a, u) => a + u.t, 0) / g.length; gesehen.push(t); const art = await linienArt(pt, L0m, t); if (!art.durch) continue;
+      const tiefe = t > 1.0 ? r1(t) : 0; return { tiefe, laenge: r1(L0m), flaeche: tiefe ? r1(L0m * tiefe) : 0, t, geo: tiefe ? [[pt(0, 0), pt(1, 0), pt(1, t), pt(0, t), pt(0, 0)]] : [], linie: [pt(0, t), pt(1, t)] }; }
+    throw new Error(treffer.length ? 'nur strichlierte Linien an der Straßenseite' : 'keine rote Linie an der Straßenseite'); }
+  async function strasseLesen(e, bp, tb) { const { L0m, pt } = messRahmen(e, bp), treffer = [];                // Straßenbreite: eigene Baulinie bis zur Fluchtlinie gegenüber (rot durchgehend)
+    for (const f of FS9) for (let t = tb - 1.2; t >= tb - 60; t -= 0.1) { const p = pt(f, t); if (!(await planRot(p[0], p[1]))) continue; let t2 = t; while (t2 - 0.1 >= t - 1.5) { const q = pt(f, t2 - 0.1); if (!(await planRot(q[0], q[1]))) break; t2 -= 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 - 0.1; }
+    const gesehen = [];
+    for (const h of [...treffer].sort((a, b) => b.t - a.t)) { if (gesehen.some(t => Math.abs(t - h.t) <= 0.6)) continue; const g = treffer.filter(u => Math.abs(u.t - h.t) <= 0.6); if (new Set(g.map(u => u.f)).size < 5) continue;
+      const t = g.reduce((a, u) => a + u.t, 0) / g.length; gesehen.push(t); if (!(await linienArt(pt, L0m, t)).durch) continue; const b = r2(tb - t); if (b < 3) continue;
+      return { breite: b, linie: [pt(0.5, tb), pt(0.5, t)] }; }
+    throw new Error('keine Fluchtlinie gegenüber'); }
+  async function tiefeLesen(e, bp, vg) { const { L0m, pt } = messRahmen(e, bp), drin = p => kInPoly(p, bp.polys), treffer = [];     // Baufluchtlinien hinter der Baulinie: Vorgarten (vorne) und Trakttiefe (hinten)
+    for (const f of FS9) { let rot0 = true;
+      for (let t = vg + 0.5; t <= vg + 45; t += 0.1) { const p = pt(f, t); if (t > vg + 3 && !drin(p)) break; const r = await planRot(p[0], p[1]); if (!r) { rot0 = false; continue; } if (rot0 || t < vg + 2) continue;
+        let t2 = t; while (t2 + 0.1 <= t + 1.5) { const q = pt(f, t2 + 0.1); if (!(await planRot(q[0], q[1]))) break; t2 += 0.1; } treffer.push({ f, t: (t + t2) / 2 }); t = t2 + 0.1; } }
+    const anteil = async (t, a, b) => { let an = 0, ges = 0; for (let f = a; f <= b; f += 0.2 / L0m) { ges++; for (const dt of [-0.3, 0, 0.3]) { const q = pt(f, t + dt); if (await planRot(q[0], q[1], true)) { an++; break; } } } return ges ? an / ges : 0; };
+    const linien = []; for (const h of [...treffer].sort((a, b) => a.t - b.t)) { const g = treffer.filter(u => Math.abs(u.t - h.t) <= 0.6), n = new Set(g.map(u => u.f)).size; if (n < 5 || linien.some(l => Math.abs(l.t - h.t) <= 0.6)) continue; const t = g.reduce((a, u) => a + u.t, 0) / g.length;
+      const innen = await anteil(t, 0.05, 0.95), seite = Math.max(await anteil(t, -0.6, -0.05), await anteil(t, 1.05, 1.6)); if (innen >= 0.5 && (innen >= 0.65 || seite >= 0.65)) linien.push({ t, n }); }
+    linien.sort((a, b) => a.t - b.t); if (!linien.length) throw new Error('keine Baufluchtlinie');
+    const vorne = linien[0].t - vg <= 8 ? linien[0] : null, hinten = vorne ? linien[1] : linien[0];
+    return { vorgarten: vorne ? r1(vorne.t - vg) : null, tiefe: hinten ? r1(hinten.t - vg) : null, linieV: vorne ? [pt(0, vorne.t), pt(1, vorne.t)] : null, linieH: hinten ? [pt(0, hinten.t), pt(1, hinten.t)] : null, n: hinten ? hinten.n : 0 }; }
+  const leserC = new Map();
+  async function leserLauf(bp, ref) { const key = bp.teile.map(t => t.kg + '|' + t.gnr).join(','); if (leserC.has(key)) return leserC.get(key);
+    const pr = (async () => { const e = frontKante(bp, ref); if (!e) return { fehler: 'Straßenseite nicht gefunden' }; const R = { front: e, laenge: null };
+      try { R.abtr = await baulinieLesen(e, bp); } catch (x) { R.abtrFehler = String(x.message || x); }
+      const tb = R.abtr ? R.abtr.t : 0;
+      try { R.strasse = await strasseLesen(e, bp, tb); } catch (x) { R.strasseFehler = String(x.message || x); }
+      try { R.tiefe = await tiefeLesen(e, bp, R.abtr ? R.abtr.tiefe : 0); } catch (x) { R.tiefeFehler = String(x.message || x); }
+      return R; })();
+    leserC.set(key, pr); pr.catch(() => leserC.delete(key)); return pr; }
+  if (/[?&]leser=1/.test(location.search)) window.QE_LESER = () => M.sel ? leserLauf(M.sel, M.pt) : Promise.resolve({ fehler: 'kein Bauplatz' });   // Testmodus (nicht für Kunden)
   const ROEM = ['', 'I', 'II', 'III', 'IV', 'V', 'VI'], BKH = { 1: [9, 3], 2: [12, 4], 3: [16, 5], 4: [21, 7], 5: [26, 8] };   // Wiener Bauordnung § 75: Höchsthöhe je Bauklasse
   const WTXT = { W: 'Wohngebiet – hier darf man Wohnhäuser bauen.', WGV: 'Wohngebiet mit Geschäftsviertel – Wohnhäuser, das Erdgeschoss muss für Geschäfte genutzt werden (Wohnungen erst ab 3,5 m Fußbodenhöhe).',
     GB: 'Gemischtes Baugebiet – Wohnungen und Betriebe sind erlaubt.', GBGV: 'Gemischtes Baugebiet mit Geschäftsviertel – Wohnungen und Geschäfte, das Erdgeschoss muss für Geschäfte genutzt werden (Wohnungen erst ab 3,5 m Fußbodenhöhe).',
