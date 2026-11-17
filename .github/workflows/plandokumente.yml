@@ -1,0 +1,47 @@
+name: Plandokumente sammeln
+
+# Holt Text der Wiener Plandokumente (Stadt Wien) und legt ihn unter /plandokumente/ ab.
+# Täglich, bis alle da sind; danach kommen nur neue/geänderte dazu. Von Hand startbar, auch für einzelne Nummern.
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+    inputs:
+      nur:
+        description: 'Nur diese Plandokumente (Komma-Liste, z. B. 7294,7223) – leer = alle'
+        required: false
+        default: ''
+      budget:
+        description: 'Zeitbudget in Minuten'
+        required: false
+        default: '300'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: plandokumente
+  cancel-in-progress: false
+
+jobs:
+  sammeln:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - name: Werkzeuge
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-deu
+      - name: Sammeln
+        env:
+          PD_NUR: ${{ github.event.inputs.nur }}
+          PD_BUDGET_MIN: ${{ github.event.inputs.budget || '300' }}
+        run: python3 tools/pd_sammeln.py
+      - name: Speichern
+        run: |
+          git config user.name "Eduard Beches"
+          git config user.email "beches.eduard@gmail.com"
+          git add plandokumente
+          if git diff --cached --quiet; then echo "nichts Neues"; exit 0; fi
+          git commit -q -m "Plandokumente aktualisiert ($(date +%F))"
+          git pull -q --rebase origin main
+          git push -q origin HEAD:main
