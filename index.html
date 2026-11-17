@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://maps.wien.gv.at; media-src 'self' blob:; font-src 'self'; connect-src 'self' https://data.wien.gv.at; base-uri 'self'; form-action 'self'; object-src 'none'">
 <title>QuickEstate – Was darf ich auf meinem Grundstück bauen? | Eduard Beches, Wien</title>
 <meta name="description" content="QuickEstate von Eduard Beches: Baurechner für Wiener Grundstücke, die Reel-Serie „Baue mit Shifty“ und ausgewählte Objekte wie die Skyview Penthouses am Börseplatz 1.">
 <meta name="robots" content="noindex">
@@ -13,7 +13,7 @@
 <meta property="og:description" content="Baurechner, Baue mit Shifty und Objekte in Wien.">
 <meta property="og:image" content="https://quickestate.at/img/skyview-penthouse-dachterrasse-stephansdom.webp">
 <link rel="preload" href="fonts/oswald-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="start.css?v=341">
+<link rel="stylesheet" href="start.css?v=342">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"QuickEstate","url":"https://quickestate.at/","slogan":"See beyond.","founder":{"@id":"#eduard"}},{"@type":"Person","@id":"#eduard","name":"Eduard Beches","alternateName":"Shifty","address":{"@type":"PostalAddress","addressLocality":"Wien","addressCountry":"AT"}}]}
 </script>
@@ -63,6 +63,14 @@
     <p class="g-t">Adresse eingeben – du siehst Bauklasse, erlaubte Höhe und den maximalen Grundstückspreis pro m² aus Bauträgersicht.</p>
     <form class="g-f" id="gateForm" novalidate><label class="sr" for="gateAddr">Adresse in Wien</label><input id="gateAddr" name="adresse" type="text" autocomplete="street-address" placeholder="Stephansplatz 1, 1010 Wien"><button type="submit" class="g-b"><span>Prüfen</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
     <p class="g-m" id="gateMsg" role="status"></p>
+    <ul class="g-sug" id="gateSug" role="listbox" aria-label="Adressvorschläge" hidden></ul>
+    <div class="g-res" id="gateRes" hidden>
+      <p class="g-ra" id="resAddr"></p>
+      <div class="g-map" id="resMap" role="img" aria-label="Ausschnitt Flächenwidmungsplan mit markiertem Grundstück"><div class="g-tiles" id="resTiles"></div><svg class="g-ov" id="resOv" aria-hidden="true"></svg><p class="g-load" id="resLoad">Plan wird geladen …</p></div>
+      <p class="g-pi" id="resInfo"></p>
+      <p class="g-src">Flächenwidmungsplan: Stadt Wien – data.wien.gv.at · Grundstücksgrenzen: BEV Kataster, Stand 01.10.2025 · CC BY 4.0 · Grenzen nicht vermessungsgenau</p>
+      <button type="button" class="g-back" id="resBack">Andere Adresse</button>
+    </div>
     <p class="g-n">Unverbindliche Ersteinschätzung · keine Rechts- oder Bewertungsberatung · Daten: Stadt Wien · nichts wird gespeichert</p>
   </div>
   </div>
@@ -89,6 +97,6 @@
 <script src="lib/gsap.min.js" defer></script>
 <script src="lib/ScrollTrigger.min.js" defer></script>
 <script src="lib/lenis.min.js" defer></script>
-<script type="module" src="start.js?v=341"></script>
+<script type="module" src="start.js?v=342"></script>
 </body>
 </html>

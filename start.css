@@ -258,3 +258,23 @@ body.gl-arch .arch{background:none}
 .qe-mono{display:block;width:100%;height:100%;overflow:visible}
 @media (max-width:900px){.seal{width:76px;height:45px}}
 .qe-in .qc{display:inline-block;will-change:transform,opacity}
+
+/* v3.42 – Baurechner Schritt 1: Adressvorschläge + Grundstück im Flächenwidmungsplan */
+.g-sug{list-style:none;margin:6px auto 0;padding:0;max-width:620px;text-align:left;border:1px solid rgba(3,32,61,.25);background:var(--beige)}
+.g-sug li{padding:10px 14px;font-size:15px;cursor:pointer;border-top:1px solid rgba(3,32,61,.1)}
+.g-sug li:first-child{border-top:0}
+.g-sug li:hover,.g-sug li.on{background:#E3D7C2}
+.g-in.has-res .g-h,.g-in.has-res .g-t,.g-in.has-res .g-f,.g-in.has-res .g-n{display:none}
+.g-in.has-res{padding-top:40px;padding-bottom:30px}
+.g-ra{font-family:"QE Disp",Georgia,serif;font-stretch:62.5%;font-weight:600;text-transform:uppercase;font-size:clamp(28px,min(3.6vw,5.5vh),46px);line-height:1;margin:0 0 16px;letter-spacing:-.01em}
+.g-map{position:relative;width:min(100%,46vh,440px);aspect-ratio:1;margin:0 auto;overflow:hidden;background:#F4F1EA;border:1px solid rgba(3,32,61,.35)}
+.g-tiles{position:absolute;inset:0}
+.g-tiles img{position:absolute;display:block;max-width:none;user-select:none;pointer-events:none}
+.g-ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.g-ov .gs{fill:rgba(3,32,61,.16);stroke:#03203D;stroke-width:3;stroke-linejoin:round}
+.g-ov .ap{fill:#C8102E;stroke:#F4F1EA;stroke-width:2}
+.g-load{position:absolute;left:0;right:0;bottom:8px;margin:0;font-size:12px;opacity:.7}
+.g-pi{margin:14px auto 0;font-size:15px;font-weight:600;max-width:520px}
+.g-src{margin:8px auto 0;font-size:11px;opacity:.6;max-width:520px;line-height:1.5}
+.g-back{margin-top:14px;background:none;border:0;border-bottom:1px solid currentColor;padding:2px 0;color:inherit;font:600 12px/1.4 var(--sans);letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+@media (max-width:900px){.g-map{width:min(100%,42vh)}}

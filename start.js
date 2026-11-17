@@ -392,12 +392,85 @@ function start() {
     gons.forEach((g, i) => { const a = (wA + i * 24 - 90) * Math.PI / 180, x = 250 * Math.cos(a), y = 250 * Math.sin(a);
       g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')');
       const tx = g.querySelector('text'); if (tx) tx.style.opacity = (0.35 + 0.65 * Math.max(0, -y / 250)).toFixed(2); }); });
-  // Adresse: Rechner ist noch nicht online → ehrlich sagen und Kontakt mit vorausgefüllter Adresse anbieten (nichts wird gespeichert)
-  $('gateForm').addEventListener('submit', e => { e.preventDefault(); const a = $('gateAddr').value.trim(); const msg = $('gateMsg'); if (a) wBoost = 140;
-    if (!a) { msg.textContent = 'Bitte eine Adresse in Wien eingeben.'; $('gateAddr').focus(); return; }
-    msg.innerHTML = ''; const t = document.createElement('span'); t.textContent = 'Der Rechner geht in Kürze online. Bis dahin prüfe ich „' + a + '“ gern persönlich: '; const l = document.createElement('a');
-    l.href = 'mailto:eb@quickestate.at?subject=' + encodeURIComponent('Grundstück prüfen: ' + a); l.textContent = 'Anfrage senden'; msg.append(t, l); });
-  $('gateAddr').addEventListener('input', () => { $('gateMsg').textContent = ''; });
+  /* ── Baurechner Schritt 1: Adresse → Grundstück im Flächenwidmungsplan (17.11.2026) ──────────────────────────────
+     Adresse: Adress-Service der Stadt Wien (OGD, CORS). Grundstück: BEV-Kataster als eigene Kacheln unter /kataster/16/
+     (Zoom-16-Kacheln, Ringe als ganze Zahlen 1e-7 Grad, Start + Differenzen – Format wie im Rechner v204).
+     Plan: WMTS-Kacheln flwbplmzk/rot der Stadt Wien. Nichts wird gespeichert. */
+  const gIn = $('gateAddr'), gMsg = $('gateMsg'), gSug = $('gateSug'), gRes = $('gateRes'), gBox = document.querySelector('.g-in');
+  const ADR = q => 'https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?Address=' + encodeURIComponent(q) + '&crs=EPSG:4326';
+  const adrSuche = q => fetch(ADR(q)).then(r => r.ok ? r.text() : '').then(t => { try { return (JSON.parse(t).features || []).filter(f => f.geometry && f.properties); } catch { return []; } });
+  const adrText = f => f.properties.Adresse + (f.properties.PostalCode ? ', ' + f.properties.PostalCode + ' Wien' : ', Wien');
+  const hatNr = f => !!f.properties.StreetNumber;
+  let sugList = [], sugT = 0, sugN = 0, kgNamen = null;
+  const sugZeigen = L => { sugList = L; gSug.textContent = ''; L.forEach((f, i) => { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.tabIndex = -1;
+      li.textContent = adrText(f) + (hatNr(f) ? '' : ' – Hausnummer fehlt'); li.addEventListener('mousedown', e => { e.preventDefault(); waehlen(f); }); gSug.append(li); });
+    gSug.hidden = !L.length; };
+  gIn.addEventListener('input', () => { gMsg.textContent = ''; clearTimeout(sugT); const q = gIn.value.trim(); if (q.length < 3) { sugZeigen([]); return; }
+    const n = ++sugN; sugT = setTimeout(() => adrSuche(q).then(L => { if (n === sugN && document.activeElement === gIn) sugZeigen(L.slice(0, 6)); }).catch(() => {}), 280); });
+  gIn.addEventListener('keydown', e => { const it = [...gSug.children]; if (gSug.hidden || !it.length) return; let i = it.indexOf(gSug.querySelector('.on'));
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); i = e.key === 'ArrowDown' ? Math.min(it.length - 1, i + 1) : Math.max(-1, i - 1); it.forEach((li, k) => li.classList.toggle('on', k === i)); }
+    else if (e.key === 'Enter' && i >= 0) { e.preventDefault(); waehlen(sugList[i]); } else if (e.key === 'Escape') sugZeigen([]); });
+  gIn.addEventListener('blur', () => setTimeout(() => sugZeigen([]), 120));
+  $('gateForm').addEventListener('submit', e => { e.preventDefault(); const q = gIn.value.trim(); if (q) wBoost = 140; sugZeigen([]);
+    if (!q) { gMsg.textContent = 'Bitte eine Adresse in Wien eingeben.'; gIn.focus(); return; }
+    gMsg.textContent = 'Suche …';
+    adrSuche(q).then(L => { const f = L.find(hatNr);
+      if (!L.length) { gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
+      if (!f) { gMsg.textContent = 'Bitte mit Hausnummer eingeben (z. B. „' + L[0].properties.Adresse + ' 5“).'; return; }
+      waehlen(f); }).catch(() => { gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
+  $('resBack').addEventListener('click', () => { gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
+
+  // Kataster
+  const KZ = 16, katC = new Map();
+  const kKachel = (lon, lat, z) => { const n = 2 ** z, la = lat * Math.PI / 180; return [Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n)]; };
+  const katLaden = (x, y) => { const k = x + '_' + y; if (!katC.has(k)) katC.set(k, fetch('kataster/16/' + k + '.json').then(r => r.ok ? r.json() : []).catch(() => []));  return katC.get(k); };
+  const kRing = fl => { const r = []; let x = 0, y = 0; for (let i = 0; i + 1 < fl.length; i += 2) { x += fl[i]; y += fl[i + 1]; r.push([x / 1e7, y / 1e7]); } return r; };
+  const kDrin = (p, rg) => { let c = false; for (let i = 0, j = rg.length - 1; i < rg.length; j = i++) { const [xi, yi] = rg[i], [xj, yj] = rg[j];
+      if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+  const kInPoly = (p, polys) => polys.some(pg => kDrin(p, pg[0]) && !pg.slice(1).some(h => kDrin(p, h)));
+  const kSegAbst = (p, a, b) => { const kx = 74000, ky = 111200, ax = (a[0] - p[0]) * kx, ay = (a[1] - p[1]) * ky, bx = (b[0] - p[0]) * kx, by = (b[1] - p[1]) * ky;   // Meter (Wien, grob)
+    const dx = bx - ax, dy = by - ay, t = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / ((dx * dx + dy * dy) || 1))); return Math.hypot(ax + t * dx, ay + t * dy); };
+  async function grundstueck(lon, lat) {
+    const [x, y] = kKachel(lon, lat, KZ), d = await katLaden(x, y), P = d.map(r => ({ kg: r[0], gnr: r[1], fl: +r[2] || 0, polys: (r[3] || []).map(pg => pg.map(kRing)) }));
+    const hit = P.find(g => kInPoly([lon, lat], g.polys)); if (hit) return { g: hit, alle: P, genau: true };
+    let best = null, bd = 12;                                        // Adresspunkt auf Gehsteig/Straße → nächstes Grundstück bis 12 m
+    P.forEach(g => g.polys.forEach(pg => pg[0].forEach((a, i, R) => { const dd = kSegAbst([lon, lat], a, R[(i + 1) % R.length]); if (dd < bd) { bd = dd; best = g; } })));
+    return best ? { g: best, alle: P, genau: false } : null; }
+
+  // Planausschnitt: Kacheln Flächenwidmungsplan + Grundstück als Linie
+  const kMerc = (lon, lat) => { const la = lat * Math.PI / 180; return [(lon + 180) / 360 * 256, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * 256]; };   // Weltpixel bei Zoom 0
+  function planZeichnen(g, P, pt) {
+    const box = $('resMap'), S = box.clientWidth || 400, tiles = $('resTiles'), ov = $('resOv'), ld = $('resLoad');
+    const pts = g.polys.flatMap(pg => pg[0]).map(c => kMerc(c[0], c[1]));
+    const x0 = Math.min(...pts.map(p => p[0])), x1 = Math.max(...pts.map(p => p[0])), y0 = Math.min(...pts.map(p => p[1])), y1 = Math.max(...pts.map(p => p[1]));
+    const span = Math.max(x1 - x0, y1 - y0, 1e-9), k = Math.min(0.5 * S / span, 2 ** 19.6), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;   // Grundstück ≈ halbe Breite, höchstens Zoom ~19,6
+    const dpr = Math.min(2, devicePixelRatio || 1), tz = Math.max(12, Math.min(19, Math.round(Math.log2(k * dpr)))), ts = 256 * k / 2 ** tz;
+    const toCss = p => [(p[0] - cx) * k + S / 2, (p[1] - cy) * k + S / 2];
+    tiles.textContent = ''; ld.hidden = false; let offen = 0;
+    const tx0 = Math.floor((cx - S / 2 / k) * 2 ** tz / 256), tx1 = Math.floor((cx + S / 2 / k) * 2 ** tz / 256), ty0 = Math.floor((cy - S / 2 / k) * 2 ** tz / 256), ty1 = Math.floor((cy + S / 2 / k) * 2 ** tz / 256);
+    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) {
+      const im = new Image(); im.alt = ''; im.decoding = 'async'; offen++;
+      im.onload = im.onerror = () => { if (--offen === 0) ld.hidden = true; };
+      im.src = 'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/' + tz + '/' + ty + '/' + tx + '.jpeg';
+      const [l, t] = toCss([tx * 256 / 2 ** tz, ty * 256 / 2 ** tz]); im.style.left = l.toFixed(1) + 'px'; im.style.top = t.toFixed(1) + 'px'; im.style.width = im.style.height = (ts + 0.6).toFixed(1) + 'px'; tiles.append(im); }
+    const NS = 'http://www.w3.org/2000/svg'; ov.setAttribute('viewBox', '0 0 ' + S + ' ' + S); ov.textContent = '';
+    const pfad = gg => gg.polys.map(pg => pg.map(r => 'M' + r.map(c => toCss(kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')).join('');
+    const p = document.createElementNS(NS, 'path'); p.setAttribute('d', pfad(g)); p.setAttribute('class', 'gs'); p.setAttribute('fill-rule', 'evenodd'); ov.append(p);
+    const [ax, ay] = toCss(kMerc(pt[0], pt[1])), m = document.createElementNS(NS, 'circle'); m.setAttribute('cx', ax.toFixed(1)); m.setAttribute('cy', ay.toFixed(1)); m.setAttribute('r', 5); m.setAttribute('class', 'ap'); ov.append(m); }
+
+  async function waehlen(f) {
+    sugZeigen([]); gIn.value = adrText(f); gMsg.textContent = 'Grundstück wird gesucht …';
+    const [lon, lat] = f.geometry.coordinates;
+    try {
+      if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => j.kg).catch(() => ({}));
+      const [r, kgN] = await Promise.all([grundstueck(lon, lat), kgNamen]);
+      if (!r) { gMsg.textContent = 'An dieser Adresse habe ich kein Grundstück gefunden – bitte eine andere Hausnummer probieren.'; return; }
+      gMsg.textContent = ''; $('resAddr').textContent = adrText(f);
+      const fl = r.g.fl.toLocaleString('de-AT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      $('resInfo').textContent = 'Grundstück ' + r.g.gnr + ' · KG ' + (kgN[r.g.kg] || r.g.kg) + ' · ' + fl + ' m² laut Kataster' + (r.genau ? '' : ' · Adresspunkt liegt knapp außerhalb – nächstes Grundstück gewählt');
+      gRes.hidden = false; gBox.classList.add('has-res');
+      requestAnimationFrame(() => planZeichnen(r.g, r.alle, [lon, lat]));
+    } catch (err) { gMsg.textContent = 'Das Grundstück konnte gerade nicht geladen werden – bitte nochmal versuchen.'; } }
 
   let raf = 0;
   function frame() {
