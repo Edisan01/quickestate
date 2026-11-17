@@ -13,10 +13,10 @@ for name, kg, gnr, (lon, lat) in F:
         for dy in range(-R, R + 1):
             u = f'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/{Z}/{cy + dy}/{cx + dx}.jpeg'
             try:
-                b = urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent': 'quickestate-test'}), timeout=30).read()
+                b = urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent': 'quickestate-test'}), timeout=8).read()
                 im.paste(Image.open(io.BytesIO(b)).convert('RGB'), ((dx + R) * 256, (dy + R) * 256))
-            except Exception as e: print('Fehler', u, e)
+            except Exception as e: print('Fehler', u, e, flush=True)
     key = f'{kg}_{gnr.replace("/", "-")}'
     im.save(f'{OUT}/{key}.png')
     json.dump({'name': name, 'kg': kg, 'gnr': gnr, 'z': Z, 'x0': cx - R, 'y0': cy - R, 'punkt': [lon, lat]}, open(f'{OUT}/{key}.json', 'w'))
-    print('ok', name, key)
+    print("ok", name, key, flush=True)

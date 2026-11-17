@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pip install -q pillow
-      - run: python3 tools/planbild_holen.py tools/planbild_faelle.json /tmp/pb ${{ github.event.inputs.zoom }} ${{ github.event.inputs.radius }}
+      - run: timeout 900 python3 -u tools/planbild_holen.py tools/planbild_faelle.json /tmp/pb ${{ github.event.inputs.zoom }} ${{ github.event.inputs.radius }}
       - name: Auf eigenen Branch legen
         run: |
           git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
