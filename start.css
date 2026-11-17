@@ -340,3 +340,6 @@ body.gl-arch .arch{background:none}
 .g-lay button:focus-visible{outline:2px solid #C8102E;outline-offset:-2px}
 .topnav{transition:opacity .3s}
 body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer-events:none}
+.g-lb .g-ov .gs,.g-lb .g-ov .gsf{fill:rgba(120,200,90,.32)}
+.g-lb .g-ov .gs,.g-lb .g-ov .gsa{stroke:#F1E9DA;filter:drop-shadow(0 0 1.5px rgba(0,0,0,.8))}
+.g-lb .g-ov .gsi{stroke:#F1E9DA}

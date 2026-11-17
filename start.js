@@ -506,18 +506,20 @@ function start() {
   const mapS = () => mapEl.clientWidth || 400;
   const KMIN = 2 ** 17, KMAX = 2 ** 20;   // nie bis zur bunten Übersicht hinaus – immer Detailplan mit roten Linien
   function mapRender() {
-    const s = mapS(), k = M.k, dpr = Math.min(2, devicePixelRatio || 1), tz = Math.max(12, Math.min(19, Math.round(Math.log2(k * dpr)))), n = 2 ** tz;
+    const s = mapS(), k = M.k, dpr = Math.min(2, devicePixelRatio || 1), zw = Math.round(Math.log2(k * dpr)), tz = Math.max(12, Math.min(19, zw));   // Plan gibt es bis Stufe 19, Luftbild bis 20
     const css = (x, y) => [(x - M.cx) * k + s / 2, (y - M.cy) * k + s / 2];
-    const tx0 = Math.floor((M.cx - s / 2 / k) * n / 256), tx1 = Math.floor((M.cx + s / 2 / k) * n / 256), ty0 = Math.floor((M.cy - s / 2 / k) * n / 256), ty1 = Math.floor((M.cy + s / 2 / k) * n / 256);
     const need = new Set(); let pend = 0;
     const LAG = M.lb ? ['lb/farbe', 'flwbplmzk/rot'] : ['flwbplmzk/rot'];   // Luftbild: Orthofoto unten, Widmungsplan darüber (Weiß wird per multiply durchsichtig)
-    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) LAG.forEach((lg, li) => { const key = lg + '/' + tz + '/' + ty + '/' + tx; need.add(key);
-      let im = M.tiles.get(key); if (!im) { im = new Image(); im.alt = ''; im.decoding = 'async'; im.dataset.z = tz; im.dataset.x = tx; im.dataset.y = ty; im.dataset.li = lg === 'lb/farbe' ? 0 : 1; im.className = lg === 'lb/farbe' ? 'tlb' : 'tpl';
+    const zAkt = new Set();
+    LAG.forEach(lg => { const tz = lg === 'lb/farbe' ? Math.max(12, Math.min(20, zw)) : Math.max(12, Math.min(19, zw)), n = 2 ** tz; zAkt.add(lg + tz);
+    const tx0 = Math.floor((M.cx - s / 2 / k) * n / 256), tx1 = Math.floor((M.cx + s / 2 / k) * n / 256), ty0 = Math.floor((M.cy - s / 2 / k) * n / 256), ty1 = Math.floor((M.cy + s / 2 / k) * n / 256);
+    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) { const key = lg + '/' + tz + '/' + ty + '/' + tx; need.add(key);
+      let im = M.tiles.get(key); if (!im) { im = new Image(); im.alt = ''; im.decoding = 'async'; im.dataset.z = tz; im.dataset.x = tx; im.dataset.y = ty; im.dataset.li = lg === 'lb/farbe' ? 0 : 1; im.dataset.lg = lg; im.className = lg === 'lb/farbe' ? 'tlb' : 'tpl';
         im.onload = im.onerror = () => { im.dataset.ok = 1; aufraeumen(); }; im.src = 'https://maps.wien.gv.at/wmts/' + lg + '/google3857/' + tz + '/' + ty + '/' + tx + '.jpeg'; M.tiles.set(key, im); tilesEl.append(im); }
-      if (!im.dataset.ok) pend++; });
+      if (!im.dataset.ok) pend++; } });
     M.need = need; M.tz = tz;
     M.tiles.forEach(im => { const z = +im.dataset.z, f = 256 / 2 ** z, [l, t] = css(+im.dataset.x * f, +im.dataset.y * f), w = 256 * k / 2 ** z;
-      im.style.left = l.toFixed(1) + 'px'; im.style.top = t.toFixed(1) + 'px'; im.style.width = im.style.height = (w + 0.6).toFixed(1) + 'px'; im.style.zIndex = (z === tz ? 2 : 0) + +im.dataset.li; });
+      im.style.left = l.toFixed(1) + 'px'; im.style.top = t.toFixed(1) + 'px'; im.style.width = im.style.height = (w + 0.6).toFixed(1) + 'px'; im.style.zIndex = (zAkt.has(im.dataset.lg + z) ? 2 : 0) + +im.dataset.li; });
     ldEl.hidden = pend === 0; aufraeumen();
     ovEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); ovEl.textContent = '';
     const P = c => css(...kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ');
