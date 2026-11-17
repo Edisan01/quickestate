@@ -1,0 +1,30 @@
+name: Plan-PDF Test (nur Analyse, kein Commit)
+on:
+  workflow_dispatch:
+    inputs:
+      nr:
+        description: "Plandokument-Nummern, mit Leerzeichen getrennt"
+        default: "7294"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Werkzeuge
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - name: Plan-PDFs holen und analysieren
+        run: |
+          mkdir -p out
+          for p in ${{ github.event.inputs.nr }}; do
+            curl -sS -m 120 -o out/pd${p}_plan.pdf "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=${p}&planDpi=0&isPlan=true" -w "${p}: %{http_code} %{size_download} %{content_type}\n"
+            pdfinfo out/pd${p}_plan.pdf > out/pd${p}_info.txt 2>&1 || true
+            pdfimages -list out/pd${p}_plan.pdf > out/pd${p}_bilder.txt 2>&1 || true
+            pdffonts out/pd${p}_plan.pdf > out/pd${p}_schriften.txt 2>&1 || true
+            pdftotext -bbox out/pd${p}_plan.pdf out/pd${p}_text_bbox.html 2>&1 || true
+            pdftotext -layout out/pd${p}_plan.pdf out/pd${p}_text.txt 2>&1 || true
+            echo "== $p"; cat out/pd${p}_info.txt; head -5 out/pd${p}_bilder.txt; wc -c out/pd${p}_text.txt
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plan-test
+          path: out
+          retention-days: 3
