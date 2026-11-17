@@ -20,9 +20,9 @@ jobs:
       - name: Verzeichnis zeigen
         if: ${{ github.event.inputs.modus == 'liste' }}
         run: |
-          for d in csv/${{ github.event.inputs.stichtag }} csv; do
-            echo "=== $d"; curl -sS -m 60 "https://data.bev.gv.at/download/Kataster/$d/" | grep -oE 'href="[^"]+"[^<]*</a>[^<]{0,80}' | sed -E 's/<[^>]+>//g' | head -80
-          done
+          curl -sS -m 60 -A "Mozilla/5.0" "https://www.bev.gv.at/Services/Produkte/Kataster-und-Verzeichnisse/Kataster-Stichtagsdaten.html" -o seite.html; wc -c seite.html
+          grep -oE 'href="[^"]*(data\.bev\.gv\.at|\.csv|\.zip|\.gpkg)[^"]*"' seite.html | sort -u | head -80
+          curl -sS -m 60 "https://data.bev.gv.at/geonetwork/srv/atom/describe/service?uuid=68cb9fac-e9ca-4366-b41f-79195fd31360" | grep -oE 'https://data\.bev\.gv\.at/[^"<]+' | sort -u | head -40
       - name: CSV holen und Wien-Flächen schreiben
         if: ${{ github.event.inputs.modus == 'holen' }}
         run: |
