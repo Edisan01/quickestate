@@ -5,6 +5,9 @@ on:
       nr:
         description: "Plandokument-Nummern, mit Leerzeichen getrennt"
         default: "7294"
+      zeigen:
+        description: "Nummer, deren Text ausgegeben wird"
+        default: ""
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -21,7 +24,8 @@ jobs:
             pdffonts out/pd${p}_plan.pdf > out/pd${p}_schriften.txt 2>&1 || true
             pdftotext -bbox out/pd${p}_plan.pdf out/pd${p}_text_bbox.html 2>&1 || true
             pdftotext -layout out/pd${p}_plan.pdf out/pd${p}_text.txt 2>&1 || true
-            echo "== $p"; cat out/pd${p}_info.txt; head -5 out/pd${p}_bilder.txt; wc -c out/pd${p}_text.txt
+            echo "== $p | $(grep -E '^(Creator|Producer)' out/pd${p}_info.txt | tr -s ' ' | tr '\n' ' ') | Seite $(grep 'Page size' out/pd${p}_info.txt | tr -s ' ') | Text $(wc -c < out/pd${p}_text.txt) Zeichen | Woerter $(grep -c '<word' out/pd${p}_text_bbox.html)"
+            if [ "${{ github.event.inputs.zeigen }}" = "$p" ]; then echo "--- Text-Auszug"; tr -s ' \n' ' ' < out/pd${p}_text.txt | head -c 4000; echo; echo "--- Woerter mit Position"; grep '<word' out/pd${p}_text_bbox.html | sed -E 's/.*xMin="([0-9.]+)" yMin="([0-9.]+)".*>(.*)<\/word>/\1 \2 \3/' | head -150 | tr '\n' '|'; echo; fi
           done
       - uses: actions/upload-artifact@v4
         with:
