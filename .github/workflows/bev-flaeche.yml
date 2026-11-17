@@ -15,6 +15,7 @@ permissions:
 jobs:
   lauf:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - name: Verzeichnis zeigen
@@ -23,16 +24,18 @@ jobs:
           curl -sS -m 60 -A "Mozilla/5.0" "https://www.bev.gv.at/Services/Produkte/Kataster-und-Verzeichnisse/Kataster-Stichtagsdaten.html" -o seite.html; wc -c seite.html
           grep -oE 'href="[^"]*(data\.bev\.gv\.at|\.csv|\.zip|\.gpkg)[^"]*"' seite.html | sort -u | head -80
           curl -sS -m 60 "https://data.bev.gv.at/geonetwork/srv/atom/describe/service?uuid=68cb9fac-e9ca-4366-b41f-79195fd31360" | grep -oE 'https://data\.bev\.gv\.at/[^"<]+' | sort -u | head -40
-      - name: CSV holen und Wien-Flächen schreiben
-        if: ${{ github.event.inputs.modus == 'holen' }}
+      - name: GPKG holen und Wien-Flächen schreiben
+        if: ${{ github.event.inputs.modus == 'holen' || github.event.inputs.modus == 'schema' }}
         run: |
           set -e
-          f="${{ github.event.inputs.datei }}"
-          curl -sS -m 1500 -o roh "https://data.bev.gv.at/download/Kataster/csv/${{ github.event.inputs.stichtag }}/$f"
-          ls -la roh; file roh
-          if file roh | grep -qi zip; then unzip -o -q roh -d roh_d; ls -la roh_d; src=$(ls roh_d/*.csv | head -1); else src=roh; fi
-          head -3 "$src" | iconv -f latin1 -t utf-8 || head -3 "$src"
-          python3 tools/bev_flaeche.py "$src" kataster/flaeche.json
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost "$AGENT_TOOLSDIRECTORY" || true
+          df -h /
+          f=KAT_DKM_GST_epsg31287_${{ github.event.inputs.stichtag }}.gpkg
+          curl -sS -m 3000 -o /mnt/$f "https://data.bev.gv.at/download/Kataster/gpkg/national/$f" || sudo curl -sS -m 3000 -o /mnt/$f "https://data.bev.gv.at/download/Kataster/gpkg/national/$f"
+          ls -la /mnt/$f
+          if [ "${{ github.event.inputs.modus }}" = schema ]; then python3 tools/bev_flaeche.py /mnt/$f x schema; exit 0; fi
+          python3 tools/bev_flaeche.py /mnt/$f kataster/flaeche.json
+          ls -la kataster/flaeche.json
           git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
           git add kataster/flaeche.json
           git commit -m "Amtliche Grundstücksflächen Wien (BEV Grundstücksverzeichnis ${{ github.event.inputs.stichtag }}, CC BY 4.0)" || echo nichts
