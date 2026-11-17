@@ -416,9 +416,8 @@ function start() {
     gMsg.textContent = 'Suche …';
     adrSuche(q).then(L => { const f = L.find(hatNr);
       if (!L.length) { gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
-      if (!f) { gMsg.textContent = 'Bitte mit Hausnummer eingeben (z. B. „' + L[0].properties.Adresse + ' 5“).'; return; }
-      waehlen(f); }).catch(() => { gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
-  $('resBack').addEventListener('click', () => { gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
+      waehlen(f || L[0]); }).catch(() => { gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
+  $('resBack').addEventListener('click', () => { M.marks = []; M.sel = null; gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
 
   // Kataster
   const KZ = 16, katC = new Map();
@@ -437,39 +436,92 @@ function start() {
     P.forEach(g => g.polys.forEach(pg => pg[0].forEach((a, i, R) => { const dd = kSegAbst([lon, lat], a, R[(i + 1) % R.length]); if (dd < bd) { bd = dd; best = g; } })));
     return best ? { g: best, alle: P, genau: false } : null; }
 
-  // Planausschnitt: Kacheln Flächenwidmungsplan + Grundstück als Linie
-  const kMerc = (lon, lat) => { const la = lat * Math.PI / 180; return [(lon + 180) / 360 * 256, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * 256]; };   // Weltpixel bei Zoom 0
-  function planZeichnen(g, P, pt) {
-    const box = $('resMap'), S = box.clientWidth || 400, tiles = $('resTiles'), ov = $('resOv'), ld = $('resLoad');
-    const pts = g.polys.flatMap(pg => pg[0]).map(c => kMerc(c[0], c[1]));
-    const x0 = Math.min(...pts.map(p => p[0])), x1 = Math.max(...pts.map(p => p[0])), y0 = Math.min(...pts.map(p => p[1])), y1 = Math.max(...pts.map(p => p[1]));
-    const span = Math.max(x1 - x0, y1 - y0, 1e-9), k = Math.min(0.5 * S / span, 2 ** 19.6), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;   // Grundstück ≈ halbe Breite, höchstens Zoom ~19,6
-    const dpr = Math.min(2, devicePixelRatio || 1), tz = Math.max(12, Math.min(19, Math.round(Math.log2(k * dpr)))), ts = 256 * k / 2 ** tz;
-    const toCss = p => [(p[0] - cx) * k + S / 2, (p[1] - cy) * k + S / 2];
-    tiles.textContent = ''; ld.hidden = false; let offen = 0;
-    const tx0 = Math.floor((cx - S / 2 / k) * 2 ** tz / 256), tx1 = Math.floor((cx + S / 2 / k) * 2 ** tz / 256), ty0 = Math.floor((cy - S / 2 / k) * 2 ** tz / 256), ty1 = Math.floor((cy + S / 2 / k) * 2 ** tz / 256);
-    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) {
-      const im = new Image(); im.alt = ''; im.decoding = 'async'; offen++;
-      im.onload = im.onerror = () => { if (--offen === 0) ld.hidden = true; };
-      im.src = 'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/' + tz + '/' + ty + '/' + tx + '.jpeg';
-      const [l, t] = toCss([tx * 256 / 2 ** tz, ty * 256 / 2 ** tz]); im.style.left = l.toFixed(1) + 'px'; im.style.top = t.toFixed(1) + 'px'; im.style.width = im.style.height = (ts + 0.6).toFixed(1) + 'px'; tiles.append(im); }
-    const NS = 'http://www.w3.org/2000/svg'; ov.setAttribute('viewBox', '0 0 ' + S + ' ' + S); ov.textContent = '';
-    const pfad = gg => gg.polys.map(pg => pg.map(r => 'M' + r.map(c => toCss(kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')).join('');
-    const p = document.createElementNS(NS, 'path'); p.setAttribute('d', pfad(g)); p.setAttribute('class', 'gs'); p.setAttribute('fill-rule', 'evenodd'); ov.append(p);
-    const [ax, ay] = toCss(kMerc(pt[0], pt[1])), m = document.createElementNS(NS, 'circle'); m.setAttribute('cx', ax.toFixed(1)); m.setAttribute('cy', ay.toFixed(1)); m.setAttribute('r', 5); m.setAttribute('class', 'ap'); ov.append(m); }
+  // Plan als bewegliche Karte: Ziehen = verschieben, + / − = zoomen (kein Mausrad – das bleibt fürs Seiten-Scrollen), Klick = Grundstück bzw. Hausnummer wählen
+  const kMerc = (lon, lat) => { const la = lat * Math.PI / 180; return [(lon + 180) / 360 * 256, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * 256]; };   // Weltpixel Zoom 0
+  const kGeo = (x, y) => [x / 256 * 360 - 180, Math.atan(Math.sinh(Math.PI * (1 - 2 * y / 256))) * 180 / Math.PI];
+  const NS = 'http://www.w3.org/2000/svg', mapEl = $('resMap'), tilesEl = $('resTiles'), ovEl = $('resOv'), ldEl = $('resLoad');
+  const M = { cx: 0, cy: 0, k: 1, sel: null, pt: null, marks: [], tiles: new Map(), tz: 0 };
+  const mapS = () => mapEl.clientWidth || 400;
+  const KMIN = 2 ** 12.5, KMAX = 2 ** 20;
+  function mapRender() {
+    const s = mapS(), k = M.k, dpr = Math.min(2, devicePixelRatio || 1), tz = Math.max(12, Math.min(19, Math.round(Math.log2(k * dpr)))), n = 2 ** tz;
+    const css = (x, y) => [(x - M.cx) * k + s / 2, (y - M.cy) * k + s / 2];
+    const tx0 = Math.floor((M.cx - s / 2 / k) * n / 256), tx1 = Math.floor((M.cx + s / 2 / k) * n / 256), ty0 = Math.floor((M.cy - s / 2 / k) * n / 256), ty1 = Math.floor((M.cy + s / 2 / k) * n / 256);
+    const need = new Set(); let pend = 0;
+    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) { const key = tz + '/' + ty + '/' + tx; need.add(key);
+      let im = M.tiles.get(key); if (!im) { im = new Image(); im.alt = ''; im.decoding = 'async'; im.dataset.z = tz; im.dataset.x = tx; im.dataset.y = ty;
+        im.onload = im.onerror = () => { im.dataset.ok = 1; aufraeumen(); }; im.src = 'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/' + key + '.jpeg'; M.tiles.set(key, im); tilesEl.append(im); }
+      if (!im.dataset.ok) pend++; }
+    M.need = need; M.tz = tz;
+    M.tiles.forEach(im => { const z = +im.dataset.z, f = 256 / 2 ** z, [l, t] = css(+im.dataset.x * f, +im.dataset.y * f), w = 256 * k / 2 ** z;
+      im.style.left = l.toFixed(1) + 'px'; im.style.top = t.toFixed(1) + 'px'; im.style.width = im.style.height = (w + 0.6).toFixed(1) + 'px'; im.style.zIndex = z === tz ? 2 : 1; });
+    ldEl.hidden = pend === 0; aufraeumen();
+    ovEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); ovEl.textContent = '';
+    const P = c => css(...kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ');
+    if (M.sel) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', M.sel.polys.map(pg => pg.map(r => 'M' + r.map(P).join('L') + 'Z').join('')).join('')); p.setAttribute('class', 'gs'); p.setAttribute('fill-rule', 'evenodd'); ovEl.append(p); }
+    const lab = Math.log2(k) >= 17.4;
+    M.marks.forEach(m => { const [x, y] = css(...kMerc(m.lon, m.lat)); if (x < -20 || y < -20 || x > s + 20 || y > s + 20) return;
+      const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', x.toFixed(1)); c.setAttribute('cy', y.toFixed(1)); c.setAttribute('r', lab ? 9 : 4); c.setAttribute('class', 'hn'); ovEl.append(c);
+      if (lab) { const t = document.createElementNS(NS, 'text'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', (y + 3.5).toFixed(1)); t.setAttribute('class', 'hnt'); t.textContent = m.nr; ovEl.append(t); } });
+    if (M.pt) { const [x, y] = css(...kMerc(M.pt[0], M.pt[1])), c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', x.toFixed(1)); c.setAttribute('cy', y.toFixed(1)); c.setAttribute('r', 5); c.setAttribute('class', 'ap'); ovEl.append(c); } }
+  function aufraeumen() {                                                   // alte Zoomstufe erst entfernen, wenn die neue fertig ist
+    if (!M.need) return; const fertig = [...M.need].every(k => { const im = M.tiles.get(k); return im && im.dataset.ok; });
+    if (fertig) { ldEl.hidden = true; M.tiles.forEach((im, key) => { if (!M.need.has(key)) { im.remove(); M.tiles.delete(key); } }); } }
+  let rq = 0; const mapKick = () => { if (!rq) rq = requestAnimationFrame(() => { rq = 0; mapRender(); }); };
+  const zoomAuf = (box, anteil) => { const s = mapS(), [x0, y0] = kMerc(box[0], box[3]), [x1, y1] = kMerc(box[2], box[1]);
+    M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; M.k = Math.max(KMIN, Math.min(2 ** 19.6, anteil * s / Math.max(x1 - x0, y1 - y0, 1e-9))); };
+  const bbox = pts => [Math.min(...pts.map(p => p[0])), Math.min(...pts.map(p => p[1])), Math.max(...pts.map(p => p[0])), Math.max(...pts.map(p => p[1]))];
+  $('mapIn').addEventListener('click', () => { M.k = Math.min(KMAX, M.k * 2); mapKick(); });
+  $('mapOut').addEventListener('click', () => { M.k = Math.max(KMIN, M.k / 2); mapKick(); });
+  let drag = null;
+  mapEl.addEventListener('pointerdown', e => { if (e.target.closest('.g-zoom')) return; drag = { x: e.clientX, y: e.clientY, cx: M.cx, cy: M.cy, moved: false }; mapEl.setPointerCapture(e.pointerId); mapEl.classList.add('drag'); });
+  mapEl.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.hypot(dx, dy) > 4) drag.moved = true;
+    if (drag.moved) { M.cx = drag.cx - dx / M.k; M.cy = drag.cy - dy / M.k; mapKick(); } });
+  const dragEnde = e => { if (!drag) return; const d = drag; drag = null; mapEl.classList.remove('drag'); if (d.moved || e.type === 'pointercancel') return;
+    const r = mapEl.getBoundingClientRect(), s = mapS(), px = e.clientX - r.left, py = e.clientY - r.top;
+    const hit = Math.log2(M.k) >= 15.5 && M.marks.find(m => { const [mx, my] = kMerc(m.lon, m.lat); return Math.hypot((mx - M.cx) * M.k + s / 2 - px, (my - M.cy) * M.k + s / 2 - py) < 12; });
+    if (hit) { waehlen(hit.f, true); return; }
+    const [lon, lat] = kGeo(M.cx + (px - s / 2) / M.k, M.cy + (py - s / 2) / M.k); parzelleWaehlen(lon, lat); };
+  mapEl.addEventListener('pointerup', dragEnde); mapEl.addEventListener('pointercancel', dragEnde);
 
-  async function waehlen(f) {
-    sugZeigen([]); gIn.value = adrText(f); gMsg.textContent = 'Grundstück wird gesucht …';
+  const flText = g => g.fl.toLocaleString('de-AT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  const zeigeInfo = (g, extra) => { $('resInfo').textContent = 'Grundstück ' + g.gnr + ' · KG ' + ((M.kg || {})[g.kg] || g.kg) + ' · ' + flText(g) + ' m² laut Kataster' + (extra || ''); };
+  const ladeKg = () => { if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => (M.kg = j.kg)).catch(() => (M.kg = {})); return kgNamen; };
+  const zeigeBox = () => { gRes.hidden = false; gBox.classList.add('has-res'); };
+  async function parzelleWaehlen(lon, lat) {
+    const r = await grundstueck(lon, lat); await ladeKg(); if (!r) return;
+    if (!r.genau) return;                                                    // Klick daneben (Straße ohne Kataster) → nichts ändern
+    M.sel = r.g; M.pt = null; $('resAddr').textContent = 'Grundstück ' + r.g.gnr; zeigeInfo(r.g, ' · per Klick gewählt');
+    $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück'; mapKick(); }
+
+  // ganze Straße (ohne Hausnummer): alle Adressen der Straße holen und als Hausnummern zeigen
+  const STR = (name, bez) => 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=1500&cql_filter='
+    + encodeURIComponent("NAME_STR='" + name.replace(/'/g, "''") + "'" + (bez ? " AND GEB_BEZIRK='" + String(bez).padStart(2, '0') + "'" : ''));
+  async function strasseZeigen(f) {
+    const name = f.properties.StreetName || f.properties.Adresse, bez = f.properties.Bezirk; gMsg.textContent = 'Straße wird geladen …';
+    let fc; try { fc = await fetch(STR(name, bez)).then(r => r.json()); } catch { fc = null; }
+    const L = ((fc && fc.features) || []).filter(x => x.geometry && x.properties && x.properties.NAME_ONR).map(x => ({ lon: x.geometry.coordinates[0], lat: x.geometry.coordinates[1], nr: x.properties.NAME_ONR,
+      f: { geometry: { coordinates: x.geometry.coordinates }, properties: { Adresse: x.properties.NAME, PostalCode: x.properties.PLZ, StreetNumber: x.properties.NAME_ONR, StreetName: x.properties.NAME_STR } } }));
+    await ladeKg(); gMsg.textContent = ''; M.marks = L; M.sel = null; M.pt = null;
+    if (!L.length) {                                                      // Flurname/Platz ohne Hausnummern (z. B. Wiese, Park): nur Ausschnitt zeigen, nichts vorwählen
+      const [lon, lat] = f.geometry.coordinates; $('resAddr').textContent = name; $('resInfo').textContent = 'Kein Ort mit Hausnummern – klick auf das Grundstück, das du meinst';
+      $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = Grundstück wählen'; zeigeBox();
+      requestAnimationFrame(() => { zoomAuf([lon - 0.002, lat - 0.0013, lon + 0.002, lat + 0.0013], 1); mapRender(); }); return; }
+    $('resAddr').textContent = name + (bez ? ', ' + bez + '. Bezirk' : ', Wien'); $('resInfo').textContent = L.length + ' Hausnummern – klick auf deine Nummer oder direkt auf ein Grundstück';
+    $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen'; zeigeBox();
+    requestAnimationFrame(() => { zoomAuf(bbox(L.map(m => [m.lon, m.lat])), 0.85); mapRender(); }); }
+
+  async function waehlen(f, ausKarte) {
+    sugZeigen([]); if (!hatNr(f)) { gIn.value = f.properties.Adresse; return strasseZeigen(f); }
+    gIn.value = adrText(f); if (!ausKarte) gMsg.textContent = 'Grundstück wird gesucht …';
     const [lon, lat] = f.geometry.coordinates;
     try {
-      if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => j.kg).catch(() => ({}));
-      const [r, kgN] = await Promise.all([grundstueck(lon, lat), kgNamen]);
+      const [r] = await Promise.all([grundstueck(lon, lat), ladeKg()]);
       if (!r) { gMsg.textContent = 'An dieser Adresse habe ich kein Grundstück gefunden – bitte eine andere Hausnummer probieren.'; return; }
-      gMsg.textContent = ''; $('resAddr').textContent = adrText(f);
-      const fl = r.g.fl.toLocaleString('de-AT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-      $('resInfo').textContent = 'Grundstück ' + r.g.gnr + ' · KG ' + (kgN[r.g.kg] || r.g.kg) + ' · ' + fl + ' m² laut Kataster' + (r.genau ? '' : ' · Adresspunkt liegt knapp außerhalb – nächstes Grundstück gewählt');
-      gRes.hidden = false; gBox.classList.add('has-res');
-      requestAnimationFrame(() => planZeichnen(r.g, r.alle, [lon, lat]));
+      gMsg.textContent = ''; $('resAddr').textContent = adrText(f); zeigeInfo(r.g, r.genau ? '' : ' · Adresspunkt liegt knapp außerhalb – nächstes Grundstück gewählt');
+      $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück';
+      M.sel = r.g; M.pt = [lon, lat]; if (!ausKarte) M.marks = []; zeigeBox();
+      requestAnimationFrame(() => { if (!ausKarte) zoomAuf(bbox(r.g.polys.flatMap(pg => pg[0])), 0.5); mapRender(); });
     } catch (err) { gMsg.textContent = 'Das Grundstück konnte gerade nicht geladen werden – bitte nochmal versuchen.'; } }
 
   let raf = 0;

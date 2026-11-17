@@ -278,3 +278,16 @@ body.gl-arch .arch{background:none}
 .g-src{margin:8px auto 0;font-size:11px;opacity:.6;max-width:520px;line-height:1.5}
 .g-back{margin-top:14px;background:none;border:0;border-bottom:1px solid currentColor;padding:2px 0;color:inherit;font:600 12px/1.4 var(--sans);letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
 @media (max-width:900px){.g-map{width:min(100%,42vh)}}
+/* v3.43 – Plan beweglich: ziehen, + / −, Hausnummern der Straße */
+.g-map{cursor:grab;touch-action:none;user-select:none}
+.g-map.drag{cursor:grabbing}
+.g-zoom{position:absolute;right:10px;top:10px;z-index:5;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(3,32,61,.25)}
+.g-zoom button{width:36px;height:36px;border:0;background:var(--beige);color:var(--blue);font:500 22px/1 var(--sans);cursor:pointer}
+.g-zoom button+button{border-top:1px solid rgba(3,32,61,.2)}
+.g-zoom button:hover,.g-zoom button:focus-visible{background:#E3D7C2}
+.g-ov{z-index:3}
+.g-tiles{z-index:1}
+.g-load{z-index:4}
+.g-ov .hn{fill:#03203D;stroke:#F4F1EA;stroke-width:1.5}
+.g-ov .hnt{fill:#F4F1EA;font:700 9px/1 var(--sans);text-anchor:middle}
+.g-hint{margin:8px auto 0;font-size:12px;opacity:.7}
