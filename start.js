@@ -89,14 +89,15 @@ function start() {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
     [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(p => gl.texParameteri(gl.TEXTURE_2D, p, gl.LINEAR));
     [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(p => gl.texParameteri(gl.TEXTURE_2D, p, rep ? gl.REPEAT : gl.CLAMP_TO_EDGE)); };
-  const load = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  const load = src => new Promise((res, rej) => { const i = new Image(); i.src = src; i.decode().then(() => res(i), rej); });   // decode() entpackt das Bild abseits des Hauptthreads → kein Ruckler beim Hochladen in die Grafikkarte
   let depthReady = false, heroLive = true, cloudBoost = 0;
   let duskV = 0;   // angezeigter Sonnenstand: folgt dem Scrollziel S.dusk gedrosselt (voller Untergang ≥ ~4 s), damit schnelles Scrollen kein Aufblitzen erzeugt
   const t0 = performance.now(), CLOCK = () => (window.__heroT ?? (performance.now() - t0) / 1000);
   Promise.all([load('img/skyview-penthouse-dachterrasse-stephansdom' + (mobile ? '-m' : '') + '.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-tiefe.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-himmel.webp'), load('img/skyview-himmel-wolken.webp'), load('img/skyview-lichter.webp'), load('img/skyline-linie.webp')])
     .then(([a, b, c, d, e, f]) => { glTex(a, 0); glTex(b, 1); glTex(c, 2); glTex(d, 3, true); glTex(e, 4); gl.uniform1i(U.li, 4); glTex(f, 5); gl.uniform1i(U.sl, 5); document.body.classList.add('gl-arch'); gl.uniform1i(U.im, 0); gl.uniform1i(U.dp, 1); gl.uniform1i(U.sk, 2); gl.uniform1i(U.cl, 3); depthReady = true; kick(); requestAnimationFrame(() => window.__introTry && window.__introTry());
       // Große/Retina-Bildschirme: danach still die scharfe 3600-px-Version nachladen und austauschen
-      if (!mobile && innerWidth * (devicePixelRatio || 1) > 2400) load('img/skyview-penthouse-dachterrasse-stephansdom-xl.webp').then(x => { glTex(x, 0); kick(); }).catch(() => {}); });
+      // erst nach dem Einstieg (Intro fertig) und in einer ruhigen Sekunde – der Tausch des 3600-px-Bilds kostet einen Frame
+      if (!mobile && innerWidth * (devicePixelRatio || 1) > 2400) setTimeout(() => load('img/skyview-penthouse-dachterrasse-stephansdom-xl.webp').then(x => (window.requestIdleCallback || setTimeout)(() => { glTex(x, 0); kick(); })).catch(() => {}), 5000); });
 
   function drawDepth() {
     if (!depthReady) return;
@@ -239,9 +240,12 @@ function start() {
     const w = document.getElementById('heroWord'), sg = document.querySelector('.t-hero .sig'); if (!w || !sg) return;
     const mk = el => { let m = el.querySelector('.bl'); if (!m) { m = document.createElement('span'); m.className = 'bl'; m.style.cssText = 'display:inline-block;width:0;height:0'; el.append(m); } return m; };
     const mt = mk(w), ms = sg.querySelector('.bl0') || (() => { const m = document.createElement('span'); m.className = 'bl0'; m.style.cssText = 'display:inline-block;width:0;height:0'; sg.prepend(m); return m; })();
-    // Breite: „See beyond.“ so groß, dass es etwa so breit ist wie ESTATE (wie „Estepona“ unter ÄRA)
-    sg.style.fontSize = ''; const r0 = document.createRange(); r0.selectNodeContents(w); const lw = Math.max(...[...r0.getClientRects()].map(r => r.width));
-    const sw = sg.getBoundingClientRect().width; if (sw > 0) sg.style.fontSize = (parseFloat(getComputedStyle(sg).fontSize) * 1.0 * lw / sw) + 'px';
+    // Breite: „See beyond.“ etwas breiter als ESTATE → Kegelform (QUICK schmal, ESTATE mittel, See beyond. am breitesten); max. 92 % Bildschirm
+    // Zeilenbreite je Zeile aus allen Teil-Rechtecken (Intro zerlegt das Wort in einzelne Buchstaben)
+    sg.style.fontSize = ''; const r0 = document.createRange(); r0.selectNodeContents(w); const rows = {};
+    [...r0.getClientRects()].forEach(r => { if (!r.width) return; const k = Math.round(r.top / 20); rows[k] = rows[k] || [1e9, -1e9]; rows[k][0] = Math.min(rows[k][0], r.left); rows[k][1] = Math.max(rows[k][1], r.right); });
+    const lw = Math.max(...Object.values(rows).map(v => v[1] - v[0]));
+    const sw = sg.getBoundingClientRect().width; if (sw > 0) sg.style.fontSize = (parseFloat(getComputedStyle(sg).fontSize) * Math.min(1.22 * lw, 0.92 * innerWidth) / sw) + 'px';
     const F = parseFloat(getComputedStyle(sg).fontSize), T = parseFloat(getComputedStyle(w).fontSize) * 1.22;
     const cur = parseFloat(sg.style.marginTop) || 0;
     const want = mt.getBoundingClientRect().bottom + 0.1 * T + 0.79 * F;
@@ -254,15 +258,23 @@ function start() {
   document.fonts.ready.then(() => { placeSig(); introTry(); }); setTimeout(() => { if (introGo < 2) { introGo = 1; introTry(); } }, 4000); addEventListener('resize', placeSig);
   // Einstieg: „See beyond.“ steht schon, QUICKESTATE schwebt weit auseinandergezogen herein und rückt zusammen (umgekehrt wie beim Scrollen)
   gsap.set('.qe-in', { opacity: 0 });
-  const heroIntro = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? gsap.set('.qe-in', { opacity: 1 }) : gsap.fromTo('.qe-in', { letterSpacing: '1.2em', opacity: 0, filter: 'blur(10px)' },
-    { letterSpacing: '-0.02em', opacity: 1, filter: 'blur(0px)', duration: 2.4, ease: 'power2.out', delay: 0.5, clearProps: 'letterSpacing,opacity,filter' });
+  // Buchstaben einzeln verschieben (nur transform/opacity = Grafikkarte) statt letter-spacing + Unschärfe am ganzen Wort (zwang jeden Frame zu Layout + Neuzeichnen → Ruckeln beim Laden)
+  const heroIntro = () => {
+    const w = document.querySelector('.qe-in');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { gsap.set(w, { opacity: 1 }); return; }
+    const fs = parseFloat(getComputedStyle(w).fontSize), ch = [];
+    [...w.childNodes].forEach(n => { if (n.nodeType !== 3) return; const row = [...n.textContent], f = document.createDocumentFragment();
+      row.forEach((c, i) => { const sp = document.createElement('span'); sp.className = 'qc'; sp.textContent = c; sp.dataset.o = ((i - (row.length - 1) / 2) * fs * 1.25).toFixed(1); f.appendChild(sp); ch.push(sp); });
+      n.replaceWith(f); });
+    gsap.set(w, { opacity: 1 });
+    gsap.fromTo(ch, { x: i => +ch[i].dataset.o, opacity: 0 }, { x: 0, opacity: 1, duration: 2.4, ease: 'power3.out', delay: 0.5, stagger: { each: 0.02, from: 'edges' }, clearProps: 'transform,opacity' });
+  };
   tl.to('#heroWord', { letterSpacing: '0.5em', opacity: 0, duration: 1 }, 0)
     .to('#tHero .sig', { y: -40, opacity: 0, duration: 0.8 }, 0.1)
     .to(S, { ter: 1, duration: 1.6, ease: 'power1.inOut' }, 0.2)
     .to(S, { pan: 1, dolly: 1, duration: 2.6 }, 0.8)
     .to(S, { dusk: 1, duration: 1.1, ease: 'none' }, 1.35)   // Sonne geht unter, bevor der blaue Bogen aufsteigt
     .to('#tTer', { opacity: 1, duration: 0.4 }, 1.3).to('#tTer', { opacity: 0, duration: 0.3 }, 2.4)
-    .to('#vis', { opacity: 0.75, duration: 0.3 }, 1.2).to('#vis', { opacity: 0, duration: 0.3 }, 3.6)
     .to('#arch', { yPercent: 0, xPercent: -50, duration: 1.1, ease: 'power2.out' }, 2.4)
     .to('#tArch', { opacity: 1, duration: 0.3 }, 3.0).to('#tArch', { opacity: 0, duration: 0.25 }, 4.25)
     .to('#arch', { scale: 3.4, duration: 0.9, ease: 'power2.in' }, 3.6)
