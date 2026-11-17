@@ -510,13 +510,14 @@ function start() {
     const css = (x, y) => [(x - M.cx) * k + s / 2, (y - M.cy) * k + s / 2];
     const tx0 = Math.floor((M.cx - s / 2 / k) * n / 256), tx1 = Math.floor((M.cx + s / 2 / k) * n / 256), ty0 = Math.floor((M.cy - s / 2 / k) * n / 256), ty1 = Math.floor((M.cy + s / 2 / k) * n / 256);
     const need = new Set(); let pend = 0;
-    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) { const key = tz + '/' + ty + '/' + tx; need.add(key);
-      let im = M.tiles.get(key); if (!im) { im = new Image(); im.alt = ''; im.decoding = 'async'; im.dataset.z = tz; im.dataset.x = tx; im.dataset.y = ty;
-        im.onload = im.onerror = () => { im.dataset.ok = 1; aufraeumen(); }; im.src = 'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/' + key + '.jpeg'; M.tiles.set(key, im); tilesEl.append(im); }
-      if (!im.dataset.ok) pend++; }
+    const LAG = M.lb ? ['lb/farbe', 'flwbplmzk/rot'] : ['flwbplmzk/rot'];   // Luftbild: Orthofoto unten, Widmungsplan darüber (Weiß wird per multiply durchsichtig)
+    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) LAG.forEach((lg, li) => { const key = lg + '/' + tz + '/' + ty + '/' + tx; need.add(key);
+      let im = M.tiles.get(key); if (!im) { im = new Image(); im.alt = ''; im.decoding = 'async'; im.dataset.z = tz; im.dataset.x = tx; im.dataset.y = ty; im.dataset.li = lg === 'lb/farbe' ? 0 : 1; im.className = lg === 'lb/farbe' ? 'tlb' : 'tpl';
+        im.onload = im.onerror = () => { im.dataset.ok = 1; aufraeumen(); }; im.src = 'https://maps.wien.gv.at/wmts/' + lg + '/google3857/' + tz + '/' + ty + '/' + tx + '.jpeg'; M.tiles.set(key, im); tilesEl.append(im); }
+      if (!im.dataset.ok) pend++; });
     M.need = need; M.tz = tz;
     M.tiles.forEach(im => { const z = +im.dataset.z, f = 256 / 2 ** z, [l, t] = css(+im.dataset.x * f, +im.dataset.y * f), w = 256 * k / 2 ** z;
-      im.style.left = l.toFixed(1) + 'px'; im.style.top = t.toFixed(1) + 'px'; im.style.width = im.style.height = (w + 0.6).toFixed(1) + 'px'; im.style.zIndex = z === tz ? 2 : 1; });
+      im.style.left = l.toFixed(1) + 'px'; im.style.top = t.toFixed(1) + 'px'; im.style.width = im.style.height = (w + 0.6).toFixed(1) + 'px'; im.style.zIndex = (z === tz ? 2 : 0) + +im.dataset.li; });
     ldEl.hidden = pend === 0; aufraeumen();
     ovEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); ovEl.textContent = '';
     const P = c => css(...kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ');
@@ -536,6 +537,8 @@ function start() {
     M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; M.k = Math.max(KMIN, Math.min(2 ** 19.6, anteil * s / Math.max(x1 - x0, y1 - y0, 1e-9))); };
   const bbox = pts => [Math.min(...pts.map(p => p[0])), Math.min(...pts.map(p => p[1])), Math.max(...pts.map(p => p[0])), Math.max(...pts.map(p => p[1]))];
   $('mapIn').addEventListener('click', () => { M.k = Math.min(KMAX, M.k * 2); mapKick(); });
+  document.querySelectorAll('#mapLay button').forEach(bt => bt.addEventListener('click', () => { M.lb = bt.dataset.l === '1';   // Plan ↔ Luftbild mit Widmungslinien
+    document.querySelectorAll('#mapLay button').forEach(x => x.setAttribute('aria-pressed', x === bt)); mapEl.classList.toggle('g-lb', M.lb); mapKick(); }));
   $('mapOut').addEventListener('click', () => { M.k = Math.max(KMIN, M.k / 2); mapKick(); });
   let drag = null, tipT = 0; const tipZeigen = () => { const t = $('mapTip'); t.classList.add('on'); clearTimeout(tipT); tipT = setTimeout(() => t.classList.remove('on'), 4500); };
   mapEl.addEventListener('pointerdown', e => { if (e.target.closest('.g-zoom')) return; $('mapTip').classList.remove('on'); drag = { x: e.clientX, y: e.clientY, cx: M.cx, cy: M.cy, moved: false }; mapEl.setPointerCapture(e.pointerId); mapEl.classList.add('drag'); });
