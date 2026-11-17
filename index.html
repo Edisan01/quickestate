@@ -13,7 +13,7 @@
 <meta property="og:description" content="Baurechner, Baue mit Shifty und Objekte in Wien.">
 <meta property="og:image" content="https://quickestate.at/img/skyview-penthouse-dachterrasse-stephansdom.webp">
 <link rel="preload" href="fonts/oswald-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="start.css?v=350">
+<link rel="stylesheet" href="start.css?v=351">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"QuickEstate","url":"https://quickestate.at/","slogan":"See beyond.","founder":{"@id":"#eduard"}},{"@type":"Person","@id":"#eduard","name":"Eduard Beches","alternateName":"Shifty","address":{"@type":"PostalAddress","addressLocality":"Wien","addressCountry":"AT"}}]}
 </script>
@@ -66,16 +66,22 @@
     <p class="g-m" id="gateMsg" role="status"></p>
     <ul class="g-sug" id="gateSug" role="listbox" aria-label="Adressvorschläge" hidden></ul>
     <div class="g-res" id="gateRes" hidden>
+      <button type="button" class="g-back" id="resBack"><span aria-hidden="true">←</span> Andere Adresse</button>
       <p class="g-ra" id="resAddr"></p>
       <div class="g-nums" id="resNums" hidden><p class="g-nq">Welche Hausnummer?</p><div class="g-nrow"><div class="g-chips" id="numChips" role="list"></div><input id="numIn" type="text" inputmode="numeric" placeholder="Nr." aria-label="Hausnummer eintippen"></div></div>
+      <div class="g-cols">
+      <section class="g-side g-l" aria-labelledby="resLH"><h3 class="g-sh" id="resLH">Was ist das?</h3><div class="g-cards" id="resFakten"></div></section>
+      <div class="g-mid">
       <div class="g-mapw">
       <div class="g-map" id="resMap" role="img" aria-label="Ausschnitt Flächenwidmungsplan mit markiertem Grundstück"><div class="g-tiles" id="resTiles"></div><svg class="g-ov" id="resOv" aria-hidden="true"></svg><p class="g-load" id="resLoad">Plan wird geladen …</p><p class="g-tip" id="mapTip">Ziehen zum Verschieben · + / − zum Zoomen · Klick auf dein Grundstück</p></div>
       <div class="g-lay" id="mapLay" role="group" aria-label="Kartenansicht"><button type="button" data-l="0" aria-pressed="true">Plan</button><button type="button" data-l="1" aria-pressed="false">Luftbild</button></div>
       <div class="g-zoom"><button type="button" id="mapIn" aria-label="Hineinzoomen">+</button><button type="button" id="mapOut" aria-label="Herauszoomen">−</button></div></div>
       <p class="g-hint" id="resHint"></p>
-      <p class="g-pi" id="resInfo"></p>
+      <p class="g-pi" id="resInfo" aria-live="polite"></p>
+      </div>
+      <section class="g-side g-r" aria-labelledby="resRH"><h3 class="g-sh" id="resRH">Was heißt das für dich?</h3><div class="g-cards" id="resDeut"></div></section>
+      </div>
       <p class="g-src">Flächenwidmungsplan &amp; Luftbild: Stadt Wien – data.wien.gv.at · Grundstücke &amp; Einlagezahlen: BEV – kataster.bev.gv.at · CC BY 4.0 · Grenzen nicht vermessungsgenau</p>
-      <button type="button" class="g-back" id="resBack">Andere Adresse</button>
     </div>
     <p class="g-n">Unverbindliche Ersteinschätzung · keine Rechts- oder Bewertungsberatung · Daten: Stadt Wien · nichts wird gespeichert</p>
   </div>
@@ -103,7 +109,7 @@
 <script src="lib/gsap.min.js" defer></script>
 <script src="lib/ScrollTrigger.min.js" defer></script>
 <script src="lib/lenis.min.js" defer></script>
-<script src="mvt.js?v=350" defer></script>
-<script type="module" src="start.js?v=350"></script>
+<script src="mvt.js?v=351" defer></script>
+<script type="module" src="start.js?v=351"></script>
 </body>
 </html>

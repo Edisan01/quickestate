@@ -398,7 +398,9 @@ function start() {
      Plan: WMTS-Kacheln flwbplmzk/rot der Stadt Wien. Nichts wird gespeichert. */
   const gIn = $('gateAddr'), gMsg = $('gateMsg'), gSug = $('gateSug'), gRes = $('gateRes'), gBox = document.querySelector('.g-in');
   const ADR = q => 'https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?Address=' + encodeURIComponent(q) + '&crs=EPSG:4326';
-  const adrSuche = q => fetch(ADR(q)).then(r => r.ok ? r.text() : '').then(t => { try { return (JSON.parse(t).features || []).filter(f => f.geometry && f.properties); } catch { return []; } });
+  const hol = u => fetch(u, AbortSignal.timeout ? { signal: AbortSignal.timeout(8000) } : {});   // nie ewig „Suche …“
+  let wahlN = 0;                                                            // jede neue Suche macht ältere Antworten ungültig
+  const adrSuche = q => hol(ADR(q)).then(r => r.ok ? r.text() : Promise.reject(r.status)).then(t => { try { return (JSON.parse(t).features || []).filter(f => f.geometry && f.properties); } catch { return []; } });
   const adrText = f => f.properties.Adresse + (f.properties.PostalCode ? ', ' + f.properties.PostalCode + ' Wien' : ', Wien');
   const hatNr = f => !!f.properties.StreetNumber;
   let sugList = [], sugT = 0, sugN = 0, kgNamen = null, modus = 'adr';
@@ -407,27 +409,27 @@ function start() {
       li.textContent = x.t; li.addEventListener('mousedown', e => { e.preventDefault(); x.w(); }); gSug.append(li); }); gSug.hidden = !L.length; };
   const adrSug = L => L.map(f => ({ t: adrText(f) + (hatNr(f) ? '' : ' – ganze Straße zeigen'), w: () => waehlen(f) }));
   // Grundstückssuche: „Jedlesee 675“, „01609 675/2“ – Katastralgemeinde (Name oder Nummer) + Grundstücksnummer
-  const gstTeile = q => { const m = /^(.*?)[\s,]+(\d+(?:\s*\/\s*\d+)?)\s*$/.exec(q.trim()); return m ? { kg: m[1].trim(), nr: m[2].replace(/\s+/g, '') } : { kg: q.trim(), nr: '' }; };
+  const gstTeile = q => { const m = /^(.*?)[\s,]+(\.?\d+(?:\s*\/\s*\d+)?)\s*$/.exec(q.trim()); return m ? { kg: m[1].trim(), nr: m[2].replace(/\s+/g, '') } : { kg: q.trim(), nr: '' }; };
   const kgNorm = t => t.toLowerCase().replace(/^kg\s+/, '').replace(/ß/g, 'ss').replace(/[^a-z0-9äöü]/g, '');
   const kgTreffer = t => { const K = M.kg || {}, n = kgNorm(t); if (!n) return [];
     return Object.keys(K).filter(c => c === t.trim() || kgNorm(K[c]).startsWith(n) || kgNorm(K[c]).includes(n)).sort((x, y) => (kgNorm(K[y]).startsWith(n) - kgNorm(K[x]).startsWith(n)) || K[x].localeCompare(K[y], 'de')); };
-  async function gstSuche(q) {
-    await ladeKg(); const { kg, nr } = gstTeile(q), T = kgTreffer(kg), K = M.kg || {};
+  async function gstSuche(q) { const tok = ++wahlN;
+    await ladeKg(); if (tok !== wahlN) return; const { kg, nr } = gstTeile(q), T = kgTreffer(kg), K = M.kg || {};
     const exakt = T.find(c => kgNorm(K[c]) === kgNorm(kg) || c === kg);
     if (!T.length) { gMsg.textContent = 'Diese Katastralgemeinde kenne ich nicht – z. B. „Jedlesee 675“.'; return; }
     if (!exakt && T.length > 1) { gMsg.textContent = 'Welche Katastralgemeinde meinst du?'; sugZeigen(T.slice(0, 6).map(c => ({ t: 'KG ' + K[c] + ' (' + c + ')', w: () => { gIn.value = K[c] + ' ' + nr; gMsg.textContent = ''; sugZeigen([]); if (nr) gstSuche(gIn.value); else gIn.focus(); } }))); return; }
     const c = exakt || T[0]; if (!nr) { gMsg.textContent = 'Bitte noch die Grundstücksnummer dazuschreiben, z. B. „' + K[c] + ' 675“.'; return; }
     gMsg.textContent = 'Grundstück wird gesucht …';
-    let idx; try { idx = await fetch('kataster/kg/' + c + '.json').then(r => r.json()); } catch { idx = null; }
-    const pt = idx && idx[nr]; if (!pt) { gMsg.textContent = 'Grundstück ' + nr + ' gibt es in der KG ' + K[c] + ' laut Kataster nicht.'; return; }
-    const [x, y] = kKachel(pt[0], pt[1], KZ), d = await katLaden(x, y), rec = d.find(r => r[0] === c && r[1] === nr);
+    let idx; try { idx = await hol('kataster/kg/' + c + '.json').then(r => r.json()); } catch { gMsg.textContent = 'Der Kataster ist gerade nicht erreichbar – bitte nochmal versuchen.'; return; }
+    if (tok !== wahlN) return; const pt = idx && idx[nr]; if (!pt) { gMsg.textContent = 'Grundstück ' + nr + ' gibt es in der KG ' + K[c] + ' laut Kataster nicht.'; return; }
+    const [x, y] = kKachel(pt[0], pt[1], KZ), d = await katLaden(x, y), rec = d.find(r => r[0] === c && r[1] === nr); if (tok !== wahlN) return;
     if (!rec) { gMsg.textContent = 'Grundstück ' + nr + ' konnte ich nicht laden – bitte nochmal versuchen.'; return; }
     const g = { kg: rec[0], gnr: rec[1], fl: +rec[2] || 0, polys: (rec[3] || []).map(pg => pg.map(kRing)) };
     gMsg.textContent = ''; M.marks = []; M.akt = null; nummernZeigen(); zeigeBox();
     requestAnimationFrame(() => { zoomAuf(bbox(g.polys.flatMap(pg => pg[0])), 0.5); grundstueckZeigen(g, ' · über Grundstücksnummer gesucht', pt); }); }
   // Reiter Adresse | Grundstück – immer nur eine Suchart aktiv
   const MODI = { adr: { ph: 'Stephansplatz 1, 1010 Wien', lab: 'Adresse in Wien' }, gst: { ph: 'Katastralgemeinde + Nr., z. B. Jedlesee 675', lab: 'Katastralgemeinde und Grundstücksnummer' } };
-  document.querySelectorAll('.g-tabs [role=tab]').forEach(t => t.addEventListener('click', () => { const m = t.dataset.m; if (m === modus) return; modus = m;
+  document.querySelectorAll('.g-tabs [role=tab]').forEach(t => t.addEventListener('click', () => { const m = t.dataset.m; if (m === modus) return; modus = m; ++wahlN;
     document.querySelectorAll('.g-tabs [role=tab]').forEach(x => x.setAttribute('aria-selected', x === t)); gIn.value = ''; gMsg.textContent = ''; sugZeigen([]);
     gIn.placeholder = MODI[m].ph; document.querySelector('label[for=gateAddr]').textContent = MODI[m].lab; gIn.setAttribute('inputmode', 'text');
     const f = $('gateForm'); f.classList.remove('swap'); void f.offsetWidth; f.classList.add('swap'); gIn.focus({ preventScroll: true }); if (m === 'gst') ladeKg(); }));
@@ -440,19 +442,19 @@ function start() {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); i = e.key === 'ArrowDown' ? Math.min(it.length - 1, i + 1) : Math.max(-1, i - 1); it.forEach((li, k) => li.classList.toggle('on', k === i)); }
     else if (e.key === 'Enter' && i >= 0) { e.preventDefault(); sugList[i].w(); } else if (e.key === 'Escape') sugZeigen([]); });
   gIn.addEventListener('blur', () => setTimeout(() => sugZeigen([]), 120));
-  $('gateForm').addEventListener('submit', e => { e.preventDefault(); const q = gIn.value.trim(); if (q) wBoost = 140; sugZeigen([]);
+  $('gateForm').addEventListener('submit', e => { e.preventDefault(); const q = gIn.value.trim(); if (q) wBoost = 140; clearTimeout(sugT); ++sugN; sugZeigen([]);
     if (!q) { gMsg.textContent = modus === 'gst' ? 'Bitte Katastralgemeinde und Grundstücksnummer eingeben, z. B. „Jedlesee 675“.' : 'Bitte eine Adresse in Wien eingeben.'; gIn.focus(); return; }
     if (modus === 'gst') { gstSuche(q); return; }
     gMsg.textContent = 'Suche …';
     adrSuche(q).then(L => { const f = L.find(hatNr);
       if (!L.length) { gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
       waehlen(f || L[0]); }).catch(() => { gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
-  $('resBack').addEventListener('click', () => { M.marks = []; M.sel = null; M.akt = null; nummernZeigen(); gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
+  $('resBack').addEventListener('click', () => { ++wahlN; kartenLeeren(); M.marks = []; M.sel = null; M.akt = null; nummernZeigen(); gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
 
   // Kataster
   const KZ = 16, katC = new Map();
   const kKachel = (lon, lat, z) => { const n = 2 ** z, la = lat * Math.PI / 180; return [Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n)]; };
-  const katLaden = (x, y) => { const k = x + '_' + y; if (!katC.has(k)) katC.set(k, fetch('kataster/16/' + k + '.json').then(r => r.ok ? r.json() : []).catch(() => []));  return katC.get(k); };
+  const katLaden = (x, y) => { const k = x + '_' + y; if (!katC.has(k)) katC.set(k, hol('kataster/16/' + k + '.json').then(r => r.status === 404 ? [] : r.ok ? r.json() : Promise.reject(r.status)).catch(() => { katC.delete(k); return []; }));  return katC.get(k); };
   const kRing = fl => { const r = []; let x = 0, y = 0; for (let i = 0; i + 1 < fl.length; i += 2) { x += fl[i]; y += fl[i + 1]; r.push([x / 1e7, y / 1e7]); } return r; };
   const kDrin = (p, rg) => { let c = false; for (let i = 0, j = rg.length - 1; i < rg.length; j = i++) { const [xi, yi] = rg[i], [xj, yj] = rg[j];
       if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
@@ -469,8 +471,8 @@ function start() {
   /* Bauplatz = alle Grundstücke derselben Einlagezahl (EZ) wie das Adress-Grundstück – EZ live aus dem BEV-Kataster (Vektorkacheln kataster.bev.gv.at,
      tagesaktuell, CC BY 4.0). Stichprobe 17.11.2026, 120 Adressen: ~95 % ohne Zutun richtig. Grenzen/Flächen aus unserem Katasterstand. */
   const bevC = new Map();
-  const bevLaden = (x, y) => { const k = x + '_' + y; if (!bevC.has(k)) bevC.set(k, fetch('https://kataster.bev.gv.at/tiles/kataster/16/' + x + '/' + y + '.pbf')
-    .then(r => r.ok ? r.arrayBuffer() : null).then(b => b && window.MVT ? (MVT.lies(b, 16, x, y).gst || []) : []).catch(() => [])); return bevC.get(k); };
+  const bevLaden = (x, y) => { const k = x + '_' + y; if (!bevC.has(k)) bevC.set(k, hol('https://kataster.bev.gv.at/tiles/kataster/16/' + x + '/' + y + '.pbf')
+    .then(r => r.ok ? r.arrayBuffer() : null).then(b => b && window.MVT ? (MVT.lies(b, 16, x, y).gst || []) : []).catch(() => { bevC.delete(k); return []; })); return bevC.get(k); };
   const um9 = (x, y, f) => { const L = []; for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) L.push(f(x + dx, y + dy)); return Promise.all(L); };
   const flBerechnet = polys => polys.reduce((s, pg) => s + pg.reduce((t, r, i) => { let a = 0; for (let j = 0; j < r.length - 1; j++) a += (r[j][0] * 74000) * (r[j + 1][1] * 111200) - (r[j + 1][0] * 74000) * (r[j][1] * 111200); return t + (i ? -1 : 1) * Math.abs(a / 2); }, 0), 0);
   async function bauplatz(g, lon, lat) {
@@ -548,21 +550,38 @@ function start() {
     if (drag.moved) { M.cx = drag.cx - dx / M.k; M.cy = drag.cy - dy / M.k; mapKick(); } });
   const dragEnde = e => { if (!drag) return; const d = drag; drag = null; mapEl.classList.remove('drag'); if (d.moved || e.type === 'pointercancel') return;
     const r = mapEl.getBoundingClientRect(), s = mapS(), px = e.clientX - r.left, py = e.clientY - r.top;
-    const hit = M.marks.find(m => { const [mx, my] = kMerc(m.lon, m.lat); return Math.hypot((mx - M.cx) * M.k + s / 2 - px, (my - M.cy) * M.k + s / 2 - py) < 12; });
+    const hit = M.marks.find(m => { const [mx, my] = kMerc(m.lon, m.lat); return Math.hypot((mx - M.cx) * M.k + s / 2 - px, (my - M.cy) * M.k + s / 2 - py) < (e.pointerType === 'touch' ? 22 : 12); });
     if (hit) { nummerWaehlen(hit); return; }
     const [lon, lat] = kGeo(M.cx + (px - s / 2) / M.k, M.cy + (py - s / 2) / M.k); parzelleWaehlen(lon, lat); };
   mapEl.addEventListener('pointerup', dragEnde); mapEl.addEventListener('pointercancel', dragEnde);
 
   const flText = g => g.fl.toLocaleString('de-AT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-  const zeigeInfo = (g, extra) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1;
-    $('resInfo').textContent = (n > 1 ? 'Bauplatz ' + flText(g) + ' m² · aus Grundstück ' + g.gnr : 'Grundstück ' + g.gnr + ' · ' + flText(g) + ' m²') + (g.ez ? ' · EZ ' + g.ez : '') + ' · KG ' + K + ' laut Kataster'
-      + (g.gross ? ' · Teil einer großen Einlage (' + g.gross + ' Grundstücke) – nur dieses Grundstück gezeigt' : '') + (extra || ''); };
+  /* Ergebnis als Karten in Alltagssprache: links „Was ist das?“, rechts „Was heißt das für dich?“ – Ampel grün/gelb, Fachbegriffe per „Was heißt das?“ */
+  const karte = (art, titel, text, mehr) => { const d = document.createElement('div'); d.className = 'g-card ' + art;
+    const h = document.createElement('p'); h.className = 'g-ct'; h.textContent = titel; d.append(h);
+    if (text) { const t = document.createElement('p'); t.className = 'g-cx'; t.textContent = text; d.append(t); }
+    if (mehr) { const x = document.createElement('details'), sm = document.createElement('summary'), b = document.createElement('p'); sm.textContent = 'Was heißt das?'; b.textContent = mehr; x.append(sm, b); d.append(x); }
+    return d; };
+  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; };
+  const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'); kartenLeeren(); $('resInfo').textContent = '';
+    L.append(n > 1 ? karte('', 'Bauplatz ' + flText(g) + ' m²', 'Besteht aus ' + n + ' Grundstücken (' + g.gnr + '), die im Grundbuch zusammen geführt werden.', 'Ein Bauplatz ist die Fläche, auf der gebaut werden darf. Grundstücke mit derselben Grundbuch-Einlage (EZ) werden gemeinsam geführt und zählen zusammen.')
+      : karte('', 'Grundstück ' + g.gnr + ' · ' + flText(g) + ' m²', 'Ein einzelnes Grundstück laut amtlichem Kataster.', 'Die Grundstücksnummer und die Fläche stammen aus dem Kataster des Bundesamts für Eich- und Vermessungswesen (BEV).'));
+    L.append(karte('meta', 'KG ' + K + (g.ez ? ' · EZ ' + g.ez : ''), '', 'KG = Katastralgemeinde, der Vermessungsbezirk. EZ = Einlagezahl, die Nummer im Grundbuch.'));
+    if (o.auch && o.auch.length) L.append(karte('', 'Auf diesem Bauplatz auch', o.auch.slice(0, 4).join(', ') + (o.auch.length > 4 ? ' und weitere' : '')));
+    if (o.ohneAdr) L.append(karte('meta', 'Ohne Adresse', 'Diesem Grundstück ist keine Hausnummer zugeordnet.'));
+    L.append(karte('bald', 'Kommt als Nächstes', 'Widmung und erlaubte Höhe in Alltagssprache, Schutzzone, Hochwasser und Bäume.'));
+    const gelb = o.hinweis || (g.gross ? 'Diese Grundbuch-Einlage ist sehr groß (' + g.gross + ' Grundstücke) – gezeigt wird nur dieses Grundstück.' : '')
+      || (o.auch && o.auch.length ? 'Zu dieser Einlage gehören mehrere Häuser. Ist das wirklich dein Bauplatz?' : '') || (g.fl > 2000 ? 'Der Bauplatz ist ungewöhnlich groß. Ist das wirklich deiner?' : '');
+    D.append(gelb ? karte('gelb', 'Bitte kurz prüfen', gelb + ' Bald kannst du den Bauplatz hier selbst anpassen.') : karte('gruen', 'Grundstück eindeutig gefunden', 'Fläche und Grenzen stammen aus dem amtlichen Kataster.'));
+    D.append(karte('bald', 'Wie viel darfst du hier bauen?', 'Erlaubte Höhe, Geschosse und Reserve in m² berechnen wir im nächsten Schritt.')); };
   const ladeKg = () => { if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => (M.kg = j.kg)).catch(() => (M.kg = {})); return kgNamen; };
+  const ueberlauf = () => gBox.toggleAttribute('data-lenis-prevent', gBox.scrollHeight > gBox.clientHeight + 2);   // nur wenn die Box selbst scrollen muss, sonst scrollt die Seite
+  if (window.ResizeObserver) new ResizeObserver(ueberlauf).observe(gRes);
   const zeigeBox = () => { const neu = gRes.hidden; gRes.hidden = false; gBox.classList.add('has-res'); if (neu) tipZeigen(); };
   // Adressen auf einem Grundstück: Stadt-Wien-Adressen im Umkreis holen, Gebäudepunkt (bzw. Eingang) muss im Grundstück liegen
   async function adressenAuf(g) {
     const B = bbox(g.polys.flatMap(pg => pg[0])), m = 0.00008;
-    let fc = null; try { fc = await fetch('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=300&bbox='
+    let fc = null; try { fc = await hol('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=300&bbox='
       + [B[0] - m, B[1] - m, B[2] + m, B[3] + m].map(v => v.toFixed(6)).join(',') + ',EPSG:4326').then(r => r.json()); } catch { return []; }
     const L = ((fc && fc.features) || []).map(x => { const c = x.geometry && x.geometry.coordinates, p = x.properties || {}; if (!c || !p.NAME_ONR) return null; const ein = zugang(c[0], c[1], p);
       return (kInPoly(c, g.polys) || kInPoly(ein, g.polys)) ? { name: p.NAME, str: p.NAME_STR, nr: p.NAME_ONR, plz: p.PLZ, haupt: p.HAUPT_IDENT_PSEUDO === 'H', ein, geb: c } : null; }).filter(Boolean);
@@ -570,20 +589,20 @@ function start() {
     const seen = new Set(); return L.filter(a => !seen.has(a.name) && seen.add(a.name)); }
   const adrTitel = A => A.length ? A[0].name + (A[1] ? ' / ' + (A[1].str === A[0].str ? A[1].nr : A[1].name) : '') + (A.length > 2 ? ' u. a.' : '') + ', ' + A[0].plz + ' Wien' : '';
   const auchText = A => { const haupt = A.length ? grundNr(A[0]) : ''; const andere = [...new Set(A.filter(a => grundNr(a) !== haupt).map(a => a.name.replace(/\/.*$/, '')))];
-    return andere.length ? ' · Diese Einlage umfasst auch ' + andere.slice(0, 3).join(', ') + (andere.length > 3 ? ' u. a.' : '') : ''; };
+    return andere; };
   // Grundstück gewählt (Klick oder Grundstückssuche) → Adresse dazu suchen und oben anzeigen
-  async function grundstueckZeigen(g, wie, pkt) {
+  async function grundstueckZeigen(g, wie, pkt) { const tok = ++wahlN;
     const ip = pkt || (() => { const b = bbox(g.polys.flatMap(pg => pg[0])); return [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2]; })();
-    g = await bauplatzFuer(g, ip[0], ip[1]); if (!g.teile.some(t => kInPoly(ip, t.polys)) && pkt) { /* Punkt außerhalb: trotzdem anzeigen */ }
+    g = await bauplatzFuer(g, ip[0], ip[1]); if (tok !== wahlN) return; if (!g.teile.some(t => kInPoly(ip, t.polys)) && pkt) { /* Punkt außerhalb: trotzdem anzeigen */ }
     M.sel = g; M.pt = null; M.akt = null; M.marks.forEach(x => x.btn && x.btn.classList.remove('on'));
-    $('resAddr').textContent = 'Grundstück ' + g.gnr; zeigeInfo(g, ''); $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück'; mapKick();
-    const A = await adressenAuf(g); if (M.sel !== g) return;
-    if (!A.length) { $('resAddr').textContent = 'Grundstück ' + g.gnr; zeigeInfo(g, ' · ohne Adresse'); return; }
-    $('resAddr').textContent = adrTitel(A); zeigeInfo(g, (wie || '') + auchText(A)); M.pt = A[0].ein; gIn.value = A[0].name + ', ' + A[0].plz + ' Wien';
+    $('resAddr').textContent = 'Grundstück ' + g.gnr; zeigeInfo(g); $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück'; mapKick();
+    const A = await adressenAuf(g); if (M.sel !== g || tok !== wahlN) return;
+    if (!A.length) { $('resAddr').textContent = 'Grundstück ' + g.gnr; zeigeInfo(g, { ohneAdr: true }); return; }
+    $('resAddr').textContent = adrTitel(A); zeigeInfo(g, { auch: auchText(A) }); M.pt = A[0].ein; gIn.value = A[0].name + ', ' + A[0].plz + ' Wien';
     const mk = M.marks.find(x => x.f.properties.Adresse === A[0].name); if (mk) { M.akt = mk; M.marks.forEach(x => x.btn && x.btn.classList.toggle('on', x === mk)); mk.btn && mk.btn.scrollIntoView({ block: 'nearest', inline: 'center' }); }
     mapKick(); }
   async function parzelleWaehlen(lon, lat) {
-    const r = await grundstueck(lon, lat); await ladeKg(); if (!r || !r.genau) return;   // Klick auf Straße ohne Kataster → nichts ändern
+    const tok = ++wahlN; const r = await grundstueck(lon, lat); await ladeKg(); if (tok !== wahlN || !r || !r.genau) return;   // Klick auf Straße ohne Kataster → nichts ändern
     grundstueckZeigen(r.g, '', [lon, lat]); }
 
   // Zugangspunkt (Eingang an der Straße) = Gebäudepunkt + Versatz ZUG − GEB (Gauß-Krüger, Meter) – Gebäudepunkt liegt mitten im Haus
@@ -591,17 +610,17 @@ function start() {
     if (!isFinite(dx) || !isFinite(dy) || Math.hypot(dx, dy) > 80) return [lon, lat];
     return [lon + dx / (111320 * Math.cos(lat * Math.PI / 180)), lat + dy / 110540]; };
   const WFSADR = cql => 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=1500&cql_filter=' + encodeURIComponent(cql);
-  const eingangFuer = f => fetch(WFSADR("NAME='" + f.properties.Adresse.replace(/'/g, "''") + "'" + (f.properties.PostalCode ? " AND PLZ='" + f.properties.PostalCode + "'" : '')))
-    .then(r => r.json()).then(fc => { const x = (fc.features || [])[0]; return x ? zugang(x.geometry.coordinates[0], x.geometry.coordinates[1], x.properties) : null; }).catch(() => null);
+  const adrPunkte = f => hol(WFSADR("NAME='" + f.properties.Adresse.replace(/'/g, "''") + "'" + (f.properties.PostalCode ? " AND PLZ='" + f.properties.PostalCode + "'" : '')))
+    .then(r => r.json()).then(fc => { const x = (fc.features || [])[0]; return x ? { geb: x.geometry.coordinates, ein: zugang(x.geometry.coordinates[0], x.geometry.coordinates[1], x.properties) } : null; }).catch(() => null);
   // ganze Straße (ohne Hausnummer): alle Adressen der Straße holen und als Hausnummern zeigen
   const STR = (name, bez) => 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=1500&cql_filter='
     + encodeURIComponent("NAME_STR='" + name.replace(/'/g, "''") + "'" + (bez ? " AND GEB_BEZIRK IN (" + String(bez).split(/\s*,\s*/).filter(Boolean).map(b => "'" + b.padStart(2, '0') + "'").join(',') + ")" : ''));   // Straße über mehrere Bezirke: „16, 17“
-  async function strasseZeigen(f) {
+  async function strasseZeigen(f) { const tok = wahlN;
     const name = f.properties.StreetName || f.properties.Adresse, bez = f.properties.Bezirk; gMsg.textContent = 'Straße wird geladen …';
-    let fc; try { fc = await fetch(STR(name, bez)).then(r => r.json()); } catch { fc = null; }
+    let fc; try { fc = await hol(STR(name, bez)).then(r => r.json()); } catch { fc = null; }
     const L = ((fc && fc.features) || []).filter(x => x.geometry && x.properties && x.properties.NAME_ONR).map(x => { const [elon, elat] = zugang(x.geometry.coordinates[0], x.geometry.coordinates[1], x.properties); return { lon: elon, lat: elat, nr: x.properties.NAME_ONR, ein: [elon, elat],
       f: { geometry: { coordinates: x.geometry.coordinates }, properties: { Adresse: x.properties.NAME, PostalCode: x.properties.PLZ, StreetNumber: x.properties.NAME_ONR, StreetName: x.properties.NAME_STR } } }; });
-    await ladeKg(); gMsg.textContent = ''; M.marks = L; M.sel = null; M.pt = null; M.akt = null;
+    await ladeKg(); if (tok !== wahlN) return; gMsg.textContent = ''; kartenLeeren(); M.marks = L; M.sel = null; M.pt = null; M.akt = null;
     if (!L.length) { nummernZeigen();                                                      // Flurname/Platz ohne Hausnummern (z. B. Wiese, Park): nur Ausschnitt zeigen, nichts vorwählen
       const [lon, lat] = f.geometry.coordinates; $('resAddr').textContent = name; $('resInfo').textContent = 'Kein Ort mit Hausnummern – klick auf das Grundstück, das du meinst';
       $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = Grundstück wählen'; zeigeBox();
@@ -620,24 +639,24 @@ function start() {
   function nummerWaehlen(m) { M.akt = m; M.marks.forEach(x => x.btn && x.btn.classList.toggle('on', x === m)); m.btn && m.btn.scrollIntoView({ block: 'nearest', inline: 'center' });
     [M.cx, M.cy] = kMerc(m.lon, m.lat); if (M.k < 2 ** 18) M.k = 2 ** 18.3; waehlen(m.f, true, m.ein); }
   $('numIn').addEventListener('keydown', e => { if (e.key !== 'Enter') return; e.preventDefault(); const v = e.target.value.trim().toLowerCase().replace(/\s+/g, '');
-    const m = M.marks.find(x => x.nr.toLowerCase().replace(/\s+/g, '') === v) || M.marks.find(x => parseInt(x.nr, 10) === parseInt(v, 10));
+    const m = M.marks.find(x => x.nr.toLowerCase().replace(/\s+/g, '') === v) || M.marks.find(x => parseInt(x.nr, 10) === parseInt(v, 10)) || M.marks.find(x => { const b = /^(\d+)-(\d+)/.exec(x.nr); return b && +v >= +b[1] && +v <= +b[2]; });
     if (m) { nummerWaehlen(m); e.target.value = ''; } else { $('resInfo').textContent = 'Hausnummer ' + e.target.value + ' gibt es in dieser Straße nicht.'; } });
 
   async function waehlen(f, ausKarte, ein) {
-    sugZeigen([]); if (!hatNr(f)) { gIn.value = f.properties.Adresse; return strasseZeigen(f); }
+    clearTimeout(sugT); ++sugN; sugZeigen([]); const tok = ++wahlN; if (!hatNr(f)) { gIn.value = f.properties.Adresse; return strasseZeigen(f); }
     gIn.value = adrText(f); if (!ausKarte) gMsg.textContent = 'Grundstück wird gesucht …';
     const [lon, lat] = f.geometry.coordinates;
     try {
-      const [r] = await Promise.all([grundstueck(lon, lat), ladeKg()]);
+      const [r0, ap] = await Promise.all([grundstueck(lon, lat), ein ? null : mitTimeout(adrPunkte(f), 4000, null), ladeKg()]); if (tok !== wahlN) return;
+      let r = r0; if (ap && ap.geb) { const rg = await grundstueck(ap.geb[0], ap.geb[1]); if (tok !== wahlN) return; if (rg && rg.genau) r = rg; }   // Gebäudepunkt zuerst – Adresspunkt liegt oft am Gehsteig
       if (!r) { gMsg.textContent = 'An dieser Adresse habe ich kein Grundstück gefunden – bitte eine andere Hausnummer probieren.'; return; }
-      const bp = await bauplatzFuer(r.g, lon, lat);
-      gMsg.textContent = ''; $('resAddr').textContent = adrText(f); zeigeInfo(bp, r.genau ? '' : ' · Adresspunkt liegt knapp außerhalb – nächstes Grundstück gewählt');
+      const bp = await bauplatzFuer(r.g, lon, lat); if (tok !== wahlN) return;
+      gMsg.textContent = ''; $('resAddr').textContent = adrText(f); zeigeInfo(bp, r.genau ? {} : { hinweis: 'Der Adresspunkt liegt knapp außerhalb eines Grundstücks – wir haben das nächste gewählt.' });
       $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück';
-      M.sel = bp; M.pt = ein || [lon, lat]; if (!ausKarte) { M.marks = []; M.akt = null; nummernZeigen(); } zeigeBox();
-      if (!ein) eingangFuer(f).then(e => { if (e && M.sel === bp) { M.pt = e; mapKick(); } });
-      if (bp.teile.length > 1) adressenAuf(bp).then(A => { if (M.sel === bp && A.length) { const t = auchText([{ str: f.properties.StreetName || '', nr: f.properties.StreetNumber, name: f.properties.Adresse }].concat(A)); if (t) zeigeInfo(bp, t); } });
+      M.sel = bp; M.pt = ein || (ap && ap.ein) || [lon, lat]; if (!ausKarte) { M.marks = []; M.akt = null; nummernZeigen(); } zeigeBox();
+      if (bp.teile.length > 1) adressenAuf(bp).then(A => { if (M.sel === bp && A.length) { const t = auchText([{ str: f.properties.StreetName || '', nr: f.properties.StreetNumber, name: f.properties.Adresse }].concat(A)); if (t.length) zeigeInfo(bp, { auch: t }); } });
       requestAnimationFrame(() => { if (!ausKarte) zoomAuf(bbox(bp.polys.flatMap(pg => pg[0])), 0.5); mapRender(); });
-    } catch (err) { gMsg.textContent = 'Das Grundstück konnte gerade nicht geladen werden – bitte nochmal versuchen.'; } }
+    } catch (err) { if (tok === wahlN) gMsg.textContent = 'Das Grundstück konnte gerade nicht geladen werden – bitte nochmal versuchen.'; } }
 
   let raf = 0;
   function frame() {

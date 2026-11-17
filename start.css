@@ -343,3 +343,40 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-lb .g-ov .gs,.g-lb .g-ov .gsf{fill:rgba(120,200,90,.32)}
 .g-lb .g-ov .gs,.g-lb .g-ov .gsa{stroke:#F1E9DA;filter:drop-shadow(0 0 1.5px rgba(0,0,0,.8))}
 .g-lb .g-ov .gsi{stroke:#F1E9DA}
+/* v3.51 Ergebnis in drei Spalten: links Fakten, Mitte Karte, rechts Bedeutung · „Andere Adresse“ immer oben · Handy gestapelt */
+.g-res .g-back{display:inline-flex;gap:8px;align-items:center;margin:0 0 14px;border:0;opacity:.75;font-size:11px}
+.g-res .g-back:hover,.g-res .g-back:focus-visible{opacity:1;text-decoration:underline}
+.g-cols{display:grid;grid-template-columns:1fr;gap:18px;text-align:left}
+.g-mid{text-align:center;min-width:0}
+.g-side{min-width:0}
+.g-side:has(.g-cards:empty){display:none}
+.g-sh{margin:0 0 10px;font:600 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;opacity:.65}
+.g-cards{display:flex;flex-direction:column;gap:10px}
+.g-card{background:#F7F2E8;border:1px solid rgba(3,32,61,.16);border-radius:6px;padding:12px 14px}
+.g-ct{margin:0;font:600 15px/1.35 var(--sans)}
+.g-cx{margin:4px 0 0;font-size:13.5px;line-height:1.5;opacity:.82}
+.g-card details{margin-top:6px;font-size:12.5px;line-height:1.5}
+.g-card summary{cursor:pointer;opacity:.7;font-weight:600;list-style:none}
+.g-card summary::before{content:"ⓘ ";}
+.g-card summary::-webkit-details-marker{display:none}
+.g-card details p{margin:6px 0 0;opacity:.85}
+.g-card.meta{background:transparent;padding:8px 14px}
+.g-card.meta .g-ct{font-size:13px;font-weight:500}
+.g-card.bald{background:transparent;border-style:dashed;opacity:.7}
+.g-card.bald .g-ct{font-size:13px}
+.g-card.gruen,.g-card.gelb{position:relative;padding-left:36px}
+.g-card.gruen::before,.g-card.gelb::before{content:"";position:absolute;left:14px;top:16px;width:11px;height:11px;border-radius:50%}
+.g-card.gruen{background:#E7EFDF;border-color:#9DB98A}.g-card.gruen::before{background:#3E7B2A}
+.g-card.gelb{background:#F7EBCB;border-color:#D9B65A}.g-card.gelb::before{background:#C58A0B}
+.g-pi{font-size:13px;font-weight:500;opacity:.85}
+.g-pi:empty{display:none}
+.g-src{max-width:none;text-align:center}
+@media (max-width:1099px){.g-cols{grid-template-areas:"r" "m" "l"}.g-l{grid-area:l}.g-mid{grid-area:m}.g-r{grid-area:r}}
+@media (min-width:1100px){
+  .g-wrap:has(.g-in.has-res){width:min(1360px,calc(100vw - 140px))}
+  .g-in.has-res{padding-left:44px;padding-right:44px}
+  .g-cols{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:0 72px;align-items:start}
+  .g-in.has-res .g-mapw,.g-in.has-res.has-nums .g-mapw{width:min(52vh,500px)}
+}
+.g-in.has-res{max-height:calc(100vh - 110px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+@media (pointer:coarse){.g-map{touch-action:pan-y}}
