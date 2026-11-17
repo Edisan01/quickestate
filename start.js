@@ -11,7 +11,8 @@ if (!reduce && testGL() && window.gsap && window.ScrollTrigger && window.Lenis) 
 function start() {
   document.body.classList.remove('no-motion'); document.body.classList.add('on-sky');
   const mobile = innerWidth < 900;
-  const S = { ter: 0, pan: 0, dolly: 0, lt: 0, water: 0, plan: 0, dusk: 0 };
+  const archEl = document.getElementById('arch');
+  const S = { ter: 0, pan: 0, dolly: 0, lt: 0, water: 0, plan: 0, dusk: 0, gate: 0 };
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
 
   /* ---------- Szene Dachterrasse: Rendering mit Tiefe ---------- */
@@ -23,7 +24,7 @@ function start() {
   // Über dem Bildrand läuft derselbe Himmel weiter (oberste Bildzeile, weich gemittelt) – keine Kante.
   // Wolken ziehen: sauberer Himmel (ohne Gebäude, nahtlos kachelbar) wandert langsam nach rechts, Stadt bleibt fest davor (Himmelsmaske).
   // Über dem Bildrand läuft derselbe Wolkenhimmel weiter (kein Spiegeln), nach oben stufenlos ins tiefe Blau. Vogel: selten, klein, hinter den Türmen.
-  const FS = `precision highp float;varying vec2 v;uniform sampler2D im,dp,sk,cl,li;uniform vec2 cov,mouse;uniform vec4 cam;uniform vec3 skyTop,avgTop;uniform float imgTop,time,dusk;
+  const FS = `precision highp float;varying vec2 v;uniform sampler2D im,dp,sk,cl,li,sl;uniform vec4 archR;uniform vec2 res;uniform vec2 cov,mouse;uniform vec4 cam;uniform vec3 skyTop,avgTop;uniform float imgTop,time,dusk;
     float bird(vec2 p,float fl){float ax=abs(p.x);if(ax>1.)return 0.;
       float wy=-fl*.55*ax+.32*ax*ax;float th=.11*(1.-ax)+.025;
       float a=1.-smoothstep(0.,.07,abs(p.y-wy)-th);float b=1.-smoothstep(0.,.07,length(p*vec2(1.,1.5))-.13);return max(a,b);}
@@ -65,12 +66,22 @@ function start() {
           col+=vec3(1.,.70,.36)*L.r*on*1.25;
           float lb=L.b*smoothstep(.1,.6,nt);col=mix(col,vec3(dot(col,vec3(.299,.587,.114)))*vec3(1.,.9,.75),min(1.,lb*1.6));   // Patina-Grün im Flutlicht entsättigen
           col*=mix(vec3(1.),vec3(4.2,3.1,1.7),lb);}}   // Stephansdom und Peterskirche: von unten rechts angestrahlt, Steinstruktur bleibt sichtbar
+      // Blauer Bogen: innen Lagune + Skyline als Linie, deckungsgleich zum Foto (gleiche Kamera); außen weiter das Foto
+      if(archR.z>archR.x){vec2 px=vec2(v.x,v.y)*res;vec4 a=archR*vec4(res,res);
+        float rx=(a.z-a.x)*.5,ry=(a.w-a.y)*.48,cx=(a.x+a.z)*.5,cy=a.y+ry;
+        float inR=step(a.x,px.x)*step(px.x,a.z)*step(a.y,px.y);
+        vec2 e=(px-vec2(cx,cy))/vec2(rx,ry);float inE=px.y<cy?smoothstep(1.003,.997,length(e)):1.;
+        float ins=inR*inE;
+        if(ins>0.){vec2 SL=q.y>0.?texture2D(sl,qi).rg:vec2(0.);
+          vec3 ac=vec3(.663,.765,.867)*(1.-.07*SL.g);
+          ac=mix(ac,vec3(.012,.125,.239),SL.r*.8);
+          col=mix(col,ac,ins);}}
       col+=(fract(sin(dot(gl_FragCoord.xy+fract(time*7.)*91.,vec2(12.9898,78.233)))*43758.5453)-.5)*.016;   // feines Filmkorn gegen CG-Look
       gl_FragColor=vec4(col,1.);}`;
   const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
   const prog = gl.createProgram();
   gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
-  const U = {}; ['im', 'dp', 'sk', 'cl', 'li', 'cov', 'mouse', 'cam', 'skyTop', 'avgTop', 'imgTop', 'time', 'dusk'].forEach(n => U[n] = gl.getUniformLocation(prog, n));
+  const U = {}; ['im', 'dp', 'sk', 'cl', 'li', 'sl', 'archR', 'res', 'cov', 'mouse', 'cam', 'skyTop', 'avgTop', 'imgTop', 'time', 'dusk'].forEach(n => U[n] = gl.getUniformLocation(prog, n));
   const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
@@ -82,8 +93,8 @@ function start() {
   let depthReady = false, heroLive = true, cloudBoost = 0;
   let duskV = 0;   // angezeigter Sonnenstand: folgt dem Scrollziel S.dusk gedrosselt (voller Untergang ≥ ~4 s), damit schnelles Scrollen kein Aufblitzen erzeugt
   const t0 = performance.now(), CLOCK = () => (window.__heroT ?? (performance.now() - t0) / 1000);
-  Promise.all([load('img/skyview-penthouse-dachterrasse-stephansdom' + (mobile ? '-m' : '') + '.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-tiefe.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-himmel.webp'), load('img/skyview-himmel-wolken.webp'), load('img/skyview-lichter.webp')])
-    .then(([a, b, c, d, e]) => { glTex(a, 0); glTex(b, 1); glTex(c, 2); glTex(d, 3, true); glTex(e, 4); gl.uniform1i(U.li, 4); gl.uniform1i(U.im, 0); gl.uniform1i(U.dp, 1); gl.uniform1i(U.sk, 2); gl.uniform1i(U.cl, 3); depthReady = true; kick();
+  Promise.all([load('img/skyview-penthouse-dachterrasse-stephansdom' + (mobile ? '-m' : '') + '.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-tiefe.webp'), load('img/skyview-penthouse-dachterrasse-stephansdom-himmel.webp'), load('img/skyview-himmel-wolken.webp'), load('img/skyview-lichter.webp'), load('img/skyline-linie.webp')])
+    .then(([a, b, c, d, e, f]) => { glTex(a, 0); glTex(b, 1); glTex(c, 2); glTex(d, 3, true); glTex(e, 4); gl.uniform1i(U.li, 4); glTex(f, 5); gl.uniform1i(U.sl, 5); document.body.classList.add('gl-arch'); gl.uniform1i(U.im, 0); gl.uniform1i(U.dp, 1); gl.uniform1i(U.sk, 2); gl.uniform1i(U.cl, 3); depthReady = true; kick(); requestAnimationFrame(() => window.__introTry && window.__introTry());
       // Große/Retina-Bildschirme: danach still die scharfe 3600-px-Version nachladen und austauschen
       if (!mobile && innerWidth * (devicePixelRatio || 1) > 2400) load('img/skyview-penthouse-dachterrasse-stephansdom-xl.webp').then(x => { glTex(x, 0); kick(); }).catch(() => {}); });
 
@@ -98,7 +109,9 @@ function start() {
     gl.uniform3f(U.skyTop, SKY_TOP[0], SKY_TOP[1], SKY_TOP[2]); gl.uniform3f(U.avgTop, 0.618, 0.757, 0.883);
     // Start: nur Turmspitzen/Dachkante (Bild-y 0,405) am unteren Rand – Terrasse erst beim Scrollen
     const camW = 1.12 + S.dolly * 0.05, top0 = (va < 0.8 ? 0.90 : 1.0) - (0.5 + (0.405 - 0.5) * camW / cov[1]);
-    gl.uniform1f(U.imgTop, top0 * (1 - S.ter)); gl.uniform1f(U.time, CLOCK() + cloudBoost); gl.uniform1f(U.dusk, duskV);
+    gl.uniform1f(U.imgTop, top0 * (1 - S.ter)); gl.uniform1f(U.time, CLOCK() + cloudBoost);
+    { const r = archEl.getBoundingClientRect(), W = innerWidth, H = innerHeight, on = r.top < H - 1;
+      gl.uniform4f(U.archR, on ? r.left / W : 0, on ? r.top / H : 0, on ? r.right / W : 0, on ? r.bottom / H : 0); gl.uniform2f(U.res, W, H); } gl.uniform1f(U.dusk, duskV);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -206,6 +219,10 @@ function start() {
   }
 
   /* ---------- Scroll-Engine ---------- */
+  // Seite startet immer ganz oben (Browser stellt sonst die alte Scrollposition oder einen #Anker wieder her)
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  scrollTo(0, 0);
   const lenis = new Lenis({ lerp: 0.09 });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
@@ -230,8 +247,15 @@ function start() {
     const want = mt.getBoundingClientRect().bottom + 0.1 * T + 0.79 * F;
     sg.style.marginTop = (cur + want - ms.getBoundingClientRect().bottom) + 'px';
   };
-  document.fonts.ready.then(() => { placeSig(); requestAnimationFrame(placeSig); }); addEventListener('resize', placeSig);
-  gsap.from('#tHero', { y: 36, opacity: 0, filter: 'blur(10px)', duration: 1.8, ease: 'power3.out', delay: 0.25, clearProps: 'filter' });   // Einstieg: Titel taucht aus dem Himmel auf
+  // Intro erst starten, wenn Schrift UND Himmelsbild da sind und die Seite sichtbar ist – sonst läuft es ungesehen ab (z. B. hinter dem Ladebildschirm)
+  let introGo = 0; const introTry = () => { if (++introGo < 2) return; const go = () => { placeSig(); requestAnimationFrame(() => { placeSig(); heroIntro(); }); };
+    document.visibilityState === 'visible' ? go() : document.addEventListener('visibilitychange', function v() { if (document.visibilityState === 'visible') { document.removeEventListener('visibilitychange', v); go(); } }); };
+  window.__introTry = introTry;
+  document.fonts.ready.then(() => { placeSig(); introTry(); }); setTimeout(() => { if (introGo < 2) { introGo = 1; introTry(); } }, 4000); addEventListener('resize', placeSig);
+  // Einstieg: „See beyond.“ steht schon, QUICKESTATE schwebt weit auseinandergezogen herein und rückt zusammen (umgekehrt wie beim Scrollen)
+  gsap.set('.qe-in', { opacity: 0 });
+  const heroIntro = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? gsap.set('.qe-in', { opacity: 1 }) : gsap.fromTo('.qe-in', { letterSpacing: '1.2em', opacity: 0, filter: 'blur(10px)' },
+    { letterSpacing: '-0.02em', opacity: 1, filter: 'blur(0px)', duration: 2.4, ease: 'power2.out', delay: 0.5, clearProps: 'letterSpacing,opacity,filter' });
   tl.to('#heroWord', { letterSpacing: '0.5em', opacity: 0, duration: 1 }, 0)
     .to('#tHero .sig', { y: -40, opacity: 0, duration: 0.8 }, 0.1)
     .to(S, { ter: 1, duration: 1.6, ease: 'power1.inOut' }, 0.2)
@@ -240,19 +264,22 @@ function start() {
     .to('#tTer', { opacity: 1, duration: 0.4 }, 1.3).to('#tTer', { opacity: 0, duration: 0.3 }, 2.4)
     .to('#vis', { opacity: 0.75, duration: 0.3 }, 1.2).to('#vis', { opacity: 0, duration: 0.3 }, 3.6)
     .to('#arch', { yPercent: 0, xPercent: -50, duration: 1.1, ease: 'power2.out' }, 2.4)
-    .to('#tArch', { opacity: 1, duration: 0.3 }, 3.0).to('#tArch', { opacity: 0, duration: 0.3 }, 3.7)
+    .to('#tArch', { opacity: 1, duration: 0.3 }, 3.0).to('#tArch', { opacity: 0, duration: 0.25 }, 4.25)
     .to('#arch', { scale: 3.4, duration: 0.9, ease: 'power2.in' }, 3.6)
-    .to('#depth', { opacity: 0, duration: 0.1 }, 4.45)
-    .to(S, { lt: 1, duration: 1.6 }, 3.95)
-    .to('#tLt', { opacity: 1, duration: 0.3 }, 4.9).to('#tLt', { opacity: 0, duration: 0.3 }, 6.0)
-    .to(S, { water: 1, duration: 1.4, ease: 'power1.inOut' }, 5.9)
-    .to(S, { plan: 1, duration: 2.4 }, 7.1)
-    .to('#tPlan', { opacity: 1, duration: 0.3 }, 7.45).to('#tPlan', { opacity: 0, duration: 0.3 }, 9.3)
-    .to('#tNum', { opacity: 1, duration: 0.4 }, 9.2)
-    .to({}, { duration: 0.6 }, 9.6);
+    .to(S, { gate: 1, duration: 1.0, ease: 'none' }, 4.4)               // Tor klappt auf: Rechner mit Adressfeld
+    .to('#cta', { autoAlpha: 0, duration: 0.2 }, 4.4).to('#cta', { autoAlpha: 1, duration: 0.2 }, 6.8)
+    .to('#gate', { autoAlpha: 0, duration: 0.4 }, 6.5).to('#depth', { opacity: 0, duration: 0.4 }, 6.5)                 // weiter: So funktioniert's
+    .to(S, { water: 1, duration: 1.4, ease: 'power1.inOut' }, 6.5)
+    .to(S, { plan: 1, duration: 2.4 }, 7.7)
+    .to('#tPlan', { opacity: 1, duration: 0.3 }, 8.05).to('#tPlan', { opacity: 0, duration: 0.3 }, 9.9)
+    .to('#tNum', { opacity: 1, duration: 0.4 }, 9.8)
+    .to({}, { duration: 0.6 }, 10.2);
 
-  const cta = $('cta'), ctaText = $('ctaText'), hint = $('hint'), sealRing = $('sealRing');
-  const CTAS = [[0, 'Grundstück prüfen', '#rechner'], [0.06, 'Wohnung wählen', '#objekte'], [0.4, 'Über Eduard', '#inhalt'], [0.68, 'Grundstück prüfen', '#rechner']];
+  const cta = $('cta'), ctaText = $('ctaText'), hint = $('hint'), qeDot = $('qeDot');
+  // Sprung zum offenen Tor (Rechner): Links mit #tor scrollen an die Stelle, an der das Tor ganz offen ist
+  const toTor = e => { if (e.currentTarget.getAttribute('href') !== '#tor') return; e.preventDefault(); setMenu && !menu.hidden && setMenu(false); const st = tl.scrollTrigger; lenis.scrollTo(st.start + (st.end - st.start) * (5.7 / tl.duration()), { duration: 2.4 }); setTimeout(() => $('gateAddr').focus({ preventScroll: true }), 2500); };
+  document.querySelectorAll('a[href="#tor"]').forEach(a => a.addEventListener('click', toTor));
+  const CTAS = [[0, 'Grundstück prüfen', '#tor'], [0.06, 'Wohnung wählen', '#objekte'], [0.62, 'Folgen ansehen', '#folgen'], [0.8, 'Grundstück prüfen', '#tor']];
   let ctaIdx = -1;
   // Abroll-Effekt wie ERA: jeder Buchstabe rollt einzeln nach oben weg, die Kopie kommt von unten (leicht versetzt)
   function rollify(el) {
@@ -272,12 +299,40 @@ function start() {
     if (i !== ctaIdx) { ctaIdx = i; ctaText.textContent = CTAS[i][1]; cta.href = CTAS[i][2]; rollify(ctaText); }
     cta.classList.toggle('away', p > 0.05);   // Handy: Kreis nur im Einstieg (CSS greift nur ≤ 900 px)
     hint.style.opacity = p > 0.01 ? 0 : 1;
-    document.body.classList.toggle('on-sky', p < 0.3); heroLive = p < 0.4;
+    document.body.classList.toggle('on-sky', !(p > 0.39 && p < 0.615)); heroLive = p < 0.4;   // Kopfzeile hell auf dunklem Grund – nur auf der hellen Lagune (Bogen) blau
   }
-  let rot = 0;
   gsap.ticker.add((t, dms) => { const d = S.dusk - duskV; if (Math.abs(d) > 0.0005) { const dt = Math.min(dms, 50) / 1000; duskV += Math.sign(d) * Math.min(Math.abs(d), dt * (0.16 + Math.abs(d) * 0.3)); kick(); } });
   gsap.ticker.add(() => { cloudBoost += Math.min(6, Math.abs(lenis.velocity || 0)) * 0.015; });             // Wolken ziehen beim Scrollen kurz schneller (Wind)
-  gsap.ticker.add(() => { rot += -0.078 + Math.max(-20, Math.min(20, lenis.velocity || 0)) * 0.6; /* Ruhe: eine Runde ≈ 77 s gegen den Uhrzeiger (wie ERA); Scrollen dreht kräftig mit */ sealRing.style.transform = 'rotate(' + rot.toFixed(2) + 'deg)'; });
+  /* QE-Monogramm: roter Punkt kreist beim Scrollen im Uhrzeigersinn ums Q (nur vorwärts) und rollt nach dem Loslassen
+     wie eine Roulettekugel aus – Zielposition = nächstgelegene Q-Stellung am natürlichen Ausrollpunkt, Geschwindigkeit
+     nimmt danach geometrisch ab (v = c·Restweg) → kein Stopp-und-Neustart, kein harter Halt. */
+  const Q_REST = Math.PI / 4, TAU = Math.PI * 2, Q_CMIN = 0.01, Q_CMAX = 0.03;
+  let qa = Q_REST, qv = 0, qt = null, qc = 0, qbl = 1;
+  const qeStill = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  gsap.ticker.add(() => {
+    if (qeStill) return;
+    const k = gsap.ticker.deltaRatio(60), lv = Math.abs(lenis.velocity || 0);
+    const want = lv > 0.3 ? Math.min(0.3, lv * 0.011) : 0;
+    if (want > qv + 0.002) {                                 // Scrollen schiebt an (nur vorwärts) – langsamer werden = Schwungrad läuft frei aus
+      qv += (want - qv) * (1 - Math.pow(0.88, k));
+      qt = null;
+    } else if (qv > 0 || qt !== null) {
+      if (qt === null) {                                     // Loslassen: Landeplatz planen
+        const stop = qa + qv / 0.016;
+        qt = Q_REST + Math.round((stop - Q_REST) / TAU) * TAU;
+        while (qt - qa < 0.02 || qv / (qt - qa) > Q_CMAX) qt += TAU;
+        const c = qv / (qt - qa);
+        qc = Math.max(Q_CMIN, Math.min(Q_CMAX, c)); qbl = c >= Q_CMIN ? 1 : 0.035;
+      }
+      const r = qt - qa;
+      if (r < 0.0004) { qa = qt; qv = 0; qt = null; }
+      else { qv += (qc * r - qv) * (qbl === 1 ? 1 : 1 - Math.pow(1 - qbl, k)); }
+    }
+    qa += qv * k;
+    if (qt !== null && qa > qt) { qa = qt; qv = 0; qt = null; }
+    qeDot.setAttribute('cx', (52 + 45 * Math.cos(qa)).toFixed(2));
+    qeDot.setAttribute('cy', (58 + 45 * Math.sin(qa)).toFixed(2));
+  });
   const menuBtn = $('menuBtn'), menu = $('menu');
   const setMenu = open => { menu.hidden = !open; menuBtn.setAttribute('aria-expanded', String(open)); const ml = menuBtn.querySelector('.roll'); ml.textContent = open ? 'Schließen' : 'Menü'; rollify(ml); open ? lenis.stop() : lenis.start(); };
   menuBtn.addEventListener('click', () => setMenu(menu.hidden));
@@ -285,13 +340,9 @@ function start() {
   addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
   $('seal').addEventListener('click', e => { e.preventDefault(); lenis.scrollTo(0, { duration: 2.2 }); });
 
-  // X-Kreuzung: Jedes Dreieck hat die Spitze in der Mitte. Seite a (links) und Seite b (rechts)
-  // drehen sich wie Uhrzeiger um die Spitze auf, bis sie sich gegenüber treffen – direkt am Scrollen.
-  const cross = $('kreuzung');
-  const tris = { down: $('triBottom'), right: $('triRight'), left: $('triLeft'), top: cross.querySelector('.t-top') };
-  const BASE = { down: 90, right: 0, left: 180, top: 270 };          // Richtung der Grundseite c (Grad, y nach unten)
-  const P = { down: 0, right: 0, left: 0 }, T = { down: 0, right: 0, left: 0 };
-  const xc = cross.querySelector('.x-center');
+  // Tor zum Rechner: Der blaue Bogen füllt den Bildschirm – im Blau steigt der Rechner-Einstieg Zeile für Zeile auf
+  // (Frage → Erklärung → Adressfeld). Kein Farbwechsel, kein Keil (Eduard 16.11.).
+  const gateEl = $('gate');
   function fan(dirDeg, prog, W, H) {
     const cx = W / 2, cy = H / 2, rad = d => d * Math.PI / 180;
     const corners = [[0, 0], [W, 0], [W, H], [0, H]].map(([x, y]) => [x, y, Math.atan2(y - cy, x - cx) * 180 / Math.PI]);
@@ -310,57 +361,29 @@ function start() {
     pts.push(hit(dirDeg + lb));
     return 'polygon(' + pts.map(([x, y]) => (x / W * 100).toFixed(3) + '% ' + (y / H * 100).toFixed(3) + '%').join(',') + ')';
   }
-  function drawX() {
-    const W = cross.clientWidth, H = cross.clientHeight; if (!W) return;
-    let active = null, max = 0;
-    Object.keys(P).forEach(k => { P[k] += (T[k] - P[k]) * 0.22; if (Math.abs(T[k] - P[k]) < 0.0005) P[k] = T[k]; if (P[k] > max) { max = P[k]; active = k; } });
-    Object.keys(tris).forEach(k => { const t = tris[k]; t.style.clipPath = fan(BASE[k], k === 'top' ? 0 : P[k], W, H); t.style.zIndex = k === active && max > 0 ? 3 : 1;
-      const lab = t.querySelector('.lab'), sec = t.querySelector('.sec');
-      lab.style.opacity = active && k !== active ? Math.max(0, 1 - max * 3) : (k === active ? Math.max(0, 1 - P[k] * 2.5) : 1);
-      if (sec) { const r = k === active ? Math.min(1, Math.max(0, (P[k] - 0.45) / 0.45)) : 0; sec.style.opacity = r > 0 ? 1 : 0;
-        [...sec.children].forEach((c, i) => { const q = Math.min(1, Math.max(0, r * 1.6 - i * 0.18)); const e2 = 1 - Math.pow(1 - q, 3);
-          c.style.opacity = e2; c.style.transform = 'translateY(' + ((1 - e2) * 26).toFixed(1) + 'px)'; }); }
-    });
-    xc.style.opacity = Math.max(0, 1 - max * 4);
-    cross.classList.toggle('open', max > 0.98);
+  function drawGate() {
+    const W = innerWidth, H = innerHeight, p = S.gate;
+    gateEl.style.visibility = p > 0.001 ? 'visible' : 'hidden';
+    gateEl.classList.toggle('open', p > 0.98);
+    [...gateEl.querySelectorAll('.g-in > *')].forEach((c, i) => { const q = Math.min(1, Math.max(0, p * 1.5 - i * 0.12)); const e2 = 1 - Math.pow(1 - q, 3);
+      c.style.opacity = e2; c.style.transform = 'translateY(' + ((1 - e2) * 24).toFixed(1) + 'px)'; });
   }
-  const busy = () => Object.keys(T).find(k => T[k] > 0) || null;
-  const KICK = 0.1;                                                 // ab 10 % Anstoß läuft es von selbst
-  const tw = {};
-  const auto = (k, to) => { if (tw[k] && tw[k].vars && tw[k].vars[k] === to && tw[k].isActive()) return; if (tw[k]) tw[k].kill();
-    tw[k] = gsap.to(T, { [k]: to, duration: to ? 1.5 : 1.1, ease: to ? 'power3.inOut' : 'power2.inOut' }); };
-  gsap.ticker.add(drawX);
-  addEventListener('resize', drawX);
-  // nach unten: am Scrollweg innerhalb der festgehaltenen Kreuzung
-  ScrollTrigger.create({ trigger: cross, start: 'top top', end: '+=120%', pin: true,
-    onUpdate: st => { const b = busy(); if (b && b !== 'down') return;
-      if (st.direction > 0 && st.progress > 0.04 && T.down < 1) { auto('down', 1); if (st.progress < 0.6) lenis.scrollTo(st.start + (st.end - st.start) * 0.85, { duration: 1.5, easing: t => 1 - Math.pow(1 - t, 3) }); }
-      if (st.direction < 0 && st.progress < 0.7 && T.down > 0) auto('down', 0); },
-    onLeaveBack: () => { ['down', 'left', 'right'].forEach(k => auto(k, 0)); } });
-  const atCross = () => { const r = cross.getBoundingClientRect(); return r.top <= 4 && r.bottom >= innerHeight - 4; };
-  const side = (k, d) => { const b = busy(); if (b && b !== k) return;
-    if (d > 0) { if (T[k] + d >= KICK || (tw[k] && tw[k].isActive())) auto(k, 1); else T[k] = Math.min(1, T[k] + d); }
-    else if (d < 0) { if (T[k] < 1 - KICK * 0.5 || T[k] + d < 1 - KICK) auto(k, 0); else T[k] = Math.max(0, T[k] + d); } };
-  // seitlich: am Wisch-/Trackpad-Weg, zurückwischen klappt wieder zu
-  addEventListener('wheel', e => {
-    if (!atCross()) return;
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      const d = e.deltaX / (innerWidth * 0.9);
-      if (T.right > 0 || (d > 0 && !T.left)) side('right', d); else side('left', -d);
-    } else if (e.deltaY < -6 && (T.left > 0 || T.right > 0)) { auto('left', 0); auto('right', 0); }
-  }, { passive: true });
-  let tx = 0;
-  cross.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-  cross.addEventListener('touchmove', e => { const x = e.touches[0].clientX, d = (tx - x) / (innerWidth * 0.8); tx = x;
-    if (T.right > 0 || (d > 0 && !T.left)) side('right', d); else side('left', -d); }, { passive: true });
-  addEventListener('keydown', e => { if (!atCross()) return;
-    if (e.key === 'ArrowRight') { if (T.left > 0) auto('left', 0); else if (!busy() || busy() === 'right') auto('right', 1); }
-    if (e.key === 'ArrowLeft') { if (T.right > 0) auto('right', 0); else if (!busy() || busy() === 'left') auto('left', 1); } });
-  cross.querySelectorAll('.tri').forEach(t => t.addEventListener('click', e => {
-    const d = t.dataset.dir;
-    if (!d) { e.preventDefault(); lenis.scrollTo(0, { duration: 2.2 }); return; }
-    if (P[d] < 0.98) { e.preventDefault(); if (d === 'down') lenis.scrollTo(cross, { offset: innerHeight * 1.0, duration: 1.5 }); else { ['left', 'right'].forEach(k => k !== d && auto(k, 0)); auto(d, 1); } }
-  }));
+  gsap.ticker.add(drawGate);
+  // Riesenrad: Rad dreht (eine Runde ≈ 60 s), Waggons bleiben senkrecht hängen; „Prüfen“ gibt kurz Schwung
+  const wRot = $('wheelRot'), gons = [...document.querySelectorAll('#wheelGon .gon')];
+  let wA = 0, wV = 6, wBoost = 0;
+  gsap.ticker.add((t, dms) => { if (!wRot || S.gate < 0.01 || document.body.classList.contains('no-motion')) return;
+    const dt = Math.min(dms, 50) / 1000; wBoost *= Math.pow(0.35, dt); wA = (wA + (wV + wBoost) * dt) % 360;
+    wRot.setAttribute('transform', 'rotate(' + wA.toFixed(2) + ')');
+    gons.forEach((g, i) => { const a = (wA + i * 24 - 90) * Math.PI / 180, x = 250 * Math.cos(a), y = 250 * Math.sin(a);
+      g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')');
+      const tx = g.querySelector('text'); if (tx) tx.style.opacity = (0.35 + 0.65 * Math.max(0, -y / 250)).toFixed(2); }); });
+  // Adresse: Rechner ist noch nicht online → ehrlich sagen und Kontakt mit vorausgefüllter Adresse anbieten (nichts wird gespeichert)
+  $('gateForm').addEventListener('submit', e => { e.preventDefault(); const a = $('gateAddr').value.trim(); const msg = $('gateMsg'); if (a) wBoost = 140;
+    if (!a) { msg.textContent = 'Bitte eine Adresse in Wien eingeben.'; $('gateAddr').focus(); return; }
+    msg.innerHTML = ''; const t = document.createElement('span'); t.textContent = 'Der Rechner geht in Kürze online. Bis dahin prüfe ich „' + a + '“ gern persönlich: '; const l = document.createElement('a');
+    l.href = 'mailto:eb@quickestate.at?subject=' + encodeURIComponent('Grundstück prüfen: ' + a); l.textContent = 'Anfrage senden'; msg.append(t, l); });
+  $('gateAddr').addEventListener('input', () => { $('gateMsg').textContent = ''; });
 
   let raf = 0;
   function frame() {

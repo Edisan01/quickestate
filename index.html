@@ -23,13 +23,11 @@
 
 <header class="head">
   <a class="seal" href="#top" id="seal" aria-label="QuickEstate – nach oben">
-    <svg class="seal-ring" id="sealRing" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="ring" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/></defs>
-      <text><textPath href="#ring">QUICKESTATE · SEE BEYOND · WIEN · </textPath></text></svg>
-    <svg class="mark" viewBox="0 0 46 62" aria-hidden="true"><path d="M23 4l-8 7h16zM16 11v5h14v-5M17 16l-3 38h18l-3-38M14 30h18M12 54h22M2 58c8-4 14-4 21-1s14 3 21-1"/><path d="M30 13l15-5M30 14l15 2"/></svg>
+    <svg class="qe-mono" viewBox="-6 0 202 120" aria-hidden="true"><circle cx="52" cy="58" r="38" fill="none" stroke="currentColor" stroke-width="15"/><g fill="currentColor"><circle cx="128" cy="24" r="9"/><circle cx="154" cy="24" r="9"/><circle cx="180" cy="24" r="9"/><circle cx="128" cy="58" r="9"/><circle cx="154" cy="58" r="9"/><circle cx="128" cy="92" r="9"/><circle cx="154" cy="92" r="9"/><circle cx="180" cy="92" r="9"/></g><circle id="qeDot" cx="84" cy="90" r="12" fill="#C8102E"/></svg>
   </a>
   <div class="head-r">
     <nav class="topnav" aria-label="Schnellwahl">
-      <a class="tn-big roll" href="#rechner">Grundstück<br>prüfen</a>
+      <a class="tn-big roll" href="#tor">Grundstück<br>prüfen</a>
       <a class="tn-sm roll" href="#objekte">Wohnung wählen</a>
       <a class="tn-sm roll" href="#folgen">Baue mit Shifty</a>
       <a class="tn-sm roll" href="mailto:eb@quickestate.at">Kontakt</a>
@@ -37,7 +35,7 @@
     <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span class="roll">Menü</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
   </div>
   <nav class="menu" id="menu" aria-label="Hauptnavigation" hidden>
-    <a href="#rechner">Grundstück prüfen</a><a href="#objekte">Wohnung wählen</a><a href="#folgen">Baue mit Shifty</a><a href="mailto:eb@quickestate.at">Kontakt</a>
+    <a href="#tor">Grundstück prüfen</a><a href="#objekte">Wohnung wählen</a><a href="#folgen">Baue mit Shifty</a><a href="mailto:eb@quickestate.at">Kontakt</a>
   </nav>
 </header>
 <span id="top"></span>
@@ -50,30 +48,31 @@
       <text><textPath href="#arc" startOffset="50%" text-anchor="middle">GRUNDSTÜCK · PLAN · HAUS</textPath></text></svg>
   </div>
   <canvas id="three"></canvas>
-  <div class="layer t-hero" id="tHero"><p class="disp" id="heroWord" aria-label="QuickEstate">Quick<br>Estate</p><p class="sig">See beyond.</p></div>
+  <div class="layer t-hero" id="tHero"><p class="disp" id="heroWord" aria-label="QuickEstate"><span class="qe-in">Quick<br>Estate</span></p><p class="sig" aria-label="See beyond."><span class="sig-s" aria-hidden="true">S</span><span aria-hidden="true">ee beyond.</span></p></div>
   <div class="layer t-ter" id="tTer"><p class="kick">Börseplatz 1 · Wien</p><p class="ital">über den Dächern der Stadt</p></div>
   <div class="layer t-arch" id="tArch"><p class="cond">Was darf ich hier bauen?</p><p class="ital">und was ist das Grundstück wert?</p></div>
-  <div class="layer t-lt" id="tLt"><p class="cond">Eduard Beches</p><p class="ital">Bauträger aus Wien</p></div>
   <div class="layer t-plan" id="tPlan"><p class="kick">Der Plan wird zum Haus</p><p class="cond" id="planStep">Grundstück · 500 m²</p></div>
   <div class="layer t-num" id="tNum"><p class="cond num">1.850 €<span>/m²</span></p><p class="ital">max. Grundstückspreis aus Bauträgersicht</p><p class="note">Beispielwert · Bauklasse II · 12 m Höhe</p></div>
   <p class="vis" id="vis">Visualisierung: Wolf &amp; Sohn</p>
   <p class="count" id="count">01 / 06</p>
 </div>
-<a class="cta" id="cta" href="#rechner"><svg class="cta-ring" viewBox="0 0 208 208" aria-hidden="true"><circle class="base" cx="104" cy="104" r="103.5"/><circle class="arc" cx="104" cy="104" r="103.5" transform="rotate(-150 104 104)"/><circle class="arc" cx="104" cy="104" r="103.5" transform="rotate(30 104 104)"/></svg><span id="ctaText">Grundstück prüfen</span></a>
+<section class="gate" id="gate" aria-labelledby="gateH">
+  <div class="g-wrap">
+  <div class="g-in">
+    <p class="g-k">Baurechner · Wien</p>
+    <h2 class="g-h" id="gateH">Was darf ich hier bauen?</h2>
+    <p class="g-t">Adresse eingeben – du siehst Bauklasse, erlaubte Höhe und den maximalen Grundstückspreis pro m² aus Bauträgersicht.</p>
+    <form class="g-f" id="gateForm" novalidate><label class="sr" for="gateAddr">Adresse in Wien</label><input id="gateAddr" name="adresse" type="text" autocomplete="street-address" placeholder="Stephansplatz 1, 1010 Wien"><button type="submit" class="g-b"><span>Prüfen</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+    <p class="g-m" id="gateMsg" role="status"></p>
+    <p class="g-n">Unverbindliche Ersteinschätzung · keine Rechts- oder Bewertungsberatung · Daten: Stadt Wien · nichts wird gespeichert</p>
+  </div>
+  </div>
+</section>
+<a class="cta" id="cta" href="#tor"><svg class="cta-ring" viewBox="0 0 208 208" aria-hidden="true"><circle class="base" cx="104" cy="104" r="103.5"/><circle class="arc" cx="104" cy="104" r="103.5" transform="rotate(-150 104 104)"/><circle class="arc" cx="104" cy="104" r="103.5" transform="rotate(30 104 104)"/></svg><span id="ctaText">Grundstück prüfen</span></a>
 <p class="hint" id="hint" aria-hidden="true"><span>Scrollen</span><i></i></p>
 
 <main id="inhalt">
   <div class="scroller" id="scroller"></div>
-  <section class="cross" id="kreuzung" aria-labelledby="crossH">
-    <h2 class="sr" id="crossH">Wohin möchtest du?</h2>
-    <div class="x-stage" id="xStage">
-      <a class="tri t-top" href="#top" aria-label="Zurück nach oben"><span class="lab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Zurück</span></a>
-      <a class="tri t-left" id="triLeft" href="/folgen/" data-dir="left"><span class="lab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Baue mit Shifty</span><span class="sec"><span class="pill">Baue mit Shifty</span><span class="sec-h">Wiener Bauordnung in 60 Sekunden</span><span class="sec-t">Folge 1 Bauklassen · Folge 2 und 3 Straßenbreite · gedreht in Venedig und Lignano</span><span class="sec-b">Alle Folgen ansehen</span></span></a>
-      <a class="tri t-right" id="triRight" href="/boerseplatz-1/" data-dir="right"><span class="lab">Börseplatz 1<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="sec"><span class="sec-k">Börseplatz 1 · 1010 Wien</span><span class="sec-h">Skyview Penthouses</span><span class="sec-t">Drei freie Penthouses · 245,94 bis 516,94 m² · je drei Ebenen mit Dachterrasse</span><span class="sec-b">Penthouses ansehen</span><span class="sec-v">Visualisierung: Wolf &amp; Sohn</span></span></a>
-      <a class="tri t-bottom" id="triBottom" href="/rechner/" data-dir="down"><span class="lab">Baurechner<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span><span class="sec"><span class="sec-k">Baurechner</span><span class="sec-h">Was darf ich auf meinem Grundstück bauen?</span><span class="sec-t">Bauklasse, Baufluchtlinie und Höhe prüfen – und sehen, welcher Grundstückspreis pro m² sich daraus ergibt.</span><span class="sec-f"><span>Adresse in Wien …</span><span class="sec-b">Rechnen</span></span></span></a>
-      <div class="x-center"><p class="cond">Wohin?</p><p class="ital">Scroll runter, nach links oder rechts</p></div>
-    </div>
-  </section>
   <figure class="still-hero"><picture><source media="(max-width: 900px)" srcset="img/skyview-penthouse-dachterrasse-stephansdom-m.webp"><img src="img/skyview-penthouse-dachterrasse-stephansdom.webp" width="2400" height="1695" alt="Visualisierung: Dachterrasse am Börseplatz 1 mit Blick auf den Stephansdom (Wolf &amp; Sohn)"></picture></figure>
   <section class="intro-text">
     <h1>QuickEstate <span>See beyond.</span></h1>
