@@ -380,3 +380,11 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 }
 .g-in.has-res{max-height:calc(100vh - 110px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 @media (pointer:coarse){.g-map{touch-action:pan-y}}
+/* v3.53 Umfeld-Karten: kleine Ampel-Varianten + Prüfliste */
+.g-card.gruen-k,.g-card.gelb-k,.g-card.rot{position:relative;padding-left:32px}
+.g-card.gruen-k::before,.g-card.gelb-k::before,.g-card.rot::before{content:"";position:absolute;left:14px;top:17px;width:8px;height:8px;border-radius:50%}
+.g-card.gruen-k::before{background:#3E7B2A}.g-card.gelb-k::before{background:#C58A0B}
+.g-card.rot{background:#F6DEDB;border-color:#D48A82}.g-card.rot::before{background:#C8102E;width:11px;height:11px;top:16px}
+.g-card.gruen-k .g-ct,.g-card.gelb-k .g-ct{font-size:14px}
+.g-pl{margin:8px 0 0;padding:0 0 0 16px;font-size:13px;line-height:1.5}
+.g-pl li+li{margin-top:4px}

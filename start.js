@@ -563,17 +563,92 @@ function start() {
     if (mehr) { const x = document.createElement('details'), sm = document.createElement('summary'), b = document.createElement('p'); sm.textContent = 'Was heißt das?'; b.textContent = mehr; x.append(sm, b); d.append(x); }
     return d; };
   const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; };
-  const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'); kartenLeeren(); $('resInfo').textContent = '';
+  /* Umfeld je Bauplatz (Punkt 11–13): Widmung + Bauklasse (GENFLWIDMUNGOGD), Schutzzone, Wohnzone, Bausperre, Bestand (GEBAEUDEINFOOGD), Straßenbäume (BAUMKATOGD) – Stadt Wien;
+     Hochwasser HQ30/100/300 (LFRZ, Bund). Einmal je Bauplatz geladen und gemerkt. Fehlt eine Quelle → „nicht abrufbar“, nie „nein“. */
+  const WFSB = (l, B, m, max) => hol('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:' + l + '&srsName=EPSG:4326&outputFormat=json&maxFeatures=' + (max || 300) + '&bbox='
+    + [B[0] - m, B[1] - m * 0.67, B[2] + m, B[3] + m * 0.67].map(v => v.toFixed(6)).join(',') + ',EPSG:4326').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(j => (j.features || []).filter(f => f.geometry && f.properties));
+  const fPolys = gm => gm.type === 'Polygon' ? [gm.coordinates] : gm.type === 'MultiPolygon' ? gm.coordinates : [];
+  const HQ = ['HQ30', 'HQ100', 'HQ300'], HQL = HQ.map(h => 'Hochwasserueberflutungsflaechen ' + h).join(',');
+  const hochwasser = ([lon, lat]) => hol('https://inspire.lfrz.gv.at/000801/ows?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=' + encodeURIComponent(HQL) + '&QUERY_LAYERS=' + encodeURIComponent(HQL)
+    + '&STYLES=&CRS=CRS:84&BBOX=' + [lon - 0.01, lat - 0.0065, lon + 0.01, lat + 0.0065].join(',') + '&WIDTH=101&HEIGHT=101&I=50&J=50&FEATURE_COUNT=10&INFO_FORMAT=text/plain')   // Dienst zeigt erst ab 1:25.000 → größerer Ausschnitt, Mitte abfragen
+    .then(r => r.ok ? r.text() : Promise.reject(r.status)).then(t => HQ.filter(h => t.includes('Hochwasserueberflutungsflaechen ' + h + "'")));
+  const proben = g => { const B = bbox(g.polys.flatMap(pg => pg[0])), P = [];                // Punkte innerhalb des Bauplatzes (Mitte zuerst) – für „mehrere Widmungen?“
+    for (let a = 0; a < 7; a++) for (let b = 0; b < 7; b++) { const p = [B[0] + (B[2] - B[0]) * (a + 0.5) / 7, B[1] + (B[3] - B[1]) * (b + 0.5) / 7]; if (kInPoly(p, g.polys)) P.push(p); }
+    const m = [(B[0] + B[2]) / 2, (B[1] + B[3]) / 2]; P.sort((x, y) => Math.hypot(x[0] - m[0], x[1] - m[1]) - Math.hypot(y[0] - m[0], y[1] - m[1])); return P.length ? P : [m]; };
+  const umfC = new Map();
+  function umfeld(g) { const key = g.teile.map(t => t.kg + '|' + t.gnr).join(','); if (umfC.has(key)) return umfC.get(key);
+    const B = bbox(g.polys.flatMap(pg => pg[0])), P = proben(g), p0 = P[0], drin = (f, p) => kInPoly(p, fPolys(f.geometry));
+    const W = q => q.then(v => ({ ok: true, v }), () => ({ ok: false }));
+    const pr = Promise.all([W(WFSB('GENFLWIDMUNGOGD', B, 0.0002)), W(WFSB('SCHUTZZONEOGD', B, 0.0001)), W(WFSB('GRPZONENOGD', B, 0.0001)), W(WFSB('BAUSPERRE82OGD', B, 0.0001)), W(WFSB('BAUSPERRE86OGD', B, 0.0001)),
+      W(WFSB('GEBAEUDEINFOOGD', B, 0.00005)), W(WFSB('BAUMKATOGD', B, 0.00015, 400)), W(hochwasser(p0))]).then(([wi, sz, gz, b82, b86, geb, baum, hq]) => {
+      const u = {};
+      if (wi.ok) { const an = p => wi.v.find(f => drin(f, p)); const f0 = an(p0) || wi.v.slice().sort((a, b) => Math.min(...fPolys(a.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9)))
+          - Math.min(...fPolys(b.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9))))[0];
+        const alle = [...new Set(P.map(an).filter(Boolean).map(f => f.properties.WIDMUNG))]; u.wid = f0 ? f0.properties : null; u.widAlle = alle; u.widRand = !an(p0); }
+      if (sz.ok) u.schutz = (sz.v.find(f => P.some(p => drin(f, p))) || {}).properties || false;
+      if (gz.ok) u.wohnzone = gz.v.some(f => f.properties.LAYER === 'DN_L-WZ' && P.some(p => drin(f, p)));
+      if (b82.ok && b86.ok) u.sperre = b82.v.concat(b86.v).some(f => P.some(p => drin(f, p)));
+      if (geb.ok) { const H = geb.v.filter(f => fPolys(f.geometry).some(pg => { const c = bbox(pg[0]); return kInPoly([(c[0] + c[2]) / 2, (c[1] + c[3]) / 2], g.polys); }));
+        u.bestand = H.length ? { gesch: Math.max(0, ...H.map(f => +f.properties.GESCH_ANZ || 0)) || null, jahr: (H.find(f => f.properties.BAUJAHR) || {}).properties?.BAUJAHR || null, periode: (H.find(f => f.properties.L_BAUJ) || {}).properties?.L_BAUJ || null } : false; }
+      if (baum.ok) u.baeume = baum.v.filter(f => { const c = f.geometry.coordinates; return kInPoly(c, g.polys) || g.polys.some(pg => pg[0].some((a, i, R) => kSegAbst(c, a, R[(i + 1) % R.length]) < 8)); }).length;
+      if (hq.ok) u.hq = hq.v;
+      return u; });
+    umfC.set(key, pr); pr.catch(() => umfC.delete(key)); return pr; }
+  const ROEM = ['', 'I', 'II', 'III', 'IV', 'V', 'VI'], BKH = { 1: [9, 3], 2: [12, 4], 3: [16, 5], 4: [21, 7], 5: [26, 8] };   // Wiener Bauordnung § 75: Höchsthöhe je Bauklasse
+  const WTXT = { W: 'Wohngebiet – hier darf man Wohnhäuser bauen.', WGV: 'Wohngebiet mit Geschäftsviertel – Wohnhäuser, das Erdgeschoss ist für Geschäfte gedacht.',
+    GB: 'Gemischtes Baugebiet – Wohnungen und Betriebe sind erlaubt.', GBGV: 'Gemischtes Baugebiet mit Geschäftsviertel – Wohnungen und Geschäfte, das Erdgeschoss ist für Geschäfte gedacht.',
+    GBBG: 'Betriebsbaugebiet – vor allem für Betriebe, Wohnungen nur eingeschränkt.', GS: 'Gartensiedlungsgebiet – kleine Wohnhäuser mit Garten.', IG: 'Industriegebiet – für Betriebe, keine Wohnungen.', SO: 'Sondergebiet – nur für den im Plan festgelegten Zweck.' };
+  const widKl = w => { const k = String(w.WIDMUNGSKLASSE || '').toUpperCase().replace(/[\s-]/g, ''); return WTXT[k] ? k : /^SO/.test(k) ? 'SO' : null; };
+  /* Ergebnis als Karten in Alltagssprache: links „Was ist das?“, rechts „Was heißt das für dich?“ – Ampel grün/gelb/rot, Fachbegriffe per „Was heißt das?“ */
+  const karte = (art, titel, text, mehr) => { const d = document.createElement('div'); d.className = 'g-card ' + art;
+    const h = document.createElement('p'); h.className = 'g-ct'; h.textContent = titel; d.append(h);
+    if (text) { const t = document.createElement('p'); t.className = 'g-cx'; t.textContent = text; d.append(t); }
+    if (mehr) { const x = document.createElement('details'), sm = document.createElement('summary'), b = document.createElement('p'); sm.textContent = 'Was heißt das?'; b.textContent = mehr; x.append(sm, b); d.append(x); }
+    return d; };
+  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; };
+  const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
+    const gelb = [], rot = [];
     L.append(n > 1 ? karte('', 'Bauplatz ' + flText(g) + ' m²', 'Besteht aus ' + n + ' Grundstücken (' + g.gnr + '), die im Grundbuch zusammen geführt werden.', 'Ein Bauplatz ist die Fläche, auf der gebaut werden darf. Grundstücke mit derselben Grundbuch-Einlage (EZ) werden gemeinsam geführt und zählen zusammen.')
       : karte('', 'Grundstück ' + g.gnr + ' · ' + flText(g) + ' m²', 'Ein einzelnes Grundstück laut amtlichem Kataster.', 'Die Grundstücksnummer und die Fläche stammen aus dem Kataster des Bundesamts für Eich- und Vermessungswesen (BEV).'));
     L.append(karte('meta', 'KG ' + K + (g.ez ? ' · EZ ' + g.ez : ''), '', 'KG = Katastralgemeinde, der Vermessungsbezirk. EZ = Einlagezahl, die Nummer im Grundbuch.'));
+    if (!u) L.append(karte('bald', 'Widmung, Schutz und Hochwasser werden geladen …', ''));
+    else {
+      if (u.wid === undefined) L.append(karte('meta', 'Widmung gerade nicht abrufbar', 'Bitte im Plan ablesen (rote Schrift) oder später nochmal versuchen.'));
+      else if (!u.wid) { L.append(karte('meta', 'Keine Widmung gefunden', 'Wahrscheinlich Straße oder Verkehrsfläche – bitte im Plan prüfen.')); gelb.push('Keine Widmung gefunden – bitte im Plan prüfen.'); }
+      else { const w = u.wid, kl = widKl(w), bk = +(String(w.WIDMUNG || '').match(/(\d)\s*$/) || [])[1] || 0, h = BKH[bk];
+        const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': bis ' + h[0] + ' m hoch, also ca. ' + h[1] + ' Geschosse.' : '';
+        if (!kl) { L.append(karte('rot', w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland', 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.')); rot.push('Laut Flächenwidmung kein Bauland.'); }
+        else L.append(karte('', WTXT[kl].split(' – ')[0], WTXT[kl].split(' – ')[1] + (bkT ? ' ' + bkT : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.'));
+        if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.');
+        if (u.widAlle.length > 1) gelb.push('Der Bauplatz hat mehrere Widmungen (' + u.widAlle.join(', ') + ').'); else if (u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
+      if (u.bestand) L.append(karte('', 'Steht heute drauf', 'Gebäude' + (u.bestand.jahr ? ' von ' + u.bestand.jahr : u.bestand.periode ? ' aus ' + u.bestand.periode : '') + (u.bestand.gesch ? ', ' + u.bestand.gesch + ' Geschosse' : '') + '.', 'Laut Gebäudeinformation der Stadt Wien. Baujahr und Geschosszahl sind Richtwerte.'));
+      else if (u.bestand === false) L.append(karte('meta', 'Kein Gebäude erfasst', 'Die Stadt Wien führt hier kein Gebäude – vielleicht unbebaut oder ein Neubau.'));
+      const sch = [];
+      if (u.schutz) { sch.push('Schutzzone' + (u.schutz.SLANG ? ' „' + u.schutz.SLANG + '“' : '')); gelb.push('Schutzzone: Abbruch und Umbau der Fassade brauchen eine Bewilligung, Neues muss ins Stadtbild passen.'); }
+      if (u.wohnzone) sch.push('Wohnzone');
+      if (u.sperre) { sch.push('Bausperre'); gelb.push('Bausperre: Der Plan wird gerade überarbeitet – Bauen ist nur eingeschränkt möglich.'); }
+      const unbek = [u.schutz === undefined && 'Schutzzone', u.wohnzone === undefined && 'Wohnzone', u.sperre === undefined && 'Bausperre'].filter(Boolean);
+      L.append(sch.length ? karte('gelb-k', sch.join(' · '), u.schutz ? 'Das Stadtbild ist hier geschützt.' : u.wohnzone ? 'Hier müssen vorwiegend Wohnungen entstehen.' : 'Der Plan wird überarbeitet.', 'Schutzzone: Gebäude prägen das Stadtbild, Abbruch braucht eine Bewilligung. Wohnzone: Büros und Geschäfte sind nur eingeschränkt erlaubt. Bausperre: Bis der neue Plan gilt, wird nur eingeschränkt bewilligt.')
+        : karte('gruen-k', 'Keine Schutzzone, Wohnzone oder Bausperre', unbek.length ? unbek.join(', ') + ' gerade nicht abrufbar.' : ''));
+      if (u.hq === undefined) L.append(karte('meta', 'Hochwasser gerade nicht abrufbar', ''));
+      else if (u.hq.length) { const t = u.hq[0]; L.append(karte(t === 'HQ300' ? 'meta' : 'gelb-k', 'Hochwassergebiet ' + t, t === 'HQ30' ? 'Statistisch alle 30 Jahre überflutet.' : t === 'HQ100' ? 'Statistisch alle 100 Jahre überflutet.' : 'Nur bei sehr seltenem Hochwasser (alle 300 Jahre) betroffen.', 'Daten: Hochwasser-Überflutungsflächen des Bundes (LFRZ), Genauigkeit ca. 15 m. Im 30-jährlichen Gebiet braucht ein Neubau zusätzlich eine wasserrechtliche Bewilligung.'));
+        if (t !== 'HQ300') gelb.push('Hochwassergebiet ' + t + (t === 'HQ30' ? ': zusätzliche wasserrechtliche Bewilligung nötig.' : '.')); }
+      else L.append(karte('gruen-k', 'Kein Hochwassergebiet', 'Auch nicht bei sehr seltenem Hochwasser (300 Jahre). Starkregen ist hier nicht erfasst.'));
+      if (u.baeume === undefined) L.append(karte('meta', 'Bäume gerade nicht abrufbar', ''));
+      else L.append(karte(u.baeume ? '' : 'meta', u.baeume ? u.baeume + (u.baeume === 1 ? ' städtischer Baum' : ' städtische Bäume') + ' direkt am Grundstück' : 'Keine städtischen Bäume direkt am Grundstück',
+        u.baeume ? 'Bei Zufahrt oder Baustelle müssen sie geschützt werden.' : '', 'Erfasst sind nur Bäume der Stadt (Straße, Park). Bäume auf privatem Grund stehen ebenfalls unter Schutz (Wiener Baumschutzgesetz) – Fällen nur mit Bewilligung und Ersatzpflanzung.'));
+    }
     if (o.auch && o.auch.length) L.append(karte('', 'Auf diesem Bauplatz auch', o.auch.slice(0, 4).join(', ') + (o.auch.length > 4 ? ' und weitere' : '')));
     if (o.ohneAdr) L.append(karte('meta', 'Ohne Adresse', 'Diesem Grundstück ist keine Hausnummer zugeordnet.'));
-    L.append(karte('bald', 'Kommt als Nächstes', 'Widmung und erlaubte Höhe in Alltagssprache, Schutzzone, Hochwasser und Bäume.'));
-    const gelb = o.hinweis || (g.gross ? 'Diese Grundbuch-Einlage ist sehr groß (' + g.gross + ' Grundstücke) – gezeigt wird nur dieses Grundstück.' : '')
+    const bp = o.hinweis || (g.gross ? 'Diese Grundbuch-Einlage ist sehr groß (' + g.gross + ' Grundstücke) – gezeigt wird nur dieses Grundstück.' : '')
       || (o.auch && o.auch.length ? 'Zu dieser Einlage gehören mehrere Häuser. Ist das wirklich dein Bauplatz?' : '') || (g.fl > 2000 ? 'Der Bauplatz ist ungewöhnlich groß. Ist das wirklich deiner?' : '');
-    D.append(gelb ? karte('gelb', 'Bitte kurz prüfen', gelb + ' Bald kannst du den Bauplatz hier selbst anpassen.') : karte('gruen', 'Grundstück eindeutig gefunden', 'Fläche und Grenzen stammen aus dem amtlichen Kataster.'));
-    D.append(karte('bald', 'Wie viel darfst du hier bauen?', 'Erlaubte Höhe, Geschosse und Reserve in m² berechnen wir im nächsten Schritt.')); requestAnimationFrame(ueberlauf); };
+    if (bp) gelb.unshift(bp);
+    const kopf = rot.length ? karte('rot', 'Hier wird es schwierig', rot.concat(gelb).join(' ')) : gelb.length ? karte('gelb', gelb.length === 1 ? 'Ein Punkt zum Prüfen' : gelb.length + ' Punkte zum Prüfen', '')
+      : karte('gruen', u ? 'Keine Auffälligkeiten' : 'Grundstück eindeutig gefunden', u ? 'Bauland, kein Schutzgebiet, kein Hochwasser, Grundstück eindeutig.' : 'Fläche und Grenzen stammen aus dem amtlichen Kataster.');
+    if (!rot.length && gelb.length) { const ul = document.createElement('ul'); ul.className = 'g-pl'; gelb.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.append(li); }); kopf.append(ul); }
+    D.append(kopf);
+    D.append(karte('bald', 'Wie viel darfst du hier bauen?', 'Erlaubte Höhe, Geschosse und Reserve in m² berechnen wir im nächsten Schritt.')); requestAnimationFrame(ueberlauf);
+    if (!u && g.teile) umfeld(g).then(v => { g.umf = v; if (M.sel === g) zeigeInfo(g, g.infoO); }, () => { g.umf = {}; if (M.sel === g) zeigeInfo(g, g.infoO); }); };
   const ladeKg = () => { if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => (M.kg = j.kg)).catch(() => (M.kg = {})); return kgNamen; };
   const ueberlauf = () => gBox.toggleAttribute('data-lenis-prevent', gBox.scrollHeight > gBox.clientHeight + 2);   // nur wenn die Box selbst scrollen muss, sonst scrollt die Seite
   if (window.ResizeObserver) { const ro = new ResizeObserver(() => requestAnimationFrame(ueberlauf)); ro.observe(gRes); ro.observe(gBox); } addEventListener('resize', () => requestAnimationFrame(ueberlauf));
