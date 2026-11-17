@@ -417,7 +417,7 @@ function start() {
     adrSuche(q).then(L => { const f = L.find(hatNr);
       if (!L.length) { gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
       waehlen(f || L[0]); }).catch(() => { gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
-  $('resBack').addEventListener('click', () => { M.marks = []; M.sel = null; gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
+  $('resBack').addEventListener('click', () => { M.marks = []; M.sel = null; M.akt = null; nummernZeigen(); gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
 
   // Kataster
   const KZ = 16, katC = new Map();
@@ -442,7 +442,7 @@ function start() {
   const NS = 'http://www.w3.org/2000/svg', mapEl = $('resMap'), tilesEl = $('resTiles'), ovEl = $('resOv'), ldEl = $('resLoad');
   const M = { cx: 0, cy: 0, k: 1, sel: null, pt: null, marks: [], tiles: new Map(), tz: 0 };
   const mapS = () => mapEl.clientWidth || 400;
-  const KMIN = 2 ** 12.5, KMAX = 2 ** 20;
+  const KMIN = 2 ** 17, KMAX = 2 ** 20;   // nie bis zur bunten Übersicht hinaus – immer Detailplan mit roten Linien
   function mapRender() {
     const s = mapS(), k = M.k, dpr = Math.min(2, devicePixelRatio || 1), tz = Math.max(12, Math.min(19, Math.round(Math.log2(k * dpr)))), n = 2 ** tz;
     const css = (x, y) => [(x - M.cx) * k + s / 2, (y - M.cy) * k + s / 2];
@@ -459,10 +459,11 @@ function start() {
     ovEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); ovEl.textContent = '';
     const P = c => css(...kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ');
     if (M.sel) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', M.sel.polys.map(pg => pg.map(r => 'M' + r.map(P).join('L') + 'Z').join('')).join('')); p.setAttribute('class', 'gs'); p.setAttribute('fill-rule', 'evenodd'); ovEl.append(p); }
-    const lab = Math.log2(k) >= 17.4;
+    const belegt = [];                                                       // Hausnummern-Schilder; zu eng beisammen → weglassen statt Ameisenhaufen
     M.marks.forEach(m => { const [x, y] = css(...kMerc(m.lon, m.lat)); if (x < -20 || y < -20 || x > s + 20 || y > s + 20) return;
-      const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', x.toFixed(1)); c.setAttribute('cy', y.toFixed(1)); c.setAttribute('r', lab ? 9 : 4); c.setAttribute('class', 'hn'); ovEl.append(c);
-      if (lab) { const t = document.createElementNS(NS, 'text'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', (y + 3.5).toFixed(1)); t.setAttribute('class', 'hnt'); t.textContent = m.nr; ovEl.append(t); } });
+      const w = 10 + 6.2 * m.nr.length; if (m !== M.akt && belegt.some(b => Math.abs(b[0] - x) < (b[2] + w) / 2 + 2 && Math.abs(b[1] - y) < 17)) return; belegt.push([x, y, w]);
+      const r = document.createElementNS(NS, 'rect'); r.setAttribute('x', (x - w / 2).toFixed(1)); r.setAttribute('y', (y - 8).toFixed(1)); r.setAttribute('width', w.toFixed(1)); r.setAttribute('height', 16); r.setAttribute('rx', 3); r.setAttribute('class', 'hn' + (m === M.akt ? ' on' : '')); ovEl.append(r);
+      const t = document.createElementNS(NS, 'text'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', (y + 3.5).toFixed(1)); t.setAttribute('class', 'hnt'); t.textContent = m.nr; ovEl.append(t); });
     if (M.pt) { const [x, y] = css(...kMerc(M.pt[0], M.pt[1])), c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', x.toFixed(1)); c.setAttribute('cy', y.toFixed(1)); c.setAttribute('r', 5); c.setAttribute('class', 'ap'); ovEl.append(c); } }
   function aufraeumen() {                                                   // alte Zoomstufe erst entfernen, wenn die neue fertig ist
     if (!M.need) return; const fertig = [...M.need].every(k => { const im = M.tiles.get(k); return im && im.dataset.ok; });
@@ -473,25 +474,25 @@ function start() {
   const bbox = pts => [Math.min(...pts.map(p => p[0])), Math.min(...pts.map(p => p[1])), Math.max(...pts.map(p => p[0])), Math.max(...pts.map(p => p[1]))];
   $('mapIn').addEventListener('click', () => { M.k = Math.min(KMAX, M.k * 2); mapKick(); });
   $('mapOut').addEventListener('click', () => { M.k = Math.max(KMIN, M.k / 2); mapKick(); });
-  let drag = null;
-  mapEl.addEventListener('pointerdown', e => { if (e.target.closest('.g-zoom')) return; drag = { x: e.clientX, y: e.clientY, cx: M.cx, cy: M.cy, moved: false }; mapEl.setPointerCapture(e.pointerId); mapEl.classList.add('drag'); });
+  let drag = null, tipT = 0; const tipZeigen = () => { const t = $('mapTip'); t.classList.add('on'); clearTimeout(tipT); tipT = setTimeout(() => t.classList.remove('on'), 4500); };
+  mapEl.addEventListener('pointerdown', e => { if (e.target.closest('.g-zoom')) return; $('mapTip').classList.remove('on'); drag = { x: e.clientX, y: e.clientY, cx: M.cx, cy: M.cy, moved: false }; mapEl.setPointerCapture(e.pointerId); mapEl.classList.add('drag'); });
   mapEl.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.hypot(dx, dy) > 4) drag.moved = true;
     if (drag.moved) { M.cx = drag.cx - dx / M.k; M.cy = drag.cy - dy / M.k; mapKick(); } });
   const dragEnde = e => { if (!drag) return; const d = drag; drag = null; mapEl.classList.remove('drag'); if (d.moved || e.type === 'pointercancel') return;
     const r = mapEl.getBoundingClientRect(), s = mapS(), px = e.clientX - r.left, py = e.clientY - r.top;
-    const hit = Math.log2(M.k) >= 15.5 && M.marks.find(m => { const [mx, my] = kMerc(m.lon, m.lat); return Math.hypot((mx - M.cx) * M.k + s / 2 - px, (my - M.cy) * M.k + s / 2 - py) < 12; });
-    if (hit) { waehlen(hit.f, true, hit.ein); return; }
+    const hit = M.marks.find(m => { const [mx, my] = kMerc(m.lon, m.lat); return Math.hypot((mx - M.cx) * M.k + s / 2 - px, (my - M.cy) * M.k + s / 2 - py) < 12; });
+    if (hit) { nummerWaehlen(hit); return; }
     const [lon, lat] = kGeo(M.cx + (px - s / 2) / M.k, M.cy + (py - s / 2) / M.k); parzelleWaehlen(lon, lat); };
   mapEl.addEventListener('pointerup', dragEnde); mapEl.addEventListener('pointercancel', dragEnde);
 
   const flText = g => g.fl.toLocaleString('de-AT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
   const zeigeInfo = (g, extra) => { $('resInfo').textContent = 'Grundstück ' + g.gnr + ' · KG ' + ((M.kg || {})[g.kg] || g.kg) + ' · ' + flText(g) + ' m² laut Kataster' + (extra || ''); };
   const ladeKg = () => { if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => (M.kg = j.kg)).catch(() => (M.kg = {})); return kgNamen; };
-  const zeigeBox = () => { gRes.hidden = false; gBox.classList.add('has-res'); };
+  const zeigeBox = () => { const neu = gRes.hidden; gRes.hidden = false; gBox.classList.add('has-res'); if (neu) tipZeigen(); };
   async function parzelleWaehlen(lon, lat) {
     const r = await grundstueck(lon, lat); await ladeKg(); if (!r) return;
     if (!r.genau) return;                                                    // Klick daneben (Straße ohne Kataster) → nichts ändern
-    M.sel = r.g; M.pt = null; $('resAddr').textContent = 'Grundstück ' + r.g.gnr; zeigeInfo(r.g, ' · per Klick gewählt');
+    M.sel = r.g; M.pt = null; M.akt = null; M.marks.forEach(x => x.btn && x.btn.classList.remove('on')); $('resAddr').textContent = 'Grundstück ' + r.g.gnr; zeigeInfo(r.g, ' · per Klick gewählt');
     $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück'; mapKick(); }
 
   // Zugangspunkt (Eingang an der Straße) = Gebäudepunkt + Versatz ZUG − GEB (Gauß-Krüger, Meter) – Gebäudepunkt liegt mitten im Haus
@@ -509,14 +510,26 @@ function start() {
     let fc; try { fc = await fetch(STR(name, bez)).then(r => r.json()); } catch { fc = null; }
     const L = ((fc && fc.features) || []).filter(x => x.geometry && x.properties && x.properties.NAME_ONR).map(x => { const [elon, elat] = zugang(x.geometry.coordinates[0], x.geometry.coordinates[1], x.properties); return { lon: elon, lat: elat, nr: x.properties.NAME_ONR, ein: [elon, elat],
       f: { geometry: { coordinates: x.geometry.coordinates }, properties: { Adresse: x.properties.NAME, PostalCode: x.properties.PLZ, StreetNumber: x.properties.NAME_ONR, StreetName: x.properties.NAME_STR } } }; });
-    await ladeKg(); gMsg.textContent = ''; M.marks = L; M.sel = null; M.pt = null;
-    if (!L.length) {                                                      // Flurname/Platz ohne Hausnummern (z. B. Wiese, Park): nur Ausschnitt zeigen, nichts vorwählen
+    await ladeKg(); gMsg.textContent = ''; M.marks = L; M.sel = null; M.pt = null; M.akt = null;
+    if (!L.length) { nummernZeigen();                                                      // Flurname/Platz ohne Hausnummern (z. B. Wiese, Park): nur Ausschnitt zeigen, nichts vorwählen
       const [lon, lat] = f.geometry.coordinates; $('resAddr').textContent = name; $('resInfo').textContent = 'Kein Ort mit Hausnummern – klick auf das Grundstück, das du meinst';
       $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = Grundstück wählen'; zeigeBox();
-      requestAnimationFrame(() => { zoomAuf([lon - 0.002, lat - 0.0013, lon + 0.002, lat + 0.0013], 1); mapRender(); }); return; }
-    $('resAddr').textContent = name + (bez ? ', ' + bez + '. Bezirk' : ', Wien'); $('resInfo').textContent = L.length + ' Hausnummern – klick auf deine Nummer oder direkt auf ein Grundstück';
-    $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen'; zeigeBox();
-    requestAnimationFrame(() => { zoomAuf(bbox(L.map(m => [m.lon, m.lat])), 0.85); mapRender(); }); }
+      requestAnimationFrame(() => { [M.cx, M.cy] = kMerc(lon, lat); M.k = 2 ** 17.5; mapRender(); }); return; }
+    const nrKey = n => { const m = /^(\d+)(.*)$/.exec(n) || [0, 1e6, n]; return [+m[1], m[2]]; };
+    L.sort((a, b) => { const A = nrKey(a.nr), B = nrKey(b.nr); return A[0] - B[0] || A[1].localeCompare(B[1], 'de'); });
+    const seen = new Set(); M.marks = L.filter(m => !seen.has(m.nr) && seen.add(m.nr));
+    $('resAddr').textContent = name + (bez ? ', ' + bez + '. Bezirk' : ', Wien'); $('resInfo').textContent = 'Wähle oben deine Hausnummer – oder klick im Plan direkt auf ein Grundstück.';
+    $('resHint').textContent = ''; nummernZeigen(); zeigeBox();
+    requestAnimationFrame(() => { const m0 = M.marks[0]; [M.cx, M.cy] = kMerc(m0.lon, m0.lat); M.k = 2 ** 18.3; mapRender(); }); }
+  function nummernZeigen() {
+    const box = $('numChips'); box.textContent = ''; gBox.classList.toggle('has-nums', M.marks.length > 0); $('resNums').hidden = !M.marks.length;
+    M.marks.forEach(m => { const b = document.createElement('button'); b.type = 'button'; b.textContent = m.nr; b.setAttribute('role', 'listitem'); m.btn = b;
+      b.addEventListener('click', () => nummerWaehlen(m)); box.append(b); }); }
+  function nummerWaehlen(m) { M.akt = m; M.marks.forEach(x => x.btn && x.btn.classList.toggle('on', x === m)); m.btn && m.btn.scrollIntoView({ block: 'nearest', inline: 'center' });
+    [M.cx, M.cy] = kMerc(m.lon, m.lat); if (M.k < 2 ** 18) M.k = 2 ** 18.3; waehlen(m.f, true, m.ein); }
+  $('numIn').addEventListener('keydown', e => { if (e.key !== 'Enter') return; e.preventDefault(); const v = e.target.value.trim().toLowerCase().replace(/\s+/g, '');
+    const m = M.marks.find(x => x.nr.toLowerCase().replace(/\s+/g, '') === v) || M.marks.find(x => parseInt(x.nr, 10) === parseInt(v, 10));
+    if (m) { nummerWaehlen(m); e.target.value = ''; } else { $('resInfo').textContent = 'Hausnummer ' + e.target.value + ' gibt es in dieser Straße nicht.'; } });
 
   async function waehlen(f, ausKarte, ein) {
     sugZeigen([]); if (!hatNr(f)) { gIn.value = f.properties.Adresse; return strasseZeigen(f); }
@@ -527,7 +540,7 @@ function start() {
       if (!r) { gMsg.textContent = 'An dieser Adresse habe ich kein Grundstück gefunden – bitte eine andere Hausnummer probieren.'; return; }
       gMsg.textContent = ''; $('resAddr').textContent = adrText(f); zeigeInfo(r.g, r.genau ? '' : ' · Adresspunkt liegt knapp außerhalb – nächstes Grundstück gewählt');
       $('resHint').textContent = 'Ziehen = verschieben · + / − = zoomen · Klick = anderes Grundstück';
-      M.sel = r.g; M.pt = ein || [lon, lat]; if (!ausKarte) M.marks = []; zeigeBox();
+      M.sel = r.g; M.pt = ein || [lon, lat]; if (!ausKarte) { M.marks = []; M.akt = null; nummernZeigen(); } zeigeBox();
       if (!ein) eingangFuer(f).then(e => { if (e && M.sel === r.g) { M.pt = e; mapKick(); } });
       requestAnimationFrame(() => { if (!ausKarte) zoomAuf(bbox(r.g.polys.flatMap(pg => pg[0])), 0.5); mapRender(); });
     } catch (err) { gMsg.textContent = 'Das Grundstück konnte gerade nicht geladen werden – bitte nochmal versuchen.'; } }

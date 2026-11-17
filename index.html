@@ -13,7 +13,7 @@
 <meta property="og:description" content="Baurechner, Baue mit Shifty und Objekte in Wien.">
 <meta property="og:image" content="https://quickestate.at/img/skyview-penthouse-dachterrasse-stephansdom.webp">
 <link rel="preload" href="fonts/oswald-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="start.css?v=344">
+<link rel="stylesheet" href="start.css?v=345">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"QuickEstate","url":"https://quickestate.at/","slogan":"See beyond.","founder":{"@id":"#eduard"}},{"@type":"Person","@id":"#eduard","name":"Eduard Beches","alternateName":"Shifty","address":{"@type":"PostalAddress","addressLocality":"Wien","addressCountry":"AT"}}]}
 </script>
@@ -66,7 +66,8 @@
     <ul class="g-sug" id="gateSug" role="listbox" aria-label="Adressvorschläge" hidden></ul>
     <div class="g-res" id="gateRes" hidden>
       <p class="g-ra" id="resAddr"></p>
-      <div class="g-map" id="resMap" role="img" aria-label="Ausschnitt Flächenwidmungsplan mit markiertem Grundstück"><div class="g-tiles" id="resTiles"></div><svg class="g-ov" id="resOv" aria-hidden="true"></svg><p class="g-load" id="resLoad">Plan wird geladen …</p><div class="g-zoom"><button type="button" id="mapIn" aria-label="Hineinzoomen">+</button><button type="button" id="mapOut" aria-label="Herauszoomen">−</button></div></div>
+      <div class="g-nums" id="resNums" hidden><p class="g-nq">Welche Hausnummer?</p><div class="g-nrow"><div class="g-chips" id="numChips" role="list"></div><input id="numIn" type="text" inputmode="numeric" placeholder="Nr." aria-label="Hausnummer eintippen"></div></div>
+      <div class="g-map" id="resMap" role="img" aria-label="Ausschnitt Flächenwidmungsplan mit markiertem Grundstück"><div class="g-tiles" id="resTiles"></div><svg class="g-ov" id="resOv" aria-hidden="true"></svg><p class="g-load" id="resLoad">Plan wird geladen …</p><p class="g-tip" id="mapTip">Ziehen zum Verschieben · + / − zum Zoomen · Klick auf dein Grundstück</p><div class="g-zoom"><button type="button" id="mapIn" aria-label="Hineinzoomen">+</button><button type="button" id="mapOut" aria-label="Herauszoomen">−</button></div></div>
       <p class="g-hint" id="resHint"></p>
       <p class="g-pi" id="resInfo"></p>
       <p class="g-src">Flächenwidmungsplan: Stadt Wien – data.wien.gv.at · Grundstücksgrenzen: BEV Kataster, Stand 01.10.2025 · CC BY 4.0 · Grenzen nicht vermessungsgenau</p>
@@ -98,6 +99,6 @@
 <script src="lib/gsap.min.js" defer></script>
 <script src="lib/ScrollTrigger.min.js" defer></script>
 <script src="lib/lenis.min.js" defer></script>
-<script type="module" src="start.js?v=344"></script>
+<script type="module" src="start.js?v=345"></script>
 </body>
 </html>
