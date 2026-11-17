@@ -613,7 +613,7 @@ function start() {
   function planRot(lon, lat, eng) { const [px, py] = planPx(lon, lat);
     for (const oy of eng ? [0] : [0, -1, 1]) for (const ox of eng ? [0] : [0, -1, 1]) { const X = Math.floor(px) + ox, Y = Math.floor(py) + oy, tx = Math.floor(X / 256), ty = Math.floor(Y / 256), d = PLAN_D.get(tx + '/' + ty); if (!d) continue;
       const i = ((Y - ty * 256) * 256 + (X - tx * 256)) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
-      if (r > 140 && r - g > 50 && r - b > 50) return true; }
+      if (r > 140 && g < 110 && b < 110 && r - g > 50) return true; }   // nur kräftiges Rot (Linien), nicht die rosa Schraffur
     return false; }
   // Straßenseite = äußere Kante des Bauplatzes, die dem Eingang am nächsten liegt; gerade Nachbarkanten werden angehängt
   function frontKante(bp, ref) { const K = (bp.kanten || []).filter(k => !k[2]), mx = 111320 * Math.cos(bp.polys[0][0][0][1] * Math.PI / 180), my = 110574, len = k => Math.hypot((k[1][0] - k[0][0]) * mx, (k[1][1] - k[0][1]) * my);
@@ -677,7 +677,7 @@ function start() {
       for (const x of R.ecke) { try { x.strasse = await strasseLesen(x.front, bp, x.abtr.t); } catch (_) { } }
       return R; })();
     leserC.set(key, pr); pr.catch(() => leserC.delete(key)); return pr; }
-  if (/[?&]leser=1/.test(location.search)) window.QE_ZONEN = async () => { if (!M.sel) return { fehler: 'kein Bauplatz' }; const L = await import('./planleser.js?v=2'); return L.zonenLesen(M.sel.polys.map(pg => pg[0]), planKachel, 40); };   // Testmodus Zonen-Leser
+  if (/[?&]leser=1/.test(location.search)) window.QE_ZONEN = async () => { if (!M.sel) return { fehler: 'kein Bauplatz' }; const L = await import('./planleser.js?v=3'); return L.zonenLesen(M.sel.polys.map(pg => pg[0]), planKachel, 40); };   // Testmodus Zonen-Leser
   if (/[?&]leser=1/.test(location.search)) window.QE_LESER = () => M.sel ? leserLauf(M.sel, M.pt) : Promise.resolve({ fehler: 'kein Bauplatz' });   // Testmodus (nicht für Kunden)
   const ROEM = ['', 'I', 'II', 'III', 'IV', 'V', 'VI'], BKH = { 1: [9, 3], 2: [12, 4], 3: [16, 5], 4: [21, 7], 5: [26, 8] };   // Wiener Bauordnung § 75: Höchsthöhe je Bauklasse
   const WTXT = { W: 'Wohngebiet – hier darf man Wohnhäuser bauen.', WGV: 'Wohngebiet mit Geschäftsviertel – Wohnhäuser, das Erdgeschoss muss für Geschäfte genutzt werden (Wohnungen erst ab 3,5 m Fußbodenhöhe).',
