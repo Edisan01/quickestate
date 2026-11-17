@@ -527,6 +527,8 @@ function start() {
     const P = c => css(...kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ');
     if (M.sel) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', M.sel.polys.map(pg => pg.map(r => 'M' + r.map(P).join('L') + 'Z').join('')).join('')); p.setAttribute('class', M.sel.kanten ? 'gsf' : 'gs'); p.setAttribute('fill-rule', 'evenodd'); ovEl.append(p);
       if (M.sel.kanten) [false, true].forEach(inn => { const q = document.createElementNS(NS, 'path'); q.setAttribute('d', M.sel.kanten.filter(k => k[2] === inn).map(k => 'M' + P(k[0]) + 'L' + P(k[1])).join('')); q.setAttribute('class', inn ? 'gsi' : 'gsa'); ovEl.append(q); }); }
+    if (M.sel && M.sel.teile && M.k >= 2 ** 17.4) M.sel.teile.forEach(t => { const [x, y] = css(...kMerc(...proben({ polys: t.polys })[0]));   // Grundstücksnummer in jedem Teil (Laien-Test 17.11.)
+      const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', x.toFixed(1)); tx.setAttribute('y', (y + 4).toFixed(1)); tx.setAttribute('class', 'gnr'); tx.textContent = t.gnr; ovEl.append(tx); });
     const belegt = [];                                                       // Hausnummern-Schilder; zu eng beisammen → weglassen statt Ameisenhaufen
     M.marks.forEach(m => { const [x, y] = css(...kMerc(m.lon, m.lat)); if (x < -20 || y < -20 || x > s + 20 || y > s + 20) return;
       const w = 10 + 6.2 * m.nr.length; if (m !== M.akt && belegt.some(b => Math.abs(b[0] - x) < (b[2] + w) / 2 + 2 && Math.abs(b[1] - y) < 17)) return; belegt.push([x, y, w]);
@@ -588,9 +590,9 @@ function start() {
       return u; });
     umfC.set(key, pr); pr.catch(() => umfC.delete(key)); return pr; }
   const ROEM = ['', 'I', 'II', 'III', 'IV', 'V', 'VI'], BKH = { 1: [9, 3], 2: [12, 4], 3: [16, 5], 4: [21, 7], 5: [26, 8] };   // Wiener Bauordnung § 75: Höchsthöhe je Bauklasse
-  const WTXT = { W: 'Wohngebiet – hier darf man Wohnhäuser bauen.', WGV: 'Wohngebiet mit Geschäftsviertel – Wohnhäuser, das Erdgeschoss ist für Geschäfte gedacht.',
-    GB: 'Gemischtes Baugebiet – Wohnungen und Betriebe sind erlaubt.', GBGV: 'Gemischtes Baugebiet mit Geschäftsviertel – Wohnungen und Geschäfte, das Erdgeschoss ist für Geschäfte gedacht.',
-    GBBG: 'Betriebsbaugebiet – vor allem für Betriebe, Wohnungen nur eingeschränkt.', GS: 'Gartensiedlungsgebiet – kleine Wohnhäuser mit Garten.', IG: 'Industriegebiet – für Betriebe, keine Wohnungen.', SO: 'Sondergebiet – nur für den im Plan festgelegten Zweck.' };
+  const WTXT = { W: 'Wohngebiet – hier darf man Wohnhäuser bauen.', WGV: 'Wohngebiet mit Geschäftsviertel – Wohnhäuser, das Erdgeschoss muss für Geschäfte genutzt werden (Wohnungen erst ab 3,5 m Fußbodenhöhe).',
+    GB: 'Gemischtes Baugebiet – Wohnungen und Betriebe sind erlaubt.', GBGV: 'Gemischtes Baugebiet mit Geschäftsviertel – Wohnungen und Geschäfte, das Erdgeschoss muss für Geschäfte genutzt werden (Wohnungen erst ab 3,5 m Fußbodenhöhe).',
+    GBBG: 'Betriebsbaugebiet – nur für Betriebe, keine Wohnhäuser (nur Wohnungen für die Betriebsleitung).', GS: 'Gartensiedlungsgebiet – kleine Wohnhäuser mit Garten.', IG: 'Industriegebiet – für Betriebe, keine Wohnungen.', SO: 'Sondergebiet – nur für den im Plan festgelegten Zweck.' };
   const widKl = w => { const k = String(w.WIDMUNGSKLASSE || '').toUpperCase().replace(/[\s-]/g, '').replace(/^WO/, 'W').replace('GF', '');   // Stadt: WO, WOGV, WOGF, GBGFGV … (GF = geförderter Wohnbau)
     return WTXT[k] ? k : /^SO/.test(k) ? 'SO' : null; };
   const widGF = w => /GF/.test(String(w.WIDMUNGSKLASSE || ''));
@@ -617,8 +619,6 @@ function start() {
         else L.append(karte('', WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.'));
         if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.');
         if (u.widAlle.length > 1) gelb.push('Der Bauplatz hat mehrere Widmungen (' + u.widAlle.join(', ') + ').'); else if (u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
-      if (u.bestand) L.append(karte('', 'Steht heute drauf', [u.bestand.jahr ? 'Baujahr ' + u.bestand.jahr : u.bestand.periode ? 'Baujahr ' + String(u.bestand.periode).replace(/\s*-\s*/, ' bis ').replace(/^(\d)/, 'zwischen $1').replace(' bis ', ' und ').replace(/^(zwischen \d+) und $/, '$1') : 'Gebäude', u.bestand.gesch ? u.bestand.gesch + ' Geschosse' : ''].filter(Boolean).join(' · ') + '.', 'Laut Gebäudeinformation der Stadt Wien. Baujahr und Geschosszahl sind Richtwerte.'));
-      else if (u.bestand === false) L.append(karte('meta', 'Kein Gebäude erfasst', 'Die Stadt Wien führt hier kein Gebäude – vielleicht unbebaut oder ein Neubau.'));
       const sch = [];
       if (u.schutz) { sch.push('Schutzzone' + (u.schutz.SLANG ? ' „' + u.schutz.SLANG + '“' : '')); gelb.push('Schutzzone: Abbruch und Umbau der Fassade brauchen eine Bewilligung, Neues muss ins Stadtbild passen.'); }
       if (u.wohnzone) sch.push('Wohnzone');

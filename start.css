@@ -388,3 +388,6 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-card.gruen-k .g-ct,.g-card.gelb-k .g-ct{font-size:14px}
 .g-pl{margin:8px 0 0;padding:0 0 0 16px;font-size:13px;line-height:1.5}
 .g-pl li+li{margin-top:4px}
+/* v3.57 Grundstücksnummern im Plan */
+.g-ov .gnr{fill:#03203D;font:700 13px/1 var(--sans);text-anchor:middle;paint-order:stroke;stroke:#F4F1EA;stroke-width:3.5px;stroke-linejoin:round;pointer-events:none}
+.g-lb .g-ov .gnr{fill:#F4F1EA;stroke:#03203D}
