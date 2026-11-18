@@ -1,0 +1,105 @@
+{
+ "zonen": 26437,
+ "klassen": {
+  "S": {
+   "zonen": 855,
+   "kacheln": 59839
+  },
+  "WO": {
+   "zonen": 11825,
+   "kacheln": 50010
+  },
+  "E": {
+   "zonen": 2158,
+   "kacheln": 21340
+  },
+  "GB": {
+   "zonen": 4441,
+   "kacheln": 14656
+  },
+  "VB": {
+   "zonen": 155,
+   "kacheln": 12852
+  },
+  "GBBG": {
+   "zonen": 941,
+   "kacheln": 8488
+  },
+  "GBGV": {
+   "zonen": 3153,
+   "kacheln": 7995
+  },
+  "L": {
+   "zonen": 132,
+   "kacheln": 6622
+  },
+  "SO": {
+   "zonen": 240,
+   "kacheln": 5402
+  },
+  "WOGV": {
+   "zonen": 1739,
+   "kacheln": 3993
+  },
+  "IG": {
+   "zonen": 66,
+   "kacheln": 3497
+  },
+  "F": {
+   "zonen": 58,
+   "kacheln": 2541
+  },
+  "GS": {
+   "zonen": 253,
+   "kacheln": 1986
+  },
+  "WOGF": {
+   "zonen": 181,
+   "kacheln": 394
+  },
+  "GBGF": {
+   "zonen": 150,
+   "kacheln": 303
+  },
+  "GBGFGV": {
+   "zonen": 50,
+   "kacheln": 143
+  },
+  "WOFB": {
+   "zonen": 14,
+   "kacheln": 54
+  },
+  "WOGFGV": {
+   "zonen": 19,
+   "kacheln": 41
+  },
+  "GBFB": {
+   "zonen": 7,
+   "kacheln": 25
+  }
+ },
+ "kacheln_alle_zonen": 153052,
+ "kacheln_bauland": 78667,
+ "kacheln_bauland_puffer2": 109473,
+ "bauland_klassen": [
+  "BG",
+  "GB",
+  "GBBG",
+  "GBBGGV",
+  "GBGF",
+  "GBGFGV",
+  "GBGV",
+  "GS",
+  "IG",
+  "SO",
+  "WO",
+  "WOGF",
+  "WOGFGV",
+  "WOGV"
+ ],
+ "stunden_bei_1_pro_s": {
+  "bauland": 21.9,
+  "bauland_puffer2": 30.4,
+  "alle": 42.5
+ }
+}
