@@ -537,7 +537,7 @@ function start() {
     if (M.sel) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', M.sel.polys.map(pg => pg.map(r => 'M' + r.map(P).join('L') + 'Z').join('')).join('')); p.setAttribute('class', M.sel.kanten ? 'gsf' : 'gs'); p.setAttribute('fill-rule', 'evenodd'); ovEl.append(p);
       if (M.sel.kanten) [false, true].forEach(inn => { const q = document.createElementNS(NS, 'path'); q.setAttribute('d', M.sel.kanten.filter(k => k[2] === inn).map(k => 'M' + P(k[0]) + 'L' + P(k[1])).join('')); q.setAttribute('class', inn ? 'gsi' : 'gsa'); ovEl.append(q); }); }
     if (M.sel && M.sel.teile && M.k >= 2 ** 17.4) { const lb = [];   // Grundstücksnummer in die Mitte jedes Teils; nur wenn sie hineinpasst und nichts überdeckt (Eduard 18.11.)
-      M.sel.teile.forEach(t => { const R = t.polys[0][0].map(c => css(...kMerc(c[0], c[1]))), xs = R.map(q => q[0]), ys = R.map(q => q[1]);
+      [...M.sel.teile].sort((a, b) => (b.fl || 0) - (a.fl || 0)).forEach(t => { const R = t.polys[0][0].map(c => css(...kMerc(c[0], c[1]))), xs = R.map(q => q[0]), ys = R.map(q => q[1]);
         let A = 0, cx = 0, cy = 0; for (let k = 0; k < R.length; k++) { const [x1, y1] = R[k], [x2, y2] = R[(k + 1) % R.length], f = x1 * y2 - x2 * y1; A += f; cx += (x1 + x2) * f; cy += (y1 + y2) * f; }
         if (Math.abs(A) < 1e-6) return; cx /= 3 * A; cy /= 3 * A; const w = t.gnr.length * 7.4 + 6;
         if (Math.max(...xs) - Math.min(...xs) < w * 0.8 || Math.max(...ys) - Math.min(...ys) < 15) return;
@@ -822,7 +822,7 @@ function start() {
     e.teile.forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = t.poly.map(r => [r]);
       const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []), mit = (a, x) => { const k = boxen(a).concat(x || []); return { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6 }; };
       const k = ZART(t), sec = document.createElement('div'); sec.className = 'g-sec ' + k; st.append(sec);
-      const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + ZTXT[k] + ' · ' + fl + ' m²';
+      const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'vorgarten' ? 'nicht bebaubar' : ZTXT[k]) + ' · ' + fl + ' m²';
       sec.append(zeile('', kopf, ZERK[k], { zonen: zone, kreise: boxen('*'), klein: 7 })); sec.lastChild.classList.add('kopf');
       if (t.art === 'G') { sec.append(zeile('G', 'gärtnerisch auszugestalten', 'Garten oder Grünfläche – hier darf kein Gebäude stehen.', mit('*'))); if (p.bb) sec.append(zeile('BB', 'Besondere Bestimmung (Hof)', 'Eigene Zusatzregel für diese Fläche – der genaue Text steht im Plandokument.', mit('*'))); return; }
       if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sec.append(zeile(v && v.plan ? v.plan.toFixed(2).replace('.', ',') : 'Vg', 'Vorgarten', 'Streifen zwischen Straße und Baufluchtlinie. Hier darf nicht gebaut werden – Garten, Zugang, Zufahrt.', mit('*'))); return; }
