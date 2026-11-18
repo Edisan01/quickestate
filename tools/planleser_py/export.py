@@ -5,7 +5,7 @@ import kat, steckbrief as S
 def ll(m,x,y):
   n=2**19; X=x/256+m['x0']; Y=y/256+m['y0']
   lon=X/n*360-180; lat=math.degrees(math.atan(math.sinh(math.pi*(1-2*Y/n)))); return [round(lon,7),round(lat,7)]
-MPX=0.2986
+MPX=0.2986*math.cos(math.radians(48.21))
 def strassenkanten(m,ringe_px,off,zonen):
   # Kante liegt an der Straße, wenn 4 m außerhalb keine Widmungszone (Bauland/Grün) liegt
   andere=[z['P'].astype(np.float32) for z in zonen]
