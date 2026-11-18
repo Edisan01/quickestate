@@ -910,6 +910,28 @@ function start() {
     const k2 = el('div', 'q-card q-mehr'); const mz_ = (l, v) => { const r = el('div', 'q-mz'); r.append(el('span', '', l), el('b', '', v)); k2.append(r); };
     const sb = e.teile.map(t => t.strassenbreite).find(x => x && x.plan); if (sb) mz_('Straßenbreite', z2(sb.plan) + ' m');
     mz_('Grundstück abtreten', e.teile.some(t => t.art === 'abtretung') ? 'Ja' : 'Nein'); wrap.append(k2); }
+  // Steckbrief für jede Adresse in Wien (Eduard 18.11.): Widmung + Bauklasse je Teil aus den Stadt-Daten, gleiche Darstellung wie mit Planleser; Plandokument-Nummer von der Stadt (WMS SCHNITTMUSTEROGD)
+  const KLN = { W: 'W', WGV: 'W GV', GB: 'GB', GBGV: 'GB GV', GBBG: 'GBBG', GS: 'GS', IG: 'IG', SO: 'SO' };
+  function stadtSteck(g, L, sZ) {
+    const el = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt != null) x.textContent = txt; return x; }, wrap = el('div', 'q-steck'), k1 = el('div', 'q-card'); wrap.append(k1); L.append(wrap); let offen = null;
+    const vor = (b, sp) => { if (matchMedia('(hover:hover)').matches) { b.addEventListener('mouseenter', () => vorschau(sp)); b.addEventListener('mouseleave', vorschauEnde); } };
+    const zeile = (dot, lab, val, bb, spez, chips, text) => { const w = el('div', 'q-it'), b = el('button', 'q-row'); b.type = 'button'; b.setAttribute('aria-expanded', 'false'); const d = el('i', 'q-dot'); d.style.background = dot;
+      const t = el('div', 'q-txt'); t.append(el('div', 'q-lab', lab), el('div', 'q-val', val)); if (bb) t.append(el('div', 'q-bb', bb)); const cv = el('span', 'q-chev'); cv.setAttribute('aria-hidden', 'true'); b.append(d, t, cv); const auf = el('div', 'q-auf'); w.append(b, auf); vor(b, spez);
+      const zu = () => { w.classList.remove('auf'); b.setAttribute('aria-expanded', 'false'); auf.textContent = ''; };
+      const oeffnen = () => { if (offen && offen !== w) offen._zu(); offen = w; w.classList.add('auf'); b.setAttribute('aria-expanded', 'true'); auf.textContent = ''; const det = el('div', 'q-det');
+        if (chips && chips.length) { const cs = el('div', 'q-chips'); let akt = null; chips.forEach(c => { const cb = el('button', 'q-chip'); cb.type = 'button'; cb.append(el('b', '', c.k), el('span', '', c.t)); cs.append(cb);
+          cb.addEventListener('click', () => { const an = akt !== cb; cs.querySelectorAll('.q-chip').forEach(x => x.classList.remove('an')); det.textContent = ''; akt = an ? cb : null; if (an) { cb.classList.add('an'); det.append(el('p', '', c.e)); } }); }); auf.append(cs); }
+        if (text) auf.append(el('p', 'q-t', text)); auf.append(det); M.hl = null; if (spez) zeigen(spez, b); };
+      w._zu = zu; b.addEventListener('click', () => { if (w.classList.contains('auf')) { zu(); offen = null; M.hl = null; zeigen(null); } else oeffnen(); }); return w; };
+    sZ.forEach(z => { const n = (z.vor || 'Straßentrakt').replace(/^Hof/, 'Hoffläche'), bkT = z.bk ? ROEM[z.bk] : '', ch = [{ k: KLN[z.kl] || z.kl, t: WTXT[z.kl].split(' – ')[0], e: WTXT[z.kl].split(' – ')[1].replace(/^./, c => c.toUpperCase()) + (widGF(z.w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : '') + ' Quelle: Flächenwidmungsplan der Stadt Wien (amtliche Daten).' }];
+      if (bkT) ch.push({ k: bkT, t: 'Bauklasse ' + bkT, e: z.h ? 'Die Bauklasse legt die Gebäudehöhe fest: höchstens ' + z.h[0] + ' m (ca. ' + z.h[1] + ' Geschoße). Steht im Plan eine eigene Meterzahl, gilt die.' : 'Bauklasse VI: über 26 m.' });
+      k1.append(zeile('#2F6FC4', 'Widmung ' + n, ((KLN[z.kl] || z.kl) + ' ' + bkT).trim(), WTXT[z.kl].split(' – ')[0], { zonen: z.zz.zonen, clip: z.zz.clip, kreise: [], farbe: 'b' }, ch)); });
+    const pd = zeile('#8A94A6', 'Plandokument', 'wird abgefragt …', 'Festsetzung der Stadt Wien', null, null, 'Das Plandokument enthält den Plan und die textlichen Bestimmungen (Besondere Bestimmungen). Die Nummer kommt direkt von der Stadt Wien.'); k1.append(pd);
+    const pt = M.pt || (g.polys && g.polys[0] && g.polys[0][0][0]); if (!pt) { pd.remove(); return; }
+    const [lon, lat] = pt, url = 'https://data.wien.gv.at/daten/wms?service=WMS&request=GetFeatureInfo&version=1.1.1&layers=SCHNITTMUSTEROGD&query_layers=SCHNITTMUSTEROGD&styles=&srs=EPSG:4326&bbox=' + [lon - 0.0005, lat - 0.0002, lon + 0.0005, lat + 0.0002].map(v => v.toFixed(6)).join(',') + '&width=101&height=101&x=50&y=50&info_format=text/xml&feature_count=10';
+    fetch(url).then(r => r.text()).then(t => { const L_ = [...t.matchAll(/<FIELDS\b([^>]*)>/g)].map(m => { const a = k => (m[1].match(new RegExp('\\b' + k + '="([^"]*)"')) || [])[1] || ''; return { nr: a('PLANNUMMER').trim(), art: a('PLANTYP_TXT'), dat: a('KUNDMACHUNG') }; }).filter(x => /^\d{3,5}[A-Z]?$/.test(x.nr));
+      const v = pd.querySelector('.q-val'), bb = pd.querySelector('.q-bb'); if (!L_.length) { pd.remove(); return; } v.textContent = L_.map(x => x.nr).join(' + '); bb.textContent = L_.map(x => (x.art || 'Festsetzung') + (x.dat ? ' vom ' + x.dat : '')).join(' · '); })
+      .catch(() => pd.remove()); }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
     const zG = { zonen: (g.teile || [g]).flatMap(t => t.polys), kreise: (g.teile || [g]).map(t => [proben({ polys: t.polys })[0]]) }, alleP = (g.teile || [g]).flatMap(t => t.polys.flatMap(pg => pg[0]));
@@ -929,6 +951,7 @@ function start() {
         if (Z.length > 1) Z.sort((a, b) => LESER_TEST ? (!!b.front - !!a.front) || dmin(a) - dmin(b) : dmin(a) - dmin(b));
         const nFront = LESER_TEST ? Z.filter(z => z.front).length : 0;
         const plE = PL && (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean);   // Planleser vorhanden → Widmung steht im Steckbrief, nicht doppelt
+        const sZ = [];   // neuer Steckbrief auch ohne Planleser (Eduard 18.11.): Widmung + Bauklasse je Teil aus den Stadt-Daten
         if (!plE) Z.forEach((z, zi) => { const w = z.w, kl = widKl(w), bk = +(String(w.WIDMUNG || '').match(/(\d)\s*$/) || [])[1] || 0, h = BKH[bk];
           const nH = Z.length - nFront, hi = zi - nFront;
           const vor = Z.length < 2 ? '' : !LESER_TEST ? (zi === 0 ? 'Straßentrakt: ' : Z.length === 2 ? 'Hof: ' : Z.length === 3 ? (zi === 1 ? 'Hof vorne: ' : 'Hof hinten: ') : 'Hof ' + zi + ': ')
@@ -936,8 +959,10 @@ function start() {
           const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': höchstens ' + h[0] + ' m hoch (ca. ' + h[1] + ' Geschosse) – im Detailplan kann eine niedrigere Grenze stehen.' : '';
           const gross1 = t => t.charAt(0).toUpperCase() + t.slice(1), zz = { zonen: z.geo ? fPolys(z.geo) : [], clip: g.polys };
           if (!kl) { L.append(karte('rot', vor + (w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland'), 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.', zz)); if (zi === 0) rot.push('Laut Flächenwidmung kein Bauland.'); }
+          else if (LESER_TEST) sZ.push({ vor: vor.replace(/: $/, ''), kl, bk, h, w, zz })
           else L.append(karte('', vor + WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.', zz));
           if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.'); });
+        if (sZ.length) stadtSteck(g, L, sZ);
         if (Z.length === 1 && u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
       if (LESER_TEST) { plG = g; planKarten(g, L); }
       const sch = [];
