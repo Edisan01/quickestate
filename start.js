@@ -747,7 +747,7 @@ function start() {
     zonDefs(svg, 'qeZm'); const cp = document.createElementNS(NS, 'clipPath'); cp.setAttribute('id', 'qeZonClip'); const cpp = document.createElementNS(NS, 'path');
     cpp.setAttribute('d', Z.clip.map(pg => pg.map(D).join('')).join('')); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); svg.querySelector('defs').append(cp);
     zonPfade(svg, { teile: Z.teile, clipId: 'qeZonClip' }, D, 'qeZm');
-    if (M.k >= 2 ** 17.6) Z.teile.forEach(t => { const r = t.poly[0]; if (!r) return; const c = r.reduce((a, q) => [a[0] + q[0] / r.length, a[1] + q[1] / r.length], [0, 0]), [x, y] = css(...kMerc(c[0], c[1]));
+    if (false) Z.teile.forEach(t => {   // Kürzel nur in der Skizze – im Plan steht die Schrift schon, sonst Überlappung mit der Grundstücksnummer const r = t.poly[0]; if (!r) return; const c = r.reduce((a, q) => [a[0] + q[0] / r.length, a[1] + q[1] / r.length], [0, 0]), [x, y] = css(...kMerc(c[0], c[1]));
       const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', x.toFixed(1)); tx.setAttribute('y', (y + 14).toFixed(1)); tx.setAttribute('class', 'zt'); tx.textContent = zKurz(t); svg.append(tx); }); }
   // Skizze: Grundstück so gedreht, als stündest du auf der Straße davor (Straße unten)
   function skizze(g, e) { const box = document.createElement('div'); box.className = 'g-skiz'; if (!e.front) return box;
