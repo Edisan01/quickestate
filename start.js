@@ -820,7 +820,7 @@ function start() {
       const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', c[0].toFixed(1)); tx.setAttribute('y', (c[1] + 4).toFixed(1)); tx.setAttribute('class', 'skt'); tx.textContent = zKurz(t); svg.append(tx); });
     const mass = (xa, ya, xb, yb, txt, sen) => { const l = document.createElementNS(NS, 'path'); l.setAttribute('d', 'M' + xa.toFixed(1) + ' ' + ya.toFixed(1) + 'L' + xb.toFixed(1) + ' ' + yb.toFixed(1)); l.setAttribute('class', 'skm'); svg.append(l);
       const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'skmt'); if (sen) t.setAttribute('transform', 'translate(' + (xa - 5).toFixed(1) + ' ' + ((ya + yb) / 2).toFixed(1) + ') rotate(-90)'); else { t.setAttribute('x', ((xa + xb) / 2).toFixed(1)); t.setAttribute('y', (ya + 12).toFixed(1)); } t.textContent = txt; svg.append(t); };
-    const f0 = S(e.front[0]), f1 = S(e.front[1]); mass(Math.min(f0[0], f1[0]), yF + 31, Math.max(f0[0], f1[0]), yF + 31, 'Front ca. ' + L.toFixed(1).replace('.', ',') + ' m');
+    const f0 = S(e.front[0]), f1 = S(e.front[1]); mass(Math.min(f0[0], f1[0]), yF + 31, Math.max(f0[0], f1[0]), yF + 31, 'Front ' + L.toFixed(2).replace('.', ',') + ' m');
     const sTr = e.teile.find(t => t.rolle === 'strasse' && t.tiefe); if (sTr) { const tief = sTr.tiefe ? sTr.tiefe.plan : Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = Math.min(...alle.flatMap(pg => pg[0]).map(c => S(c)[0])) - 9;   // Planzahl geht vor – Messung nur zur Kontrolle
       mass(xl, yF, xl, yF - tief * sk, sTr.tiefe ? 'Trakttiefe ' + tief.toFixed(2).replace('.', ',') + ' m' : 'Trakttiefe: Planzahl fehlt', true); }
     box.append(svg); const k = document.createElement('p'); k.className = 'g-skk'; k.textContent = 'So stehst du vor deinem Grundstück. Maße ca., aus dem Plan gemessen.'; box.append(k); return box; }
@@ -886,7 +886,7 @@ function start() {
     const k1 = el('div', 'q-card'); wrap.append(k1);
     const NAME = { strasse: 'Widmung Straßentrakt', hof: 'Widmung Hoffläche', hof_links: 'Widmung Hoffläche links', hof_rechts: 'Widmung Hoffläche rechts', vorgarten: 'Vorgarten', frei: 'Hinterer Teil', abtretung: 'Grundabtretung' };
     teile.forEach(t => { const p = t.plan || {}, zone = zoneVon(t), sp = { zonen: zone, kreise: [], farbe: FB(t) }, box = a => (t.labels.find(l => a === '*' || (l.teile && l.teile[a])) || {}), bx = a => { const l = box(a); return a === '*' ? l.box : l.teile && l.teile[a]; };
-      const bbT = p.bb ? p.bb + (p.bb_text ? ' · ' + p.bb_text.replace(/^Hier dürfen nur /, 'nur ').replace(/ \(z\. B\.[^)]*\)/, '').replace(/\.$/, '') : '') : '';
+      const bbT = p.bb ? p.bb + (p.bb_text ? ' · ' + p.bb_text.replace(/^Hier dürfen nur (.+?) \(§[^)]*\) gebaut werden – mit höchstens (\d+) m² bebauter Fläche\.?$/, 'nur $1, max. $2 m² bebaut').replace(/ \([^)]*\)/g, '').replace(/ erlaubt\.?$/, '').replace(/\.$/, '').replace(/^./, c => c.toLowerCase()) : '') : '';
       let w;
       if (t.art === 'bebaubar') { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null, ch = [];
         if (p.widmung) ch.push({ k: p.widmung, t: PL_W[p.widmung] || 'Widmung', e: WX[p.widmung] || 'Die Widmung sagt, was hier gebaut werden darf.', box: bx('widmung') || bx('*'), zone });
