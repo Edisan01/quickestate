@@ -1,6 +1,8 @@
 name: WFS-Testdaten holen (Branch wfs-test, nicht Webseite)
 on:
   workflow_dispatch:
+    inputs:
+      faelle: { default: "tools/planbild_faelle.json" }
 permissions:
   contents: write
 jobs:
@@ -9,7 +11,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - run: python3 -u tools/wfs_holen.py tools/planbild_faelle.json /tmp/wfs
+      - run: python3 -u tools/wfs_holen.py ${{ github.event.inputs.faelle }} /tmp/wfs
       - name: Auf eigenen Branch legen
         run: |
           git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
