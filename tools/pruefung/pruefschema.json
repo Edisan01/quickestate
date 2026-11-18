@@ -5,13 +5,12 @@
   "zustaende": ["bestaetigt", "trifft_nicht_zu", "offen"],
   "toleranzen": {
     "planzahl_gegen_messung_m": 0.6,
-    "summe_gegen_grundbuch_prozent": 1.0,
-    "summe_gegen_grundbuch_max_m2": 5.0,
-    "_status": "vorläufig – Bestätigung Eduard offen"
+    "summe_gegen_grundbuch_prozent": 2.0,
+    "_status": "bestätigt Eduard 18.11."
   },
   "rundung": { "masse_nachkomma": 2, "flaechen_nachkomma": 2, "geschosse": "abrunden" },
   "rechenwerte": {
-    "p75_4_zuschlag_m": { "III": 3.0, "IV": 4.0, "_status": "vorläufig – aus Eduards Blättern, Bestätigung offen" },
+    "p75_4_zuschlag_m": { "III": 3.0, "IV": 4.0, "_status": "bestätigt Eduard 18.11." },
     "hoehe_bauklasse_m": { "III": 16.0, "IV": 21.0, "_status": "übrige Bauklassen offen" },
     "p76_10a": { "grenze_m2": 500, "teiler": 10, "ab_m2": 10 },
     "p76_10_drittel": { "I": 350, "II": 700 },
