@@ -729,8 +729,12 @@ function start() {
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
   const LESER_TEST = /[?&]leser=1/.test(location.search); let PL = null, plG = null;
-  if (LESER_TEST) hol('planleser/test.json?v=4').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  if (LESER_TEST) hol('planleser/test.json?v=5').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung' };
+  const PL_W = { W: 'Wohngebiet', WGV: 'Wohngebiet – Geschäftsviertel', GB: 'Gemischtes Baugebiet', GBGV: 'Gemischtes Baugebiet – Geschäftsviertel', G: 'Garten' }, PL_BK = { I: [2.5, 9], II: [2.5, 12], III: [9, 16], IV: [12, 21], V: [16, 26] }, PL_BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' };
+  const plLang = p => { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null;
+    return [PL_W[p.widmung] || p.widmung, p.bauklasse ? 'Bauklasse ' + p.bauklasse + (bk ? ' (normal ' + String(bk[0]).replace('.', ',') + '–' + bk[1] + ' m)' : p.bauklasse === 'VI' ? ' (über 26 m)' : '') : '',
+      h ? 'hier begrenzt auf höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt ' + bk[1] + ' m' : '') : '', PL_BW[p.bauweise] || ''].filter(Boolean).join(' · '); };
   const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
   /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
   const ZART = t => t.art === 'G' ? 'zg' : t.art === 'abtretung' ? 'za' : t.stadt_plan_gleich ? 'zb' : 'zx';
@@ -769,7 +773,8 @@ function start() {
     const mass = (xa, ya, xb, yb, txt, sen) => { const l = document.createElementNS(NS, 'path'); l.setAttribute('d', 'M' + xa.toFixed(1) + ' ' + ya.toFixed(1) + 'L' + xb.toFixed(1) + ' ' + yb.toFixed(1)); l.setAttribute('class', 'skm'); svg.append(l);
       const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'skmt'); if (sen) t.setAttribute('transform', 'translate(' + (xa - 5).toFixed(1) + ' ' + ((ya + yb) / 2).toFixed(1) + ') rotate(-90)'); else { t.setAttribute('x', ((xa + xb) / 2).toFixed(1)); t.setAttribute('y', (ya + 12).toFixed(1)); } t.textContent = txt; svg.append(t); };
     const f0 = S(e.front[0]), f1 = S(e.front[1]); mass(Math.min(f0[0], f1[0]), yF + 31, Math.max(f0[0], f1[0]), yF + 31, 'Front ca. ' + L.toFixed(1).replace('.', ',') + ' m');
-    const sTr = e.teile.find(t => t.rolle === 'strasse'); if (sTr) { const tief = Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = Math.min(...alle.flatMap(pg => pg[0]).map(c => S(c)[0])) - 9; mass(xl, yF, xl, yF - tief * sk, 'Trakt ca. ' + tief.toFixed(1).replace('.', ',') + ' m', true); }
+    const sTr = e.teile.find(t => t.rolle === 'strasse'); if (sTr) { const tief = sTr.tiefe ? sTr.tiefe.plan : Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = Math.min(...alle.flatMap(pg => pg[0]).map(c => S(c)[0])) - 9;   // Planzahl geht vor – Messung nur zur Kontrolle
+      mass(xl, yF, xl, yF - tief * sk, sTr.tiefe ? 'Trakttiefe ' + tief.toFixed(2).replace('.', ',') + ' m' : 'Trakttiefe: Planzahl fehlt', true); }
     box.append(svg); const k = document.createElement('p'); k.className = 'g-skk'; k.textContent = 'So stehst du vor deinem Grundstück. Maße ca., aus dem Plan gemessen.'; box.append(k); return box; }
   function legende(g, e) { const box = document.createElement('div'); box.className = 'g-leg'; const fl = t => g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), sum = {};
     e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); });
@@ -783,7 +788,7 @@ function start() {
     e.teile.forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : t.m2_plan, sp = t.stadt || {};
       const titel = (PL_ROLLE[t.rolle] || t.rolle) + ': ' + (t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'an die Straße abzutreten' : plText(t.plan) || '?');
       const text = t.art === 'G' ? 'Gärtnerisch auszugestalten – hier darf nicht gebaut werden. Ca. ' + fl + ' m².' : t.art === 'abtretung' ? 'Liegt außerhalb der Baulinie. Ca. ' + fl + ' m².'
-        : 'Stadt-Daten: ' + (sp.widmung || '') + ' ' + (sp.bauklasse || '') + ' · Plan: ' + (plText(t.plan) || '–') + ' · ca. ' + fl + ' m².';
+        : plLang(t.plan) + '.' + (t.tiefe ? ' Trakttiefe ' + t.tiefe.plan.toFixed(2).replace('.', ',') + ' m laut Plan.' : '') + ' Stadt-Daten: ' + (sp.widmung || '') + ' ' + (sp.bauklasse || '') + ' · Plan: ' + (plText(t.plan) || '–') + ' · ca. ' + fl + ' m².';
       const art = t.art === 'G' || t.art === 'abtretung' ? 'gelb-k' : t.stadt_plan_gleich ? 'gruen-k' : 'gelb-k';
       L.append(karte(art, titel, text, 'Quelle: ' + t.quelle + '. Gelesen: ' + t.labels.map(l => l.t).join(', '), { zonen: t.poly.map(r => [r]), kreise: t.labels.map(l => l.box), klein: 7 })); }); }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';

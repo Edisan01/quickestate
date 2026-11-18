@@ -5,6 +5,7 @@ import kat, steckbrief as S
 def ll(m,x,y):
   n=2**19; X=x/256+m['x0']; Y=y/256+m['y0']
   lon=X/n*360-180; lat=math.degrees(math.atan(math.sinh(math.pi*(1-2*Y/n)))); return [round(lon,7),round(lat,7)]
+DEBUG=False
 MPX=0.2986*math.cos(math.radians(48.21))
 def strassenkanten(m,ringe_px,off,zonen):
   # Kante liegt an der Straße, wenn 4 m außerhalb keine Widmungszone (Bauland/Grün) liegt
@@ -20,6 +21,37 @@ def strassenkanten(m,ringe_px,off,zonen):
       q=mid+nrm*(4/MPX)
       drin=sum(1 for o in andere if cv2.pointPolygonTest(o,(float(q[0]),float(q[1])),False)>=0)
       if drin==0: out.append((a,b))
+  return out
+def laeufe(lin,p,d,maxpx,skip=0):
+  # Linien-Treffer entlang eines Strahls: Mitte jedes roten Laufs (Abstand in px)
+  H,W=lin.shape; out=[]; inn=None
+  for k in range(int(skip),int(maxpx)):
+    x,y=int(round(p[0]+d[0]*k)),int(round(p[1]+d[1]*k))
+    if not(0<=x<W and 0<=y<H): break
+    v=lin[y,x]>0
+    if v and inn is None: inn=k
+    if not v and inn is not None: out.append((inn+k-1)/2); inn=None
+  return out
+def massgap(lin,t):
+  # Maßzahl misst senkrecht zur Schriftrichtung zwischen den beiden nächsten Linien – Median über mehrere Stellen der Zahl
+  a=math.radians(t['ang']); d=np.array([math.cos(a),math.sin(a)]); n=np.array([-d[1],d[0]]); p0=np.array([t['x'],t['y']])
+  gs=[]
+  for f in (-0.35,-0.15,0,0.15,0.35):
+    p=p0+d*f*t['w']; r1=laeufe(lin,p,n,400,t['h']/2+1); r2=laeufe(lin,p,-n,400,t['h']/2+1)
+    if r1 and r2: gs.append((r1[0]+r2[0],r1[0],r2[0]))
+  if len(gs)<3: return None
+  gs.sort(); g=gs[len(gs)//2]
+  return g[0], p0+n*g[1], p0-n*g[2]
+MASS=re.compile(r'^(\d{1,2})[,.](\d\d)$')
+def masszahlen(lin,T):
+  out=[]
+  for t in T:
+    mm_=MASS.match(t['t'])
+    if not mm_: continue
+    v=float(mm_.group(1)+'.'+mm_.group(2)); g=massgap(lin,t)
+    if not g: continue
+    gm=g[0]*MPX
+    out.append(dict(v=v,gem=round(gm,2),ok=abs(gm-v)<=max(0.45,0.035*v),a=g[1],b=g[2],t=t))
   return out
 def fall(m,im,wfs):
   TF,T,lin,(x0,y0),rings=S.teilflaechen(m,im,wfs); off=np.array([x0,y0])
@@ -83,6 +115,33 @@ def fall(m,im,wfs):
       pts=np.array([kat.px(m,*q) for q in o['poly'][0]])-off; return -float(np.dot(pts.mean(0)-c,links))
     hofs.sort(key=proj)
     for k,o in enumerate(hofs): o['rolle']=('hof_links','hof_rechts')[k] if len(hofs)==2 else f'hof_{k+1}'
+  MZ=masszahlen(lin,T)
+  if sk:
+    a_,b_=max(sk,key=lambda e:np.hypot(*(e[1]-e[0]))); dv=(b_-a_)/np.hypot(*(b_-a_)); c_=np.vstack(rings).mean(0); nv=np.array([-dv[1],dv[0]])
+    if np.dot(c_-(a_+b_)/2,nv)<0: nv=-nv
+    # Vorgarten: Abstand Front → erste Linie innen (Median über die Front), nur wenn ≤ 9 m und kein Widmungsteil davor
+    vg=[]
+    for f_ in np.linspace(0.2,0.8,7):
+      p_=a_+(b_-a_)*f_; r_=laeufe(lin,p_-nv*8,nv,8+9/MPX)
+      r_=[x-8 for x in r_]
+      if len(r_)>=2 and abs(r_[0])<=1.5/MPX: vg.append((r_[1]-r_[0])*MPX)
+    vgm=float(np.median(vg)) if len(vg)>=4 else None
+    for o in out:
+      if o['rolle']!='strasse': continue
+      # Trakttiefe: Maßzahl im Straßentrakt, senkrecht zur Front, Messung bestätigt
+      kand=[z for z in MZ if z['ok'] and abs(np.dot((z['a']-z['b'])/max(1e-6,np.hypot(*(z['a']-z['b']))),nv))>0.9]
+      inT=[z for z in kand if any(cv2.pointPolygonTest(np.array([[kat.px(m,*q)[0]-x0,kat.px(m,*q)[1]-y0] for q in r],np.float32),(float(z['t']['x']),float(z['t']['y'])),True)>=-12 for r in o['poly'])]
+      if inT: z=inT[0]; o['tiefe']=dict(plan=z['v'],gemessen=z['gem'],ok=True)
+      if DEBUG:
+        for z in MZ:
+          dd=min(cv2.pointPolygonTest(np.array([[kat.px(m,*q)[0]-x0,kat.px(m,*q)[1]-y0] for q in r],np.float32),(float(z['t']['x']),float(z['t']['y'])),True) for r in o['poly'])
+          print('    MZ',z['v'],z['gem'],z['ok'],'dot',round(abs(np.dot((z['a']-z['b'])/max(1e-6,np.hypot(*(z['a']-z['b']))),nv)),2),'dist',round(dd,1))
+    if vgm and 1.5<=vgm<=9:
+      kz=[z for z in MZ if z['ok'] and abs(z['v']-vgm)<=0.45]
+      vor=dict(gemessen=round(vgm,2),plan=kz[0]['v'] if kz else None,ok=bool(kz))
+      for o in out:
+        if o['rolle']=='strasse': o['vorgarten']=vor
+  dbg=[(z['v'],z['gem'],z['ok']) for z in MZ]
   front_kante=None
   if sk and fr:
     # zusammenhängende Straßenkanten zu Geraden vereinen, dann die längste (Eingangsseite)
@@ -97,13 +156,15 @@ def fall(m,im,wfs):
       return P_[np.argmin(t_)],P_[np.argmax(t_)]
     best=max((spann(g_) for g_ in gr),key=lambda e:np.hypot(*(e[1]-e[0])))
     front_kante=[ll(m,*(best[0]+off)),ll(m,*(best[1]+off))]
-  return out,front_kante
+  return out,front_kante,dbg
 if __name__=='__main__':
-  M=json.load(open('/home/claude/pb/meta.json')); res={}
+  import os
+  MF=os.environ.get('META','/home/claude/pb/meta.json'); BILD=os.environ.get('BILD','/home/claude/pb/f%d.png')
+  M=json.load(open(MF)); res=json.load(open(sys.argv[1])) if os.environ.get('ANHAENGEN') else {}
   for i in map(int,sys.argv[2:]):
-    m=M[i]; im=cv2.imread(f'/home/claude/pb/f{i}.png')
+    m=M[i]; im=cv2.imread(BILD%i)
     fs=[f for g in m['gnr'].split('+') for f in glob.glob(f"/home/claude/pb/wfs/{m['kg']}_{g.replace('/','-')}_GENFLWIDMUNGOGD.json")]
-    out,fk=fall(m,im,json.load(open(fs[0])))
+    out,fk,dbg=fall(m,im,json.load(open(fs[0])))
     res[m['kg']+'_'+m['gnr']]=dict(name=m['name'],kg=m['kg'],gnr=m['gnr'],stand=str(datetime.date.today()),version='planleser-py-2',front=fk,teile=out)
-    print(m['name']); [print('  ',o['rolle'],o['art'],o['stadt']['code'],o['plan'],o['stadt_plan_gleich'],o['m2_plan'],[l['t'] for l in o['labels']]) for o in out]
+    print(m['name'],'Maßzahlen:',dbg); [print('  ',o['rolle'],o['art'],o['stadt']['code'],o['plan'],o['stadt_plan_gleich'],o['m2_plan'],[l['t'] for l in o['labels']],o.get('tiefe'),o.get('vorgarten')) for o in out]
   json.dump(res,open(sys.argv[1],'w'),ensure_ascii=False)
