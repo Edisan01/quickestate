@@ -409,3 +409,28 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 /* v3.64 präzises Markieren: Zone nur im Bauplatz einfärben */
 .g-hl .hlz{fill:rgba(3,32,61,.32);stroke:#03203D;stroke-width:2.2;opacity:0;animation:qeHl .45s ease forwards}
 .g-lb .g-hl .hlz{fill:rgba(247,208,70,.35);stroke:#F7D046}
+/* v3.69 Teilflächen: Bauland blau · Garten grün · Abtretung rot gestreift · ungeprüft grau + Legende + Skizze (Straße unten) */
+.g-ov .zf,.g-skiz .zf{stroke-width:1.2}
+.zf.zb{fill:rgba(38,104,190,.34);stroke:#1F5FAE}
+.zf.zg{fill:rgba(64,160,84,.34);stroke:#1E6B35}
+.zf.za{fill:rgba(200,16,46,.12);stroke:#C8102E}
+.zf.zx{fill:rgba(120,120,120,.28);stroke:#666}
+.g-ov .zm,.g-skiz .zm{stroke:none}
+.g-ov .zt{font:600 11px/1 "DM Sans",system-ui,sans-serif;fill:#03203D;text-anchor:middle;paint-order:stroke;stroke:rgba(255,255,255,.9);stroke-width:3px}
+.g-lb .g-ov .zt{fill:#fff;stroke:rgba(0,0,0,.75)}
+.g-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 4px;font:500 12.5px/1.35 "DM Sans",system-ui,sans-serif;color:inherit}
+.g-leg .lz{display:flex;align-items:center;gap:7px}
+.g-leg .sw{display:inline-block;width:16px;height:12px;border-radius:2px;border:1.2px solid}
+.g-leg .sw.zb{background:rgba(38,104,190,.34);border-color:#1F5FAE}
+.g-leg .sw.zg{background:radial-gradient(circle,#1E6B35 1px,transparent 1.3px) 0 0/5px 5px,rgba(64,160,84,.34);border-color:#1E6B35}
+.g-leg .sw.za{background:repeating-linear-gradient(45deg,rgba(200,16,46,.55) 0 2px,transparent 2px 5px);border-color:#C8102E}
+.g-leg .sw.zx{background:rgba(120,120,120,.28);border-color:#666}
+.g-skiz{margin:8px 0 6px;background:#fff;border:1px solid rgba(3,32,61,.12);border-radius:6px;padding:6px}
+.g-skiz svg{display:block;width:100%;max-width:340px;height:auto;margin:0 auto}
+.g-skiz .sks{fill:#E9E6DF}
+.g-skiz .skst{font:600 9px/1 "DM Sans",system-ui,sans-serif;letter-spacing:.25em;fill:#7a7a7a;text-anchor:middle}
+.g-skiz .sku{fill:none;stroke:#03203D;stroke-width:1.8}
+.g-skiz .skt{font:600 11px/1 "DM Sans",system-ui,sans-serif;fill:#03203D;text-anchor:middle;paint-order:stroke;stroke:rgba(255,255,255,.85);stroke-width:3px}
+.g-skiz .skm{stroke:#03203D;stroke-width:1;marker-start:none}
+.g-skiz .skmt{font:500 9.5px/1 "DM Sans",system-ui,sans-serif;fill:#03203D;text-anchor:middle}
+.g-skk{margin:4px 2px 0;font:400 11.5px/1.35 "DM Sans",system-ui,sans-serif;opacity:.75}

@@ -44,11 +44,21 @@ def fall(m,im,wfs):
       for k,v in t['plan'].items(): tgt['plan'].setdefault(k,v)
     else: merged.append(t)
   merged=[u for u in merged if u['msk'].sum()*MPX**2>=8]
+  # Lücken (Linienbreite) bis zur Grundstücksgrenze auffüllen: jedes Grundstückspixel zur nächsten Teilfläche
+  pmk=np.zeros((H,W),np.uint8)
+  for r in rings: cv2.fillPoly(pmk,[np.round(r).astype(np.int32)],1)
+  lab_=np.zeros((H,W),np.int32)
+  for k,u in enumerate(merged): lab_[u['msk']>0]=k+1
+  if merged:
+    _,lbl=cv2.distanceTransformWithLabels((lab_==0).astype(np.uint8),cv2.DIST_L2,5,labelType=cv2.DIST_LABEL_PIXEL)
+    ys,xs=np.nonzero(lab_>0); idx2lab=np.zeros(lbl.max()+1,np.int32); idx2lab[lbl[ys,xs]]=lab_[ys,xs]
+    voll=idx2lab[lbl]*(pmk>0)
+    for k,u in enumerate(merged): u['nv']=int((voll==k+1).sum()); u['msk']=cv2.dilate((voll==k+1).astype(np.uint8),np.ones((5,5),np.uint8))
   for u in merged: u['front']=int((u['msk']&front).sum())
   fr=sorted([u for u in merged if u['front']>0 and not u['G'] and u['stadt'] is not None],key=lambda u:-u['front'])
   hof=[u for u in merged if u not in fr[:1]]
   out=[]
-  ges=sum(u['msk'].sum() for u in merged)
+  ges=sum(u.get('nv',u['msk'].sum()) for u in merged)
   for u in merged:
     cs,_=cv2.findContours(u['msk'],cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     polys=[[ll(m,p[0][0]+x0,p[0][1]+y0) for p in cv2.approxPolyDP(c,1.2,True)] for c in cs if cv2.contourArea(c)>20]
@@ -57,7 +67,7 @@ def fall(m,im,wfs):
     else: gleich=bool(pl.get('widmung')==wk and pl.get('bauklasse')==bk)
     out.append(dict(rolle='strasse' if fr and u is fr[0] else 'hof',art='G' if u['G'] else ('abtretung' if u['stadt'] is None else 'bebaubar'),
       stadt=dict(widmung=wk,bauklasse=bk,code=u['stadt']),
-      plan={k:v for k,v in pl.items()},stadt_plan_gleich=gleich,anteil=round(u['msk'].sum()/ges,4),m2_plan=round(u['msk'].sum()*MPX**2,1),
+      plan={k:v for k,v in pl.items()},stadt_plan_gleich=gleich,anteil=round(u.get('nv',u['msk'].sum())/ges,4),m2_plan=round(u.get('nv',u['msk'].sum())*MPX**2,1),
       poly=polys,labels=[dict(t=t,ll=ll(m,x,y),box=[ll(m,*q) for q in bx]) for x,y,t,bx in u['labels'] if re.match(r'^(W|GB|WGV|G|E|L|I|V|g|C?BB)',t) or re.fullmatch(r'\d{1,2}([,.]\d)?m',t)],quelle=u['quelle']))
   # Hof links/rechts aus Sicht der Straße
   for o in out:
@@ -73,13 +83,17 @@ def fall(m,im,wfs):
       pts=np.array([kat.px(m,*q) for q in o['poly'][0]])-off; return -float(np.dot(pts.mean(0)-c,links))
     hofs.sort(key=proj)
     for k,o in enumerate(hofs): o['rolle']=('hof_links','hof_rechts')[k] if len(hofs)==2 else f'hof_{k+1}'
-  return out
+  front_kante=None
+  if sk and fr:
+    best=max(sk,key=lambda e:(int((cv2.line(np.zeros((H,W),np.uint8),tuple(np.round(e[0]).astype(int)),tuple(np.round(e[1]).astype(int)),1,9)&fr[0]['msk']).sum()),np.hypot(*(e[1]-e[0]))))
+    front_kante=[ll(m,*(best[0]+off)),ll(m,*(best[1]+off))]
+  return out,front_kante
 if __name__=='__main__':
   M=json.load(open('/home/claude/pb/meta.json')); res={}
   for i in map(int,sys.argv[2:]):
     m=M[i]; im=cv2.imread(f'/home/claude/pb/f{i}.png')
     fs=[f for g in m['gnr'].split('+') for f in glob.glob(f"/home/claude/pb/wfs/{m['kg']}_{g.replace('/','-')}_GENFLWIDMUNGOGD.json")]
-    out=fall(m,im,json.load(open(fs[0])))
-    res[m['kg']+'_'+m['gnr']]=dict(name=m['name'],kg=m['kg'],gnr=m['gnr'],stand=str(datetime.date.today()),version='planleser-py-1',teile=out)
+    out,fk=fall(m,im,json.load(open(fs[0])))
+    res[m['kg']+'_'+m['gnr']]=dict(name=m['name'],kg=m['kg'],gnr=m['gnr'],stand=str(datetime.date.today()),version='planleser-py-2',front=fk,teile=out)
     print(m['name']); [print('  ',o['rolle'],o['art'],o['stadt']['code'],o['plan'],o['stadt_plan_gleich'],o['m2_plan'],[l['t'] for l in o['labels']]) for o in out]
   json.dump(res,open(sys.argv[1],'w'),ensure_ascii=False)

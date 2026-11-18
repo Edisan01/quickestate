@@ -530,6 +530,7 @@ function start() {
     ldEl.hidden = pend === 0; aufraeumen();
     ovEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); ovEl.textContent = '';
     const P = c => css(...kMerc(c[0], c[1])).map(v => v.toFixed(1)).join(' ');
+    if (M.zon) zonZeichnen(ovEl, P, css);
     if (M.sel) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', M.sel.polys.map(pg => pg.map(r => 'M' + r.map(P).join('L') + 'Z').join('')).join('')); p.setAttribute('class', M.sel.kanten ? 'gsf' : 'gs'); p.setAttribute('fill-rule', 'evenodd'); ovEl.append(p);
       if (M.sel.kanten) [false, true].forEach(inn => { const q = document.createElementNS(NS, 'path'); q.setAttribute('d', M.sel.kanten.filter(k => k[2] === inn).map(k => 'M' + P(k[0]) + 'L' + P(k[1])).join('')); q.setAttribute('class', inn ? 'gsi' : 'gsa'); ovEl.append(q); }); }
     if (M.sel && M.sel.teile && M.k >= 2 ** 17.4) M.sel.teile.forEach(t => { const [x, y] = css(...kMerc(...proben({ polys: t.polys })[0]));   // Grundstücksnummer in jedem Teil (Laien-Test 17.11.)
@@ -695,7 +696,7 @@ function start() {
       d.addEventListener('click', e => { if (!e.target.closest('details')) z(); }); d.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('details')) { e.preventDefault(); z(); } });
       const hz = document.createElement('span'); hz.className = 'g-zg'; hz.textContent = 'Im Plan zeigen'; d.append(hz); }
     return d; };
-  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; if (M.hl) { M.hl = null; mapKick(); } };
+  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null; if (M.hl) { M.hl = null; mapKick(); } };
   /* Einkreisen (Eduard 17.11.): Klick auf eine Karte → Stelle im Plan wird wie mit dem Bleistift eingekreist, leiser Bleistift-Ton. Geometrie aus den geprüften Daten. */
   const hlEl = document.createElementNS(NS, 'svg'); hlEl.setAttribute('class', 'g-hl'); hlEl.setAttribute('aria-hidden', 'true'); mapEl.append(hlEl);
   const wackel = (cx, cy, rx, ry, seed) => { let q = seed; const rnd = () => (q = (q * 9301 + 49297) % 233280) / 233280, N = 64, st = -2.2 + rnd() * 0.4, L = [];
@@ -728,10 +729,56 @@ function start() {
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
   const LESER_TEST = /[?&]leser=1/.test(location.search); let PL = null, plG = null;
-  if (LESER_TEST) hol('planleser/test.json?v=1').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  if (LESER_TEST) hol('planleser/test.json?v=2').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung' };
   const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
-  function planKarten(g, L) { if (!PL) return; const e = (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean); if (!e) return;
+  /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
+  const ZART = t => t.art === 'G' ? 'zg' : t.art === 'abtretung' ? 'za' : t.stadt_plan_gleich ? 'zb' : 'zx';
+  const ZTXT = { zb: 'Bauland – hier darfst du bauen', zg: 'Garten (G) – nicht bebaubar', za: 'Grundabtretung – geht an die Stadt', zx: 'Wird noch geprüft' };
+  const zKurz = t => t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'Abtretung' : plText(t.plan) || '?';
+  function zonDefs(svg, pre) { const d = document.createElementNS(NS, 'defs');
+    d.innerHTML = '<pattern id="' + pre + 'G" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.1" fill="#1E6B35"/></pattern>'
+      + '<pattern id="' + pre + 'A" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="7" fill="#C8102E" opacity=".55"/></pattern>';
+    svg.append(d); }
+  function zonPfade(svg, Z, D, pre) { Z.teile.forEach(t => { const k = ZART(t), d = t.poly.map(D).join('');
+      const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', 'zf ' + k); p.setAttribute('fill-rule', 'evenodd'); if (Z.clipId) p.setAttribute('clip-path', 'url(#' + Z.clipId + ')'); svg.append(p);
+      if (k === 'zg' || k === 'za') { const q = p.cloneNode(); q.setAttribute('class', 'zm'); q.setAttribute('fill', 'url(#' + pre + (k === 'zg' ? 'G' : 'A') + ')'); svg.append(q); } }); }
+  function zonZeichnen(svg, P, css) { const Z = M.zon, D = r => 'M' + r.map(P).join('L') + 'Z';
+    zonDefs(svg, 'qeZm'); const cp = document.createElementNS(NS, 'clipPath'); cp.setAttribute('id', 'qeZonClip'); const cpp = document.createElementNS(NS, 'path');
+    cpp.setAttribute('d', Z.clip.map(pg => pg.map(D).join('')).join('')); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); svg.querySelector('defs').append(cp);
+    zonPfade(svg, { teile: Z.teile, clipId: 'qeZonClip' }, D, 'qeZm');
+    if (M.k >= 2 ** 17.6) Z.teile.forEach(t => { const r = t.poly[0]; if (!r) return; const c = r.reduce((a, q) => [a[0] + q[0] / r.length, a[1] + q[1] / r.length], [0, 0]), [x, y] = css(...kMerc(c[0], c[1]));
+      const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', x.toFixed(1)); tx.setAttribute('y', (y + 14).toFixed(1)); tx.setAttribute('class', 'zt'); tx.textContent = zKurz(t); svg.append(tx); }); }
+  // Skizze: Grundstück so gedreht, als stündest du auf der Straße davor (Straße unten)
+  function skizze(g, e) { const box = document.createElement('div'); box.className = 'g-skiz'; if (!e.front) return box;
+    const alle = (g.teile || [g]).flatMap(t => t.polys), lat0 = e.front[0][1], kx = Math.cos(lat0 * Math.PI / 180) * 111320, ky = 110574;
+    const loc = c => [(c[0] - e.front[0][0]) * kx, (c[1] - e.front[0][1]) * ky], b = loc(e.front[1]), L = Math.hypot(b[0], b[1]), d = [b[0] / L, b[1] / L];
+    const pts = alle.flatMap(pg => pg[0]).map(loc), cen = pts.reduce((a, q) => [a[0] + q[0] / pts.length, a[1] + q[1] / pts.length], [0, 0]);
+    let n = [-d[1], d[0]]; if (cen[0] * n[0] + cen[1] * n[1] < 0) n = [d[1], -d[0]]; const re = [n[1], -n[0]];
+    const T = c => { const q = loc(c); return [q[0] * re[0] + q[1] * re[1], q[0] * n[0] + q[1] * n[1]]; }, U = pts.map(q => [q[0] * re[0] + q[1] * re[1], q[0] * n[0] + q[1] * n[1]]);
+    const x0 = Math.min(...U.map(q => q[0])), x1 = Math.max(...U.map(q => q[0])), y1 = Math.max(...U.map(q => q[1])), W = 300, Hs = 300, rand = 34, sk = Math.min((W - 2 * rand) / (x1 - x0), (Hs - 2 * rand - 30) / y1);
+    const S = c => { const q = T(c); return [rand + (q[0] - x0) * sk + ((W - 2 * rand) - (x1 - x0) * sk) / 2, Hs - rand - 30 - q[1] * sk]; }, Pp = c => S(c).map(v => v.toFixed(1)).join(' '), D = r => 'M' + r.map(Pp).join('L') + 'Z';
+    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + Hs); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Skizze des Grundstücks, Straße unten');
+    zonDefs(svg, 'qeZs'); const cp = document.createElementNS(NS, 'clipPath'); cp.setAttribute('id', 'qeSkClip'); const cpp = document.createElementNS(NS, 'path'); cpp.setAttribute('d', alle.map(pg => pg.map(D).join('')).join('')); cp.append(cpp); svg.querySelector('defs').append(cp);
+    const yF = Hs - rand - 30, st = document.createElementNS(NS, 'rect'); st.setAttribute('x', 0); st.setAttribute('y', yF + 2); st.setAttribute('width', W); st.setAttribute('height', 26); st.setAttribute('class', 'sks'); svg.append(st);
+    const stt = document.createElementNS(NS, 'text'); stt.setAttribute('x', W / 2); stt.setAttribute('y', yF + 19); stt.setAttribute('class', 'skst'); stt.textContent = 'STRASSE'; svg.append(stt);
+    zonPfade(svg, { teile: e.teile, clipId: 'qeSkClip' }, D, 'qeZs');
+    const um = document.createElementNS(NS, 'path'); um.setAttribute('d', alle.map(pg => pg.map(D).join('')).join('')); um.setAttribute('class', 'sku'); svg.append(um);
+    e.teile.forEach(t => { const r = t.poly[0]; if (!r) return; const P2 = r.map(S), c = P2.reduce((a, q) => [a[0] + q[0] / P2.length, a[1] + q[1] / P2.length], [0, 0]);
+      const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', c[0].toFixed(1)); tx.setAttribute('y', (c[1] + 4).toFixed(1)); tx.setAttribute('class', 'skt'); tx.textContent = zKurz(t); svg.append(tx); });
+    const mass = (xa, ya, xb, yb, txt, sen) => { const l = document.createElementNS(NS, 'path'); l.setAttribute('d', 'M' + xa + ' ' + ya + 'L' + xb + ' ' + yb); l.setAttribute('class', 'skm'); svg.append(l);
+      const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'skmt'); if (sen) { t.setAttribute('transform', 'translate(' + (xa - 6) + ' ' + ((ya + yb) / 2) + ') rotate(-90)'); t.setAttribute('x', 0); t.setAttribute('y', 0); } else { t.setAttribute('x', (xa + xb) / 2); t.setAttribute('y', ya + 13); } t.textContent = txt; svg.append(t); };
+    const f0 = S(e.front[0]), f1 = S(e.front[1]); mass(Math.min(f0[0], f1[0]).toFixed(1), (yF + 32).toFixed(1), Math.max(f0[0], f1[0]).toFixed(1), (yF + 32).toFixed(1), 'Front ca. ' + L.toFixed(1).replace('.', ',') + ' m');
+    const sTr = e.teile.find(t => t.rolle === 'strasse'); if (sTr) { const tief = Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = rand - 12; mass(xl, yF.toFixed(1), xl, (yF - tief * sk).toFixed(1), 'Trakt ca. ' + tief.toFixed(1).replace('.', ',') + ' m', true); }
+    box.append(svg); const k = document.createElement('p'); k.className = 'g-skk'; k.textContent = 'So stehst du vor deinem Grundstück. Maße ca., aus dem Plan gemessen.'; box.append(k); return box; }
+  function legende(g, e) { const box = document.createElement('div'); box.className = 'g-leg'; const fl = t => g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), sum = {};
+    e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); });
+    ['zb', 'zg', 'za', 'zx'].filter(k => sum[k]).forEach(k => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'); s_.textContent = ZTXT[k] + ' · ca. ' + sum[k] + ' m²'; z.append(s_); box.append(z); });
+    return box; }
+  function planAnzeige(g, e) { document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null;
+    if (e) { M.zon = { teile: e.teile, clip: (g.teile || [g]).flatMap(t => t.polys) }; const w = $('resHint'); w.before(legende(g, e)); w.before(skizze(g, e)); }
+    mapKick(); }
+  function planKarten(g, L) { if (!PL) return; const e = (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean); planAnzeige(g, e); if (!e) return;
     L.append(karte('meta', 'Planleser (Test) · ' + e.teile.length + ' Teile', 'Aus dem Planbild gelesen, Stand ' + e.stand + '. Grün = Stadt-Daten und Plan stimmen überein.'));
     e.teile.forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : t.m2_plan, sp = t.stadt || {};
       const titel = (PL_ROLLE[t.rolle] || t.rolle) + ': ' + (t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'an die Straße abzutreten' : plText(t.plan) || '?');
