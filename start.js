@@ -536,8 +536,13 @@ function start() {
     if (M.zon) zonZeichnen(ovEl, P, css);
     if (M.sel) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', M.sel.polys.map(pg => pg.map(r => 'M' + r.map(P).join('L') + 'Z').join('')).join('')); p.setAttribute('class', M.sel.kanten ? 'gsf' : 'gs'); p.setAttribute('fill-rule', 'evenodd'); ovEl.append(p);
       if (M.sel.kanten) [false, true].forEach(inn => { const q = document.createElementNS(NS, 'path'); q.setAttribute('d', M.sel.kanten.filter(k => k[2] === inn).map(k => 'M' + P(k[0]) + 'L' + P(k[1])).join('')); q.setAttribute('class', inn ? 'gsi' : 'gsa'); ovEl.append(q); }); }
-    if (M.sel && M.sel.teile && M.k >= 2 ** 17.4) M.sel.teile.forEach(t => { const [x, y] = css(...kMerc(...proben({ polys: t.polys })[0]));   // Grundstücksnummer in jedem Teil (Laien-Test 17.11.)
-      const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', x.toFixed(1)); tx.setAttribute('y', (y + 4).toFixed(1)); tx.setAttribute('class', 'gnr'); tx.textContent = t.gnr; ovEl.append(tx); });
+    if (M.sel && M.sel.teile && M.k >= 2 ** 17.4) { const lb = [];   // Grundstücksnummer in die Mitte jedes Teils; nur wenn sie hineinpasst und nichts überdeckt (Eduard 18.11.)
+      M.sel.teile.forEach(t => { const R = t.polys[0][0].map(c => css(...kMerc(c[0], c[1]))), xs = R.map(q => q[0]), ys = R.map(q => q[1]);
+        let A = 0, cx = 0, cy = 0; for (let k = 0; k < R.length; k++) { const [x1, y1] = R[k], [x2, y2] = R[(k + 1) % R.length], f = x1 * y2 - x2 * y1; A += f; cx += (x1 + x2) * f; cy += (y1 + y2) * f; }
+        if (Math.abs(A) < 1e-6) return; cx /= 3 * A; cy /= 3 * A; const w = t.gnr.length * 7.4 + 6;
+        if (Math.max(...xs) - Math.min(...xs) < w * 0.8 || Math.max(...ys) - Math.min(...ys) < 15) return;
+        if (lb.some(b => Math.abs(b[0] - cx) < (b[2] + w) / 2 && Math.abs(b[1] - cy) < 16)) return; lb.push([cx, cy, w]);
+        const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', cx.toFixed(1)); tx.setAttribute('y', (cy + 4).toFixed(1)); tx.setAttribute('class', 'gnr'); tx.textContent = t.gnr; ovEl.append(tx); }); }
     const belegt = [];                                                       // Hausnummern-Schilder; zu eng beisammen → weglassen statt Ameisenhaufen
     M.marks.forEach(m => { const [x, y] = css(...kMerc(m.lon, m.lat)); if (x < -20 || y < -20 || x > s + 20 || y > s + 20) return;
       const w = 10 + 6.2 * m.nr.length; if (m !== M.akt && belegt.some(b => Math.abs(b[0] - x) < (b[2] + w) / 2 + 2 && Math.abs(b[1] - y) < 17)) return; belegt.push([x, y, w]);
@@ -720,13 +725,17 @@ function start() {
       if (H.clip) { const df = document.createElementNS(NS, 'defs'), cp = document.createElementNS(NS, 'clipPath'), cpp = document.createElementNS(NS, 'path'); cp.setAttribute('id', 'qeHlClip'); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); df.append(cp); hlEl.append(df); H.clipEl = cpp; }
       H.zonen.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlz'); p.setAttribute('fill-rule', 'evenodd'); if (H.clip) p.setAttribute('clip-path', 'url(#qeHlClip)'); hlEl.append(p); H.els.push(p); });
       H.polys.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlf'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); });
-      H.kreise.forEach((K, j) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlk'); p.setAttribute('pathLength', '1'); p.style.animationDelay = (j * 0.18) + 's'; hlEl.append(p); H.els.push(p); }); }
+      H.kreise.forEach((K, j) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlk'); p.setAttribute('pathLength', '1'); p.style.animationDelay = (j * 0.18) + 's'; hlEl.append(p); H.els.push(p); });
+      (H.linien || []).forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlm'); hlEl.append(p); H.els.push(p); const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'hlmt'); hlEl.append(t); H.els.push(t); }); }
     let i = 0; const S = c => css(...kMerc(c[0], c[1])), D = pg => pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('');
     if (H.clipEl) H.clipEl.setAttribute('d', H.clip.map(D).join(''));
     H.zonen.forEach(pg => { H.els[i++].setAttribute('d', D(pg)); });
     H.polys.forEach(pg => { H.els[i++].setAttribute('d', pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')); });
     H.kreise.forEach((K, j) => { const P = K.map(S), xs = P.map(p => p[0]), ys = P.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-      H.els[i++].setAttribute('d', wackel((x0 + x1) / 2, (y0 + y1) / 2, Math.max(H.klein || 24, (x1 - x0) * 0.6 + 6), Math.max(H.klein ? H.klein * 0.62 : 15, (y1 - y0) * 0.6 + 6), 11 + j * 17)); }); }
+      H.els[i++].setAttribute('d', wackel((x0 + x1) / 2, (y0 + y1) / 2, Math.max(H.klein || 24, (x1 - x0) * 0.6 + 6), Math.max(H.klein ? H.klein * 0.62 : 15, (y1 - y0) * 0.6 + 6), 11 + j * 17)); });
+    (H.linien || []).forEach(L => { const [a, b] = L.p.map(S), dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l * 7, ny = dx / l * 7, f = v => v.toFixed(1);   // Maßband in Gold (Straßenfront)
+      H.els[i++].setAttribute('d', 'M' + f(a[0]) + ' ' + f(a[1]) + 'L' + f(b[0]) + ' ' + f(b[1]) + 'M' + f(a[0] - nx) + ' ' + f(a[1] - ny) + 'L' + f(a[0] + nx) + ' ' + f(a[1] + ny) + 'M' + f(b[0] - nx) + ' ' + f(b[1] - ny) + 'L' + f(b[0] + nx) + ' ' + f(b[1] + ny));
+      const t = H.els[i++], w = Math.atan2(dy, dx) * 180 / Math.PI, ww = w > 90 || w < -90 ? w + 180 : w; t.setAttribute('transform', 'translate(' + f((a[0] + b[0]) / 2 - nx * 1.6) + ' ' + f((a[1] + b[1]) / 2 - ny * 1.6) + ') rotate(' + ww.toFixed(1) + ')'); t.textContent = L.t || ''; }); }
   let tonCtx = null;
   function bleistift() { try { tonCtx = tonCtx || new (window.AudioContext || window.webkitAudioContext)(); const ac = tonCtx, d = 0.55, n = Math.floor(ac.sampleRate * d), b = ac.createBuffer(1, n, ac.sampleRate), x = b.getChannelData(0);
       for (let k = 0; k < n; k++) { const t = k / ac.sampleRate, hub = 0.5 + 0.5 * Math.abs(Math.sin(t * Math.PI * 2 * 6.5)); x[k] = (Math.random() * 2 - 1) * hub * (Math.random() < 0.06 ? 1.7 : 1); }
@@ -736,13 +745,13 @@ function start() {
       src.connect(hp); hp.connect(bp); bp.connect(gn); gn.connect(ac.destination); src.start(); } catch (e) { /* ohne Ton weiter */ } }
   function zeigen(spec, el) { document.querySelectorAll('.g-card.an').forEach(c => c.classList.remove('an'));
     if (!spec || (el && M.hl && M.hl.el === el)) { M.hl = null; mapKick(); return; }                 // zweiter Klick auf dieselbe Karte = ausblenden
-    el && el.classList.add('an'); M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), klein: spec.klein, el };
-    const pts = M.hl.kreise.flat().concat(M.hl.clip ? M.hl.clip.flatMap(pg => pg[0]) : []); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
+    el && el.classList.add('an'); M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), klein: spec.klein, linien: spec.linien || [], el };
+    const pts = M.hl.kreise.flat().concat(M.hl.linien.flatMap(L => L.p)).concat(M.hl.clip ? M.hl.clip.flatMap(pg => pg[0]) : []); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
       if ((x0 - M.cx) * M.k < -s || (x1 - M.cx) * M.k > s || (y0 - M.cy) * M.k < -s || (y1 - M.cy) * M.k > s) { M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; } }
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
   const LESER_TEST = true; let PL = null, plG = null;   // live seit 18.11. (Eduard): Planleser-Ergebnisse, Straßenfront-Regel, Farben
-  if (LESER_TEST) hol('planleser/ergebnis.json?v=1').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  if (LESER_TEST) hol('planleser/ergebnis.json?v=2').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung', vorgarten: 'Vorgarten', frei: 'Hinterer Teil' };
   const PL_W = { W: 'Wohngebiet', WGV: 'Wohngebiet – Geschäftsviertel', GB: 'Gemischtes Baugebiet', GBGV: 'Gemischtes Baugebiet – Geschäftsviertel', G: 'Garten' }, PL_BK = { I: [2.5, 9], II: [2.5, 12], III: [9, 16], IV: [12, 21], V: [16, 26] }, PL_BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' };
   const plLang = p => { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null;
@@ -815,7 +824,7 @@ function start() {
       const k = ZART(t), sec = document.createElement('div'); sec.className = 'g-sec ' + k; st.append(sec);
       const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + ZTXT[k] + ' · ' + fl + ' m²';
       sec.append(zeile('', kopf, ZERK[k], { zonen: zone, kreise: boxen('*'), klein: 7 })); sec.lastChild.classList.add('kopf');
-      if (t.art === 'G') { sec.append(zeile('G', 'gärtnerisch auszugestalten', 'Garten oder Grünfläche – hier darf kein Gebäude stehen.' + (p.bb ? ' Dazu gilt eine Besondere Bestimmung (BB), Text im Plandokument.' : ''), mit('*'))); return; }
+      if (t.art === 'G') { sec.append(zeile('G', 'gärtnerisch auszugestalten', 'Garten oder Grünfläche – hier darf kein Gebäude stehen.', mit('*'))); if (p.bb) sec.append(zeile('BB', 'Besondere Bestimmung (Hof)', 'Eigene Zusatzregel für diese Fläche – der genaue Text steht im Plandokument.', mit('*'))); return; }
       if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sec.append(zeile(v && v.plan ? v.plan.toFixed(2).replace('.', ',') : 'Vg', 'Vorgarten', 'Streifen zwischen Straße und Baufluchtlinie. Hier darf nicht gebaut werden – Garten, Zugang, Zufahrt.', mit('*'))); return; }
       if (t.art !== 'bebaubar') return;
       if (p.widmung) sec.append(zeile(p.widmung, PL_W[p.widmung] || 'Widmung', 'Die Widmung sagt, was hier gebaut werden darf. ' + ({ W: 'W = Wohngebiet: Wohnhäuser.', GB: 'GB = Gemischtes Baugebiet: Wohnungen und Betriebe.', WGV: 'WGV = Wohngebiet Geschäftsviertel: Erdgeschoss für Geschäfte, Wohnungen erst ab 3,5 m.', GBGV: 'GBGV = Gemischtes Baugebiet Geschäftsviertel: Erdgeschoss für Geschäfte.' }[p.widmung] || ''), mit('widmung')));
@@ -824,7 +833,8 @@ function start() {
       if (p.bauweise) sec.append(zeile(p.bauweise, BW[p.bauweise] || 'Bauweise', 'Bauweise ' + p.bauweise + ': ' + (BWX[p.bauweise] || ''), mit('bauweise')));
       if (p.bb) sec.append(zeile('BB', 'Besondere Bestimmung', 'Zusätzliche Regel für diese Fläche – der genaue Text steht im Plandokument.', mit('bb')));
       if (t.tiefe) sec.append(zeile(t.tiefe.plan.toFixed(2).replace('.', ','), 'Trakttiefe', 'So tief darf von der Straße aus gebaut werden – die Zahl mit den zwei Pfeilen im Plan.', mit('-', t.tiefe.box ? [t.tiefe.box] : [])));
-      if (t.rolle === 'strasse' && e.front) { const kx = Math.cos(e.front[0][1] * Math.PI / 180) * 111320, Lf = Math.hypot((e.front[1][0] - e.front[0][0]) * kx, (e.front[1][1] - e.front[0][1]) * 110574); sec.append(zeile(Lf.toFixed(1).replace('.', ','), 'Straßenfront', 'Länge der Grundstücksgrenze an der Straße (aus dem Kataster).', mit('-', [e.front]))); }
+      if (t.rolle === 'strasse' && e.front) { const kx = Math.cos(e.front[0][1] * Math.PI / 180) * 111320, Lf = Math.hypot((e.front[1][0] - e.front[0][0]) * kx, (e.front[1][1] - e.front[0][1]) * 110574); sec.append(zeile(Lf.toFixed(1).replace('.', ','), 'Straßenfront', 'Länge der Grundstücksgrenze an der Straße (aus dem Kataster) – im Plan als goldenes Maßband.', { zonen: [], kreise: [], linien: [{ p: e.front, t: Lf.toFixed(1).replace('.', ',') + ' m' }] })); }
+      (t.strassenmasse || []).forEach(sm => sec.append(zeile(sm.v.toFixed(2).replace('.', ','), 'Breite Baulinie–Baulinie', 'Abstand von Baulinie zu Baulinie quer über die Straße, so im Plan eingetragen (Zahl mit Pfeilen) – gilt an der Stelle der Pfeile.', mit('-', [sm.box]))));
       if (t.strassenbreite && t.strassenbreite.plan) { const b = t.strassenbreite; sec.append(zeile(b.plan.toFixed(2).replace('.', ','), 'Straßenbreite', 'Zahl mit Pfeilen im Plan, am Grundstück nachgemessen (' + b.gemessen.toFixed(2).replace('.', ',') + ' m). Breitere Straße = oft mehr Höhe möglich.', mit('-', b.box ? [b.box] : []))); }
     }); }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';

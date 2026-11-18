@@ -475,3 +475,7 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 @media (min-width:1100px){.g-in.has-res .g-mid{position:sticky;top:0;align-self:start}}
 @media (max-width:1099px){.g-in.has-res .g-mapw{position:sticky;top:0;z-index:5;background:var(--beige)}}
 #resDeut .g-skiz{order:9}
+/* v3.84 Markieren ohne Blau (sonst wirkt Garten wie Bauland) · Straßenfront als goldenes Maßband */
+.g-hl.blau .hlz{fill:rgba(3,32,61,.06);stroke:#03203D;stroke-width:3px;stroke-dasharray:none}
+.g-hl .hlm{fill:none;stroke:#C9A96E;stroke-width:4px;stroke-linecap:round;filter:drop-shadow(0 0 1.5px rgba(3,32,61,.6))}
+.g-hl .hlmt{font:700 12px/1 "DM Sans",system-ui,sans-serif;fill:#8A6A2C;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:3px}

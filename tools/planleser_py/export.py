@@ -66,6 +66,27 @@ def masszahlen(lin,T):
     gm=g[0]*MPX
     out.append(dict(v=v,gem=round(gm,2),ok=abs(gm-v)<=max(0.45,0.035*v),a=g[1],b=g[2],t=t))
   return out
+def g_fern(m,im,msk,x0,y0,rand=700):
+  # Hof ohne eigene Beschriftung: gilt das „G“ derselben Planfläche, auch weit weg (Sommerschuhgasse: G BB ~110 m entfernt)
+  import zonen as Z, leser2
+  ys,xs=np.nonzero(msk); X0,Y0=max(0,int(xs.min()+x0-rand)),max(0,int(ys.min()+y0-rand)); X1,Y1=int(xs.max()+x0+rand),int(ys.max()+y0+rand)
+  crop=im[Y0:Y1,X0:X1,::-1].copy(); mm=leser2.rot_mask(crop); gl=leser2.glyphen(mm)
+  lab,st,lin=Z.regionen(mm,[],gl)
+  ids,cnt=np.unique(lab[ys+y0-Y0,xs+x0-X0],return_counts=True); ids=ids[ids>0]
+  if not len(ids): return None
+  rid=ids[np.argmax([cnt[list(np.unique(lab[ys+y0-Y0,xs+x0-X0],return_counts=True)[0]).index(i)] for i in ids])]
+  for g in Z.g_suche(crop,gl,[0,8,-8,15,-15]):
+    if g['s']<0.8: break
+    gx,gy=int(g['x']),int(g['y'])
+    if not(0<=gy<lab.shape[0] and 0<=gx<lab.shape[1]): continue
+    if cv2.dilate((lab==rid).astype(np.uint8),np.ones((25,25),np.uint8))[gy,gx]:
+      w=crop[max(0,gy-40):gy+40,max(0,gx-30):gx+160]; a_=math.radians(g['ang']%90 if g['ang']%90<45 else g['ang']%90-90)
+      ring=np.array([[0,0],[100*math.cos(a_),100*math.sin(a_)],[100*math.cos(a_)-100*math.sin(a_),100*math.sin(a_)+100*math.cos(a_)],[-100*math.sin(a_),100*math.cos(a_)]])
+      T,_,_=Z.tokens(w,0,[ring]); bb=any('BB' in t['t'] for t in T)
+      box=cv2.boxPoints(((gx+X0,gy+Y0),(g['w']*(3.2 if bb else 1)+4,g['h']+4),0)).tolist()
+      cx=gx+X0+(g['w']*1.1 if bb else 0)
+      return dict(bb=bb,label=(cx,gy+Y0,'GBB' if bb else 'G',cv2.boxPoints(((cx,gy+Y0),(g['w']*(3.2 if bb else 1)+4,g['h']+4),0)).tolist(),[]))
+  return None
 def fall(m,im,wfs):
   TF,T,lin,(x0,y0),rings=S.teilflaechen(m,im,wfs); off=np.array([x0,y0])
   sk=strassenkanten(m,[r for r in rings],off,S.stadtzonen(m,wfs,off))
@@ -91,7 +112,9 @@ def fall(m,im,wfs):
     if art=='B' and vgm0 and sk:
       ys_,xs_=np.nonzero(t['msk']); dd=(np.column_stack([xs_,ys_])-a0_)@nv0
       if dd.max()<=vgm0[1]+3 and vgm0[1]*MPX<=9: art='V'
-    if art=='B' and t['stadt'] in offen and ('nachbar' in t['quelle'] or t['quelle'].startswith('innen')): art='F'
+    if art=='B' and t['stadt'] in offen and ('nachbar' in t['quelle'] or t['quelle'].startswith('innen')):
+      art='F'; gf=g_fern(m,im,t['msk'],x0,y0)
+      if gf: art='G'; t['G']=True; t['plan']={'bb':'BB'} if gf['bb'] else {}; t['label_pos']=[gf['label']]; t['quelle']+='+G-fern'
     key=(art,t['stadt'])
     attrs=dict(t['plan'])
     if art in ('V','F'): attrs={}
@@ -185,6 +208,21 @@ def fall(m,im,wfs):
       sbr=dict(gemessen=round(sbm,2),plan=kz[0]['v'] if kz else None,ok=bool(kz),box=[ll(m,*(q+off)) for q in cv2.boxPoints(((kz[0]['t']['x'],kz[0]['t']['y']),(kz[0]['t']['w']+2,kz[0]['t']['h']+2),kz[0]['t']['ang']))] if kz else None)
       for o in out:
         if o['rolle']=='strasse': o['strassenbreite']=sbr
+    # weitere Straßenmaße derselben Straße (z. B. 12,00 Baulinie–Baulinie am Straßenende), Planzahl mit Pfeilen quer zur Straße
+    L_=np.hypot(*(b_-a_)); hull=np.vstack(rings).astype(np.float32)
+    sm=[]
+    for z in MZ:
+      if not z['ok']: continue
+      q=np.array([z['t']['x'],z['t']['y']]); al=np.dot(q-a_,dv); pe=np.dot(q-a_,nv)
+      if cv2.pointPolygonTest(hull[cv2.convexHull(hull,returnPoints=False).ravel()],(float(q[0]),float(q[1])),False)>=0: continue
+      if not(-25/MPX<=pe<=0 and -120/MPX<=al<=L_+120/MPX): continue
+      if abs(np.dot((z['a']-z['b'])/max(1e-6,np.hypot(*(z['a']-z['b']))),nv))<0.9: continue
+      if sbm and 'sbr' in dir() and sbr.get('plan')==z['v']: continue
+      if any(abs(x['v']-z['v'])<0.01 for x in sm): continue
+      sm.append(dict(v=z['v'],box=[ll(m,*(qq+off)) for qq in cv2.boxPoints(((z['t']['x'],z['t']['y']),(z['t']['w']+2,z['t']['h']+2),z['t']['ang']))]))
+    if sm:
+      for o in out:
+        if o['rolle']=='strasse': o['strassenmasse']=sm
     if vgm and 1.5<=vgm<=9:
       kz=[z for z in MZ if z['ok'] and abs(z['v']-vgm)<=0.45]
       vor=dict(gemessen=round(vgm,2),plan=kz[0]['v'] if kz else None,ok=bool(kz))
