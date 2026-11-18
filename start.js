@@ -722,10 +722,23 @@ function start() {
       src.connect(hp); hp.connect(bp); bp.connect(gn); gn.connect(ac.destination); src.start(); } catch (e) { /* ohne Ton weiter */ } }
   function zeigen(spec, el) { document.querySelectorAll('.g-card.an').forEach(c => c.classList.remove('an'));
     if (!spec || (el && M.hl && M.hl.el === el)) { M.hl = null; mapKick(); return; }                 // zweiter Klick auf dieselbe Karte = ausblenden
-    el && el.classList.add('an'); M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), el };
+    el && el.classList.add('an'); M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), klein: spec.klein, el };
     const pts = M.hl.kreise.flat().concat(M.hl.clip ? M.hl.clip.flatMap(pg => pg[0]) : []); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
       if ((x0 - M.cx) * M.k < -s || (x1 - M.cx) * M.k > s || (y0 - M.cy) * M.k < -s || (y1 - M.cy) * M.k > s) { M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; } }
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
+  /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
+  const LESER_TEST = /[?&]leser=1/.test(location.search); let PL = null, plG = null;
+  if (LESER_TEST) hol('planleser/test.json?v=1').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung' };
+  const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
+  function planKarten(g, L) { if (!PL) return; const e = (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean); if (!e) return;
+    L.append(karte('meta', 'Planleser (Test) · ' + e.teile.length + ' Teile', 'Aus dem Planbild gelesen, Stand ' + e.stand + '. Grün = Stadt-Daten und Plan stimmen überein.'));
+    e.teile.forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : t.m2_plan, sp = t.stadt || {};
+      const titel = (PL_ROLLE[t.rolle] || t.rolle) + ': ' + (t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'an die Straße abzutreten' : plText(t.plan) || '?');
+      const text = t.art === 'G' ? 'Gärtnerisch auszugestalten – hier darf nicht gebaut werden. Ca. ' + fl + ' m².' : t.art === 'abtretung' ? 'Liegt außerhalb der Baulinie. Ca. ' + fl + ' m².'
+        : 'Stadt-Daten: ' + (sp.widmung || '') + ' ' + (sp.bauklasse || '') + ' · Plan: ' + (plText(t.plan) || '–') + ' · ca. ' + fl + ' m².';
+      const art = t.art === 'G' || t.art === 'abtretung' ? 'gelb-k' : t.stadt_plan_gleich ? 'gruen-k' : 'gelb-k';
+      L.append(karte(art, titel, text, 'Quelle: ' + t.quelle + '. Gelesen: ' + t.labels.map(l => l.t).join(', '), { zonen: t.poly.map(r => [r]), kreise: t.labels.map(l => l.box), klein: 7 })); }); }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
     const zG = { zonen: (g.teile || [g]).flatMap(t => t.polys), kreise: (g.teile || [g]).map(t => [proben({ polys: t.polys })[0]]) }, alleP = (g.teile || [g]).flatMap(t => t.polys.flatMap(pg => pg[0]));
@@ -751,6 +764,7 @@ function start() {
           else L.append(karte('', vor + WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.', zz));
           if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.'); });
         if (Z.length === 1 && u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
+      if (LESER_TEST) { plG = g; planKarten(g, L); }
       const sch = [];
       if (u.schutz) { sch.push('Schutzzone' + (u.schutz.SLANG ? ' „' + u.schutz.SLANG + '“' : '')); gelb.push('Schutzzone: Abbruch und Umbau der Fassade brauchen eine Bewilligung, Neues muss ins Stadtbild passen.'); }
       if (u.wohnzone) sch.push('Wohnzone');
