@@ -930,7 +930,8 @@ function start() {
       w._zu = zu; b.addEventListener('click', () => { if (w.classList.contains('auf')) { zu(); offen = null; M.hl = null; zeigen(null); } else oeffnen(); }); return w; };
     sZ.forEach(z => { const n = (z.vor || 'Straßentrakt').replace(/^Hof/, 'Hoffläche'), bkT = z.bk ? ROEM[z.bk] : '', ch = [{ k: KLN[z.kl] || z.kl, t: WTXT[z.kl].split(' – ')[0], e: WTXT[z.kl].split(' – ')[1].replace(/^./, c => c.toUpperCase()) + (widGF(z.w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : '') + ' Quelle: Flächenwidmungsplan der Stadt Wien (amtliche Daten).' }];
       if (bkT) ch.push({ k: bkT, t: 'Bauklasse ' + bkT, e: z.h ? 'Die Bauklasse legt die Gebäudehöhe fest: höchstens ' + z.h[0] + ' m (ca. ' + z.h[1] + ' Geschoße). Steht im Plan eine eigene Meterzahl, gilt die.' : 'Bauklasse VI: über 26 m.' });
-      k1.append(zeile('#2F6FC4', 'Widmung ' + n, ((KLN[z.kl] || z.kl) + ' ' + bkT).trim(), WTXT[z.kl].split(' – ')[0], { zonen: z.zz.zonen, clip: z.zz.clip, kreise: [], farbe: 'b' }, ch)); });
+      const hofU = /^Hof/.test(z.vor || '');   /* Eduard 18.11.: Hof nur aus Stadt-Daten – G, Bauweise, Höhe stehen nur im Plan → grau + Hinweis */
+      k1.append(zeile(hofU ? '#8A94A6' : '#2F6FC4', 'Widmung ' + n, ((KLN[z.kl] || z.kl) + ' ' + bkT).trim(), hofU ? 'laut Stadt-Daten · ob G (Garten), Bauweise, Höhe: nur im Plan, noch nicht gelesen' : WTXT[z.kl].split(' – ')[0], { zonen: z.zz.zonen, clip: z.zz.clip, kreise: [], farbe: 'b' }, ch)); });
     const k2c = el('div', 'q-card q-mehr'); wrap.append(k2c); checkZeilen(k2c, g.umf || {});
     const pd = zeile('#8A94A6', 'Plandokument', 'wird abgefragt …', 'Festsetzung der Stadt Wien', null, null, 'Das Plandokument enthält den Plan und die textlichen Bestimmungen (Besondere Bestimmungen). Die Nummer kommt direkt von der Stadt Wien.'); k1.append(pd);
     const pt = M.pt || (g.polys && g.polys[0] && g.polys[0][0][0]); if (!pt) { pd.remove(); return; }
@@ -968,7 +969,7 @@ function start() {
           else if (LESER_TEST) sZ.push({ vor: vor.replace(/: $/, ''), kl, bk, h, w, zz })
           else L.append(karte('', vor + WTXT[kl].split(' – ')[0], gross1(WTXT[kl].split(' – ')[1]) + (bkT ? ' ' + bkT : '') + (widGF(w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : ''), 'Amtlich: „' + (w.WIDMUNG_TXT || w.WIDMUNG) + '“. Die Bauklasse legt die Höhe fest (Wiener Bauordnung § 75). Im Detailplan kann zusätzlich eine eigene Höchstgrenze stehen, z. B. „14m“ – die gilt dann. Das lesen wir im nächsten Schritt aus.', zz));
           if (kl && !h && bk !== 6) gelb.push('Bauklasse nicht ablesbar – bitte im Plan prüfen.'); });
-        if (sZ.length) stadtSteck(g, L, sZ);
+        if (sZ.length) { stadtSteck(g, L, sZ); gelb.push('Plan noch nicht geprüft: Widmung und Bauklasse kommen aus den Stadt-Daten. Ob im Hof G (Garten) gilt, welche Bauweise und Höhe, steht nur im Plan – für diese Adresse noch nicht gelesen.'); }
         if (Z.length === 1 && u.widRand) gelb.push('Widmung am Rand des Grundstücks abgelesen – bitte im Plan prüfen.'); }
       if (LESER_TEST) { plG = g; planKarten(g, L); }
       const sch = [];
