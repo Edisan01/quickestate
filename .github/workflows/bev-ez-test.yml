@@ -1,0 +1,16 @@
+name: BEV-EZ-Test (nur Log, nicht Webseite)
+on:
+  workflow_dispatch:
+    inputs:
+      lon: {}
+      lat: {}
+      kg: {}
+      gnr: {}
+jobs:
+  ez:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node tools/bev_ez.cjs "${{ github.event.inputs.lon }}" "${{ github.event.inputs.lat }}" "${{ github.event.inputs.kg }}" "${{ github.event.inputs.gnr }}"
