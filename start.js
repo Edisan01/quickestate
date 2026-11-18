@@ -400,7 +400,10 @@ function start() {
   const ADR = q => 'https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?Address=' + encodeURIComponent(q) + '&crs=EPSG:4326';
   const hol = u => fetch(u, AbortSignal.timeout ? { signal: AbortSignal.timeout(8000) } : {});   // nie ewig „Suche …“
   let wahlN = 0;                                                            // jede neue Suche macht ältere Antworten ungültig
-  const adrSuche = q => hol(ADR(q)).then(r => r.ok ? r.text() : Promise.reject(r.status)).then(t => { try { return (JSON.parse(t).features || []).filter(f => f.geometry && f.properties); } catch { return []; } });
+  // „Sommerschuhgasse 3, 1230 Wien“: Stadt-Suche findet mit PLZ/Wien nur die Straße → PLZ und „Wien“ abtrennen, PLZ zum Sortieren nutzen (Eduard 18.11.)
+  const adrSuche = q => { const m = q.match(/^(.*?)(?:[,\s]+(1\d{3}))?(?:[,\s]+Wien)?[,\s]*$/i), kern = m && m[1].trim() ? m[1].trim() : q, plz = m && m[2];
+    return hol(ADR(kern)).then(r => r.ok ? r.text() : Promise.reject(r.status)).then(t => { try { const L = (JSON.parse(t).features || []).filter(f => f.geometry && f.properties);
+      return plz ? L.sort((x, y) => (y.properties.PostalCode === plz) - (x.properties.PostalCode === plz)) : L; } catch { return []; } }); };
   const adrText = f => f.properties.Adresse + (f.properties.PostalCode ? ', ' + f.properties.PostalCode + ' Wien' : ', Wien');
   const hatNr = f => !!f.properties.StreetNumber;
   let sugList = [], sugT = 0, sugN = 0, kgNamen = null, modus = 'adr';
@@ -706,7 +709,7 @@ function start() {
     return d; };
   const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null; if (M.hl) { M.hl = null; mapKick(); } };
   /* Einkreisen (Eduard 17.11.): Klick auf eine Karte → Stelle im Plan wird wie mit dem Bleistift eingekreist, leiser Bleistift-Ton. Geometrie aus den geprüften Daten. */
-  const hlEl = document.createElementNS(NS, 'svg'); hlEl.setAttribute('class', 'g-hl' + (/[?&]leser=1/.test(location.search) ? ' blau' : '')); hlEl.setAttribute('aria-hidden', 'true'); mapEl.append(hlEl);
+  const hlEl = document.createElementNS(NS, 'svg'); hlEl.setAttribute('class', 'g-hl blau'); hlEl.setAttribute('aria-hidden', 'true'); mapEl.append(hlEl);
   const wackel = (cx, cy, rx, ry, seed) => { let q = seed; const rnd = () => (q = (q * 9301 + 49297) % 233280) / 233280, N = 64, st = -2.2 + rnd() * 0.4, L = [];
     for (let i = 0; i <= N * 1.1; i++) { const a = st + i / N * Math.PI * 2, f = 1 + (rnd() - 0.5) * 0.035 + i / N * 0.06; L.push((cx + Math.cos(a) * rx * f).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * f).toFixed(1)); }
     return 'M' + L.join('L'); };
@@ -736,8 +739,8 @@ function start() {
       if ((x0 - M.cx) * M.k < -s || (x1 - M.cx) * M.k > s || (y0 - M.cy) * M.k < -s || (y1 - M.cy) * M.k > s) { M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; } }
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
-  const LESER_TEST = /[?&]leser=1/.test(location.search); let PL = null, plG = null;
-  if (LESER_TEST) hol('planleser/test.json?v=8').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  const LESER_TEST = true;   // live seit 18.11. (Eduard): Planleser-Ergebnisse, Straßenfront-Regel, Farben let PL = null, plG = null;
+  if (LESER_TEST) hol('planleser/ergebnis.json?v=1').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung', vorgarten: 'Vorgarten', frei: 'Hinterer Teil' };
   const PL_W = { W: 'Wohngebiet', WGV: 'Wohngebiet – Geschäftsviertel', GB: 'Gemischtes Baugebiet', GBGV: 'Gemischtes Baugebiet – Geschäftsviertel', G: 'Garten' }, PL_BK = { I: [2.5, 9], II: [2.5, 12], III: [9, 16], IV: [12, 21], V: [16, 26] }, PL_BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' };
   const plLang = p => { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null;
@@ -796,7 +799,7 @@ function start() {
     if (e) { M.zon = { teile: e.teile, clip: (g.teile || [g]).flatMap(t => t.polys) }; const w = $('resHint'); w.before(legende(g, e)); w.before(skizze(g, e)); }
     mapKick(); }
   function planKarten(g, L) { if (!PL) return; const e = (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean); planAnzeige(g, e); if (!e) return;
-    L.append(karte('meta', 'Planleser (Test) · ' + e.teile.length + ' Teile', 'Aus dem Planbild gelesen, Stand ' + e.stand + '. Grün = Stadt-Daten und Plan stimmen überein.'));
+    L.append(karte('meta', 'Aus dem Plan gelesen · ' + e.teile.length + ' Teile', 'Jeder Wert ist im Flächenwidmungsplan nachgelesen und mit den Daten der Stadt Wien abgeglichen (Stand ' + e.stand.split('-').reverse().join('.') + '). Tippe auf eine Box – die Stelle wird im Plan eingekreist.'));
     const BW = { g: 'geschlossen – Haus an Haus, ohne Abstand zum Nachbarn', o: 'offen – freistehend, mit Abstand zu den Nachbarn', gk: 'gekuppelt – zwei Häuser an der gemeinsamen Grenze' };
     e.teile.forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : t.m2_plan, p = t.plan || {}, zone = t.poly.map(r => [r]);
       const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []);
@@ -806,7 +809,7 @@ function start() {
         'Quelle: ' + t.quelle + ' · gelesen: ' + t.labels.map(l => l.t).join(', '), { zonen: zone, kreise: boxen('*'), klein: 7 }));
       const sub = (titel, text, a, extra) => { const k = boxen(a).concat(extra || []); L.append(karte('sub', titel, text, '', { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6 })); };
       if (t.art === 'G') { sub('G = gärtnerisch auszugestalten', 'Garten oder Grünfläche. Keine Gebäude.' + (p.bb ? ' Dazu gilt eine Besondere Bestimmung (BB).' : ''), '*'); return; }
-      if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sub('Vorgarten' + (v && v.plan ? ': ' + v.plan.toFixed(2).replace('.', ',') + ' m' : ''), v && v.plan ? 'Tiefe laut Plan (Zahl mit Pfeilen).' : 'Tiefe gemessen ca. ' + (v ? v.gemessen.toFixed(1).replace('.', ',') : '?') + ' m – die Planzahl lesen wir noch sicher aus, bis dahin gilt sie als ungeprüft.', '*'); return; }
+      if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sub('Vorgarten' + (v && v.plan ? ': ' + v.plan.toFixed(2).replace('.', ',') + ' m' : ''), v && v.plan ? 'Tiefe laut Plan (Zahl mit Pfeilen). Hier darf nicht gebaut werden – Garten, Zugang, Zufahrt.' : 'Streifen zwischen Straße und Baufluchtlinie. Hier darf nicht gebaut werden – Garten, Zugang, Zufahrt.', '*'); return; }
       if (t.art === 'abtretung' || t.art === 'frei') return;
       if (t.rolle === 'strasse' && e.front) { const kx = Math.cos(e.front[0][1] * Math.PI / 180) * 111320, Lf = Math.hypot((e.front[1][0] - e.front[0][0]) * kx, (e.front[1][1] - e.front[0][1]) * 110574); sub('Straßenfront: ' + Lf.toFixed(1).replace('.', ',') + ' m', 'Länge der Grundstücksgrenze an der Straße (aus dem Kataster).', '-', [e.front]); }
       if (t.strassenbreite && t.strassenbreite.plan) { const b = t.strassenbreite; sub('Straßenbreite: ' + (b.plan ? b.plan.toFixed(2).replace('.', ',') + ' m' : 'ca. ' + b.gemessen.toFixed(1).replace('.', ',') + ' m'), b.plan ? 'Zahl mit Pfeilen im Plan, am Grundstück nachgemessen (' + b.gemessen.toFixed(2).replace('.', ',') + ' m). Breitere Straße = mehr Höhe möglich.' : 'Gemessen – Planzahl noch nicht gelesen.', '-', b.box ? [b.box] : []); }
