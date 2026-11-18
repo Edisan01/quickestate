@@ -1,5 +1,5 @@
 import sys,json,cv2,numpy as np,math,re
-import os as _os; sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)));import kat,leser3 as L
+sys.path.insert(0,'/home/claude/pbtools');import kat,leser3 as L
 from leser2 import rot_mask,glyphen,winkel
 ROM=re.compile(r'^(VI|IV|V|III|II|I)$')
 def regionen(m,T,gl=None):
@@ -73,6 +73,7 @@ def tokens(crop,A,rings=None):
     g,Mi=L.drehen(rw,ang,SK)
     for wd in L.woerter(L.zeichen(g)):
       t,sc=L.text(wd)
+      t=re.sub(r'^G[mBn]G?[Vv]','GBGV',t)   # kleines hochgestelltes GV
       if sc<0.78: continue
       x0=min(z['x'] for z in wd); y0=min(z['y'] for z in wd); x1=max(z['x']+z['w'] for z in wd); y1=max(z['y']+z['h'] for z in wd)
       cx,cy=(x0+x1)/2,(y0+y1)/2
@@ -98,6 +99,8 @@ def attrs(toks):
   a={}; txt=' '.join(t['t'] for t in toks)
   for t in sorted(toks,key=lambda t:-t['h']):
     s=t['t'].replace('[','I').replace(']','')
+    s=re.sub(r'^G[mBn]G?[Vv]','GBGV',s)   # Hochstellung „GV“ (kleiner) wird oft als „GmV“/„GBGv“ gelesen – Stadt-Daten müssen es bestätigen
+    if re.fullmatch(r'(gk|g|o)BB\d*',s) and 'bauweise' not in a: a['bauweise']=re.match(r'gk|g|o',s).group(0)
     m0=re.fullmatch(r'GBB(\d*)',s)
     if m0: a.setdefault('widmung','G'); a['bb']='BB'+m0.group(1); continue
     m=WRX.match(s)

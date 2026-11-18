@@ -1,6 +1,6 @@
 # Zonen je Grundstück: Stadt-Widmungszonen (genau) + Planleser-Tokens + G-Flächen per Flutfüllung
 import sys,json,cv2,numpy as np,math,re
-import os as _os; sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)))
+sys.path.insert(0,'/home/claude/pbtools')
 import kat, zonen as Z
 ROMAN={'1':'I','2':'II','3':'III','4':'IV','5':'V','6':'VI'}
 def stadtzonen(m,wfs,off):
@@ -99,6 +99,15 @@ def teilflaechen(m,im,wfs,rand=260):
       kand=[(dist[min(H-1,max(0,int(t['y']))),min(W-1,max(0,int(t['x'])))],t) for t in T if zid[min(H-1,max(0,int(t['y']))),min(W-1,max(0,int(t['x'])))]==z and (GRX.match(t['t']) or re.match(r'^(W|GB|WGV)',t['t']))]
       kand=[k_ for k_ in kand if k_[0]<150]
       if kand: toks=toks+[min(kand,key=lambda k_:k_[0])[1]]; quelle+='+nachbar'
+    # Zeilen-Fortsetzung: Planzeichen einer Zeile (z. B. „GB GV I … 5m … g BB“) stehen oft über das Grundstück hinaus – gleiche Richtung, gleiche Zeile, gleiche Stadtzone
+    for an_ in [t for t in toks if re.match(r'^(W|GB|WGV|GBGV)',re.sub(r'^G[mBn]G?[Vv]','GBGV',t['t']))]:
+      th_=math.radians(an_['ang']); ux_,uy_=math.cos(th_),math.sin(th_)
+      for t in T:
+        if t in toks or not re.fullmatch(r'(\d{1,2}([,.]\d)?m|(gk|g|o)(BB\d*)?|BB\d*|VI|IV|V|III|II|I)',t['t']): continue
+        da=abs((t['ang']-an_['ang']+180)%360-180)
+        if min(da,abs(da-180))>6: continue
+        lx=(t['x']-an_['x'])*ux_+(t['y']-an_['y'])*uy_; ly=-(t['x']-an_['x'])*uy_+(t['y']-an_['y'])*ux_
+        if abs(ly)<=0.6*max(an_['h'],t['h']) and abs(lx)<=330 and zid[min(H-1,max(0,int(t['y']))),min(W-1,max(0,int(t['x'])))]==z: toks=toks+[t]; quelle+='+zeile'
     g=[t for t in toks if GRX.match(t['t'])]; rest=[t for t in toks if not GRX.match(t['t'])]
     innen=tk_in(msk); wl=[t for t in rest if re.match(r'^(W|GB|WGV|III|II|IV|VI|V\b)',t['t'])]
     if any(GRX.match(t['t']) for t in innen): istG=True

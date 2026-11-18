@@ -37,8 +37,13 @@ def alle(b):
   v=norm(b); d={}
   if v is None: return d
   ys,xs=np.nonzero(b); asp=(ys.max()-ys.min()+1)/(xs.max()-xs.min()+1)
+  # Löcher zählen (6/9/0 eines, 8 zwei, 5/3/2/7/1 keines) – trennt 5 von 6 und 3 von 8 sicherer als die Form allein
+  bb=(b>0).astype(np.uint8); cs,hi=cv2.findContours(bb,cv2.RETR_CCOMP,cv2.CHAIN_APPROX_SIMPLE)
+  loch=sum(1 for k,c_ in enumerate(cs) if hi is not None and hi[0][k][3]>=0 and cv2.contourArea(c_)>=2)
+  SOLL={'0':1,'1':0,'2':0,'3':0,'5':0,'6':1,'7':0,'8':2,'9':1}
   for c,t,ta,_ in TPL:
     s=float((v*t).sum()) - 0.25*abs(math.log(asp/ta))
+    if c in SOLL and SOLL[c]!=loch: s-=0.08
     if s>d.get(c,-9): d[c]=s
   return d
 def klass(b):

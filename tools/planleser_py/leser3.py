@@ -1,5 +1,5 @@
 import cv2,numpy as np,math,sys,re
-import os as _os; sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)))
+sys.path.insert(0,'/home/claude/pbtools')
 import glyph as G
 from leser2 import rot_mask,glyphen,winkel
 def drehen(gl,ang,sk=1.0):
@@ -66,6 +66,9 @@ def bester(z,alpha,H):
   d=z['d']; klein=z['h']<0.5*H
   c=max((k for k in d if k in alpha and ((k in ',.')==klein or k not in NUM)),key=lambda k:d[k],default=None)
   if c is None: c=max((k for k in d if k in alpha),key=lambda k:d[k])
+  if c.isdigit():   # Ziffern, die sich zu ähnlich sehen (5/6, 3/8 …), nicht raten – lieber gar kein Wert (Eduard: kein Vielleicht)
+    zw=max((d[k] for k in d if k.isdigit() and k!=c and k in alpha),default=0)
+    if d[c]-zw<0.03: return '?',d[c]
   return c,d[c]
 def text(wd):
   H=max(z['h'] for z in wd if z['c']!='g') if any(z['c']!='g' for z in wd) else wd[0]['h']
