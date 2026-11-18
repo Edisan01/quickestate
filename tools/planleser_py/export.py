@@ -53,7 +53,7 @@ def fall(m,im,wfs):
     _,lbl=cv2.distanceTransformWithLabels((lab_==0).astype(np.uint8),cv2.DIST_L2,5,labelType=cv2.DIST_LABEL_PIXEL)
     ys,xs=np.nonzero(lab_>0); idx2lab=np.zeros(lbl.max()+1,np.int32); idx2lab[lbl[ys,xs]]=lab_[ys,xs]
     voll=idx2lab[lbl]*(pmk>0)
-    for k,u in enumerate(merged): u['nv']=int((voll==k+1).sum()); u['msk']=cv2.dilate((voll==k+1).astype(np.uint8),np.ones((5,5),np.uint8))
+    for k,u in enumerate(merged): u['nv']=int((voll==k+1).sum()); u['msk']=(voll==k+1).astype(np.uint8)
   for u in merged: u['front']=int((u['msk']&front).sum())
   fr=sorted([u for u in merged if u['front']>0 and not u['G'] and u['stadt'] is not None],key=lambda u:-u['front'])
   hof=[u for u in merged if u not in fr[:1]]

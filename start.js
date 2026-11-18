@@ -729,7 +729,7 @@ function start() {
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
   const LESER_TEST = /[?&]leser=1/.test(location.search); let PL = null, plG = null;
-  if (LESER_TEST) hol('planleser/test.json?v=2').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  if (LESER_TEST) hol('planleser/test.json?v=3').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung' };
   const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
   /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
@@ -766,10 +766,10 @@ function start() {
     const um = document.createElementNS(NS, 'path'); um.setAttribute('d', alle.map(pg => pg.map(D).join('')).join('')); um.setAttribute('class', 'sku'); svg.append(um);
     e.teile.forEach(t => { const r = t.poly[0]; if (!r) return; const P2 = r.map(S), c = P2.reduce((a, q) => [a[0] + q[0] / P2.length, a[1] + q[1] / P2.length], [0, 0]);
       const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', c[0].toFixed(1)); tx.setAttribute('y', (c[1] + 4).toFixed(1)); tx.setAttribute('class', 'skt'); tx.textContent = zKurz(t); svg.append(tx); });
-    const mass = (xa, ya, xb, yb, txt, sen) => { const l = document.createElementNS(NS, 'path'); l.setAttribute('d', 'M' + xa + ' ' + ya + 'L' + xb + ' ' + yb); l.setAttribute('class', 'skm'); svg.append(l);
-      const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'skmt'); if (sen) { t.setAttribute('transform', 'translate(' + (xa - 6) + ' ' + ((ya + yb) / 2) + ') rotate(-90)'); t.setAttribute('x', 0); t.setAttribute('y', 0); } else { t.setAttribute('x', (xa + xb) / 2); t.setAttribute('y', ya + 13); } t.textContent = txt; svg.append(t); };
-    const f0 = S(e.front[0]), f1 = S(e.front[1]); mass(Math.min(f0[0], f1[0]).toFixed(1), (yF + 32).toFixed(1), Math.max(f0[0], f1[0]).toFixed(1), (yF + 32).toFixed(1), 'Front ca. ' + L.toFixed(1).replace('.', ',') + ' m');
-    const sTr = e.teile.find(t => t.rolle === 'strasse'); if (sTr) { const tief = Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = rand - 12; mass(xl, yF.toFixed(1), xl, (yF - tief * sk).toFixed(1), 'Trakt ca. ' + tief.toFixed(1).replace('.', ',') + ' m', true); }
+    const mass = (xa, ya, xb, yb, txt, sen) => { const l = document.createElementNS(NS, 'path'); l.setAttribute('d', 'M' + xa.toFixed(1) + ' ' + ya.toFixed(1) + 'L' + xb.toFixed(1) + ' ' + yb.toFixed(1)); l.setAttribute('class', 'skm'); svg.append(l);
+      const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'skmt'); if (sen) t.setAttribute('transform', 'translate(' + (xa - 5).toFixed(1) + ' ' + ((ya + yb) / 2).toFixed(1) + ') rotate(-90)'); else { t.setAttribute('x', ((xa + xb) / 2).toFixed(1)); t.setAttribute('y', (ya + 12).toFixed(1)); } t.textContent = txt; svg.append(t); };
+    const f0 = S(e.front[0]), f1 = S(e.front[1]); mass(Math.min(f0[0], f1[0]), yF + 31, Math.max(f0[0], f1[0]), yF + 31, 'Front ca. ' + L.toFixed(1).replace('.', ',') + ' m');
+    const sTr = e.teile.find(t => t.rolle === 'strasse'); if (sTr) { const tief = Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = Math.min(...alle.flatMap(pg => pg[0]).map(c => S(c)[0])) - 9; mass(xl, yF, xl, yF - tief * sk, 'Trakt ca. ' + tief.toFixed(1).replace('.', ',') + ' m', true); }
     box.append(svg); const k = document.createElement('p'); k.className = 'g-skk'; k.textContent = 'So stehst du vor deinem Grundstück. Maße ca., aus dem Plan gemessen.'; box.append(k); return box; }
   function legende(g, e) { const box = document.createElement('div'); box.className = 'g-leg'; const fl = t => g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), sum = {};
     e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); });
