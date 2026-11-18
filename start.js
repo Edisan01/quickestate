@@ -746,7 +746,9 @@ function start() {
   const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
   /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
   const ZART = t => t.art === 'G' ? 'zg' : t.art === 'vorgarten' ? 'zv' : t.art === 'frei' ? 'zn' : t.art === 'abtretung' ? 'za' : t.stadt_plan_gleich ? 'zb' : 'zx';
-  const ZTXT = { zb: 'Bauland – hier darfst du bauen', zg: 'Garten (G) – nicht bebaubar', zv: 'Vorgarten – nicht bebaubar', zn: 'Nicht bebaubar (außerhalb der Baulinien)', za: 'Grundabtretung – geht an die Stadt', zx: 'Wird noch geprüft' };
+  const ZTXT = { zb: 'Bauland', zg: 'Garten (G)', zv: 'Vorgarten', zn: 'Nicht bebaubar', za: 'Grundabtretung', zx: 'Wird noch geprüft' };
+  const ZERK = { zb: 'Hier darfst du bauen – innerhalb der Baulinien und Baufluchtlinien.', zg: 'Gärtnerisch auszugestalten: Grünfläche, hier darf kein Gebäude stehen.', zv: 'Streifen zwischen Straße und Baufluchtlinie – bleibt frei (Garten, Zugang, Zufahrt).',
+    zn: 'Liegt außerhalb der Baufluchtlinien – hier darf kein Gebäude stehen.', za: 'Liegt vor der Baulinie: Dieser Streifen muss beim Bauen an die Stadt abgetreten werden (für Straße oder Gehsteig).', zx: 'Diesen Teil prüfen wir noch.' };
   const zKurz = t => t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'Abtretung' : t.art === 'vorgarten' ? 'Vorgarten' : t.art === 'frei' ? 'nicht bebaubar' : plText(t.plan) || '?';
   function zonDefs(svg, pre) { const d = document.createElementNS(NS, 'defs');
     d.innerHTML = '<pattern id="' + pre + 'G" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.1" fill="#1E6B35"/></pattern>'
@@ -787,7 +789,8 @@ function start() {
     box.append(svg); const k = document.createElement('p'); k.className = 'g-skk'; k.textContent = 'So stehst du vor deinem Grundstück. Maße ca., aus dem Plan gemessen.'; box.append(k); return box; }
   function legende(g, e) { const box = document.createElement('div'); box.className = 'g-leg'; const fl = t => g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), sum = {};
     e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); });
-    ['zb', 'zg', 'zv', 'zn', 'za', 'zx'].filter(k => sum[k]).forEach(k => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'); s_.textContent = ZTXT[k] + ' · ca. ' + sum[k] + ' m²'; z.append(s_); box.append(z); });
+    ['zb', 'zg', 'zv', 'zn', 'za', 'zx'].filter(k => sum[k]).forEach(k => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'), b_ = document.createElement('b');
+      b_.textContent = ZTXT[k] + ' · ca. ' + sum[k] + ' m²'; s_.append(b_, document.createTextNode(' – ' + ZERK[k])); z.append(s_); box.append(z); });
     return box; }
   function planAnzeige(g, e) { document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null;
     if (e) { M.zon = { teile: e.teile, clip: (g.teile || [g]).flatMap(t => t.polys) }; const w = $('resHint'); w.before(legende(g, e)); w.before(skizze(g, e)); }
@@ -799,7 +802,7 @@ function start() {
       const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []);
       const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'G' ? 'Garten (G)' : t.art === 'abtretung' ? 'Grundabtretung' : t.art === 'vorgarten' ? 'nicht bebaubar' : t.art === 'frei' ? 'nicht bebaubar' : 'Bauland') + ' · ca. ' + fl + ' m²';
       const art = t.art === 'G' || t.art === 'vorgarten' || t.art === 'frei' ? 'zk-g' : t.art === 'abtretung' ? 'zk-a' : t.stadt_plan_gleich ? 'zk-b' : 'zk-x';
-      L.append(karte(art, kopf, t.art === 'G' ? 'Gärtnerisch auszugestalten – hier darf kein Gebäude stehen.' : t.art === 'vorgarten' ? 'Streifen zwischen Straße und Baufluchtlinie – bleibt frei (Garten, Zufahrt).' : t.art === 'frei' ? 'Liegt außerhalb der Baufluchtlinien – hier darf kein Gebäude stehen.' : t.art === 'abtretung' ? 'Liegt vor der Baulinie und geht an die Stadt.' : t.stadt_plan_gleich ? 'Stadt-Daten und Plan stimmen überein.' : 'Wird noch geprüft.',
+      L.append(karte(art, kopf, t.art === 'G' ? 'Gärtnerisch auszugestalten – hier darf kein Gebäude stehen.' : t.art === 'vorgarten' ? 'Streifen zwischen Straße und Baufluchtlinie – bleibt frei (Garten, Zufahrt).' : t.art === 'frei' ? 'Liegt außerhalb der Baufluchtlinien – hier darf kein Gebäude stehen.' : t.art === 'abtretung' ? 'Liegt vor der Baulinie und muss beim Bauen an die Stadt abgetreten werden.' : t.stadt_plan_gleich ? 'Stadt-Daten und Plan stimmen überein.' : 'Wird noch geprüft.',
         'Quelle: ' + t.quelle + ' · gelesen: ' + t.labels.map(l => l.t).join(', '), { zonen: zone, kreise: boxen('*'), klein: 7 }));
       const sub = (titel, text, a, extra) => { const k = boxen(a).concat(extra || []); L.append(karte('sub', titel, text, '', { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6 })); };
       if (t.art === 'G') { sub('G = gärtnerisch auszugestalten', 'Garten oder Grünfläche. Keine Gebäude.' + (p.bb ? ' Dazu gilt eine Besondere Bestimmung (BB).' : ''), '*'); return; }

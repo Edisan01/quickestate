@@ -447,3 +447,7 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .zf.zn{fill:rgba(64,160,84,.2);stroke:#1E6B35;stroke-dasharray:4 3}
 .g-leg .sw.zv{background:repeating-linear-gradient(-45deg,rgba(30,107,53,.7) 0 1.4px,transparent 1.4px 5px),rgba(64,160,84,.22);border-color:#1E6B35}
 .g-leg .sw.zn{background:rgba(64,160,84,.2);border:1.2px dashed #1E6B35}
+.g-leg{flex-direction:column;gap:6px}
+.g-leg .lz{align-items:flex-start}
+.g-leg .lz .sw{flex:0 0 16px;margin-top:2px}
+.g-leg .lz b{font-weight:600}
