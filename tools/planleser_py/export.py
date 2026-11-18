@@ -117,9 +117,15 @@ def fall(m,im,wfs):
     ys,xs=np.nonzero(lab_>0); idx2lab=np.zeros(lbl.max()+1,np.int32); idx2lab[lbl[ys,xs]]=lab_[ys,xs]
     voll=idx2lab[lbl]*(pmk>0)
     for k,u in enumerate(merged): u['nv']=int((voll==k+1).sum()); u['msk']=(voll==k+1).astype(np.uint8)
+  # doppelt gelesene Beschriftung (gleiche Stelle, andere Drehung) nur einmal – die längere bleibt
+  for u in merged:
+    keep=[]
+    for L_ in sorted(u['labels'],key=lambda l:-len(l[2])):
+      if not any(cv2.pointPolygonTest(np.array(k[3],np.float32),(float(L_[0]),float(L_[1])),False)>=0 for k in keep): keep.append(L_)
+    u['labels']=keep
   for u in merged: u['front']=int((u['msk']&front).sum())
   fr=sorted([u for u in merged if u['front']>0 and u['art']=='B'],key=lambda u:-u['front'])
-  if not fr: fr=sorted([u for u in merged if u['art']=='B'],key=lambda u:-u['msk'].sum())
+  if not fr: fr=sorted([u for u in merged if u['art']=='B'],key=lambda u:-int(u['msk'].sum()))
   hof=[u for u in merged if u not in fr[:1]]
   out=[]
   ges=sum(u.get('nv',u['msk'].sum()) for u in merged)
