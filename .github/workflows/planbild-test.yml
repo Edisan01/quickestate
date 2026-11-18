@@ -4,6 +4,7 @@ on:
     inputs:
       zoom: { default: "19" }
       radius: { default: "3" }
+      faelle: { default: "tools/planbild_faelle.json" }
 permissions:
   contents: write
 jobs:
@@ -13,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pip install -q pillow
-      - run: timeout 3300 python3 -u tools/planbild_holen.py tools/planbild_faelle.json /tmp/pb ${{ github.event.inputs.zoom }} ${{ github.event.inputs.radius }}
+      - run: timeout 3300 python3 -u tools/planbild_holen.py ${{ github.event.inputs.faelle }} /tmp/pb ${{ github.event.inputs.zoom }} ${{ github.event.inputs.radius }}
       - name: Auf eigenen Branch legen
         if: always()
         run: |
