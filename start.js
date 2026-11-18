@@ -907,10 +907,15 @@ function start() {
     const dach = e.plandokument && (e.plandokument.allgemein || []).find(a => /^4,5 m$/.test(a[0]));
     if (dach) k1.append(zeile('#8A94A6', 'Dach', 'max. 4,5 m', 'über der Gebäudehöhe („First über Traufe“)', { zonen: [], kreise: [] }, null, dach[2] + ' Plandokument ' + e.plandokument.nr + '.'));
     // 3) Straße und Abtretung
-    const k2 = el('div', 'q-card q-mehr'); const mz_ = (l, v) => { const r = el('div', 'q-mz'); r.append(el('span', '', l), el('b', '', v)); k2.append(r); };
-    const sb = e.teile.map(t => t.strassenbreite).find(x => x && x.plan); if (sb) mz_('Straßenbreite', z2(sb.plan) + ' m');
-    mz_('Grundstück abtreten', e.teile.some(t => t.art === 'abtretung') ? 'Ja' : 'Nein'); wrap.append(k2); }
+    const k2 = el('div', 'q-card q-mehr'), pl_ = [], sb = e.teile.map(t => t.strassenbreite).find(x => x && x.plan); if (sb) pl_.push(['Straßenbreite', z2(sb.plan) + ' m']);
+    pl_.push(['Grundstück abtreten', e.teile.some(t => t.art === 'abtretung') ? 'Ja' : 'Nein']); checkZeilen(k2, g.umf || {}, pl_); wrap.append(k2); }
   // Steckbrief für jede Adresse in Wien (Eduard 18.11.): Widmung + Bauklasse je Teil aus den Stadt-Daten, gleiche Darstellung wie mit Planleser; Plandokument-Nummer von der Stadt (WMS SCHNITTMUSTEROGD)
+  // Checkliste wie in Eduards Prüfungsblättern (18.11.): Schutzzone · Wohnzone · (Bausperre) · Straßenbreite · Grundstück abtreten – aus den Stadt-Daten bzw. dem Planleser
+  function checkZeilen(k2, u, plan) { const z = (l, v, x) => { const r = document.createElement('div'); r.className = 'q-mz'; const a = document.createElement('span'); a.textContent = l; const b = document.createElement('b'); b.textContent = v; r.append(a, b); if (x) r.title = x; k2.append(r); };
+    const jn = v => v === undefined ? 'nicht abrufbar' : v ? 'Ja' : 'Nein';
+    z('Schutzzone', u.schutz === undefined ? 'nicht abrufbar' : u.schutz ? 'Ja' + (u.schutz.SLANG ? ' – ' + u.schutz.SLANG : '') : 'Nein'); z('Wohnzone', jn(u.wohnzone)); if (u.sperre) z('Bausperre', 'Ja');
+    if (plan) { plan.forEach(([l, v]) => z(l, v)); return; }
+    const r = document.createElement('div'); r.className = 'q-mz q-folgt'; r.textContent = 'Straßenbreite, Besondere Bestimmungen und Grundabtretung stehen nur im Planbild – für diese Adresse liest sie der Planleser noch ein.'; k2.append(r); }
   const KLN = { W: 'W', WGV: 'W GV', GB: 'GB', GBGV: 'GB GV', GBBG: 'GBBG', GS: 'GS', IG: 'IG', SO: 'SO' };
   function stadtSteck(g, L, sZ) {
     const el = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt != null) x.textContent = txt; return x; }, wrap = el('div', 'q-steck'), k1 = el('div', 'q-card'); wrap.append(k1); L.append(wrap); let offen = null;
@@ -926,6 +931,7 @@ function start() {
     sZ.forEach(z => { const n = (z.vor || 'Straßentrakt').replace(/^Hof/, 'Hoffläche'), bkT = z.bk ? ROEM[z.bk] : '', ch = [{ k: KLN[z.kl] || z.kl, t: WTXT[z.kl].split(' – ')[0], e: WTXT[z.kl].split(' – ')[1].replace(/^./, c => c.toUpperCase()) + (widGF(z.w) ? ' Rund zwei Drittel der neuen Wohnungen müssen geförderter Wohnbau sein.' : '') + ' Quelle: Flächenwidmungsplan der Stadt Wien (amtliche Daten).' }];
       if (bkT) ch.push({ k: bkT, t: 'Bauklasse ' + bkT, e: z.h ? 'Die Bauklasse legt die Gebäudehöhe fest: höchstens ' + z.h[0] + ' m (ca. ' + z.h[1] + ' Geschoße). Steht im Plan eine eigene Meterzahl, gilt die.' : 'Bauklasse VI: über 26 m.' });
       k1.append(zeile('#2F6FC4', 'Widmung ' + n, ((KLN[z.kl] || z.kl) + ' ' + bkT).trim(), WTXT[z.kl].split(' – ')[0], { zonen: z.zz.zonen, clip: z.zz.clip, kreise: [], farbe: 'b' }, ch)); });
+    const k2c = el('div', 'q-card q-mehr'); wrap.append(k2c); checkZeilen(k2c, g.umf || {});
     const pd = zeile('#8A94A6', 'Plandokument', 'wird abgefragt …', 'Festsetzung der Stadt Wien', null, null, 'Das Plandokument enthält den Plan und die textlichen Bestimmungen (Besondere Bestimmungen). Die Nummer kommt direkt von der Stadt Wien.'); k1.append(pd);
     const pt = M.pt || (g.polys && g.polys[0] && g.polys[0][0][0]); if (!pt) { pd.remove(); return; }
     const [lon, lat] = pt, url = 'https://data.wien.gv.at/daten/wms?service=WMS&request=GetFeatureInfo&version=1.1.1&layers=SCHNITTMUSTEROGD&query_layers=SCHNITTMUSTEROGD&styles=&srs=EPSG:4326&bbox=' + [lon - 0.0005, lat - 0.0002, lon + 0.0005, lat + 0.0002].map(v => v.toFixed(6)).join(',') + '&width=101&height=101&x=50&y=50&info_format=text/xml&feature_count=10';
@@ -970,7 +976,7 @@ function start() {
       if (u.wohnzone) sch.push('Wohnzone');
       if (u.sperre) { sch.push('Bausperre'); gelb.push('Bausperre: Der Plan wird gerade überarbeitet – Bauen ist nur eingeschränkt möglich.'); }
       const unbek = [u.schutz === undefined && 'Schutzzone', u.wohnzone === undefined && 'Wohnzone', u.sperre === undefined && 'Bausperre'].filter(Boolean);
-      L.append(sch.length ? karte('gelb-k', sch.join(' · '), u.schutz ? 'Das Stadtbild ist hier geschützt.' : u.wohnzone ? 'Hier müssen vorwiegend Wohnungen entstehen.' : 'Der Plan wird überarbeitet.', 'Schutzzone: Gebäude prägen das Stadtbild, Abbruch braucht eine Bewilligung. Wohnzone: Büros und Geschäfte sind nur eingeschränkt erlaubt. Bausperre: Bis der neue Plan gilt, wird nur eingeschränkt bewilligt.', { zonen: [u.schutzGeo, u.wzGeo, u.spGeo].filter(Boolean).flatMap(fPolys), clip: g.polys })
+      if (!LESER_TEST) L.append(sch.length ? karte('gelb-k', sch.join(' · '), u.schutz ? 'Das Stadtbild ist hier geschützt.' : u.wohnzone ? 'Hier müssen vorwiegend Wohnungen entstehen.' : 'Der Plan wird überarbeitet.', 'Schutzzone: Gebäude prägen das Stadtbild, Abbruch braucht eine Bewilligung. Wohnzone: Büros und Geschäfte sind nur eingeschränkt erlaubt. Bausperre: Bis der neue Plan gilt, wird nur eingeschränkt bewilligt.', { zonen: [u.schutzGeo, u.wzGeo, u.spGeo].filter(Boolean).flatMap(fPolys), clip: g.polys })
         : karte('gruen-k', 'Keine Schutzzone, Wohnzone oder Bausperre', unbek.length ? unbek.join(', ') + ' gerade nicht abrufbar.' : ''));
       if (u.hq === undefined) L.append(karte('meta', 'Hochwasser gerade nicht abrufbar', ''));
       else if (u.hq.length) { const t = u.hq[0]; L.append(karte(t === 'HQ300' ? 'meta' : 'gelb-k', 'Hochwassergebiet ' + t, t === 'HQ30' ? 'Statistisch alle 30 Jahre überflutet.' : t === 'HQ100' ? 'Statistisch alle 100 Jahre überflutet.' : 'Nur bei sehr seltenem Hochwasser (alle 300 Jahre) betroffen.', 'Daten: Hochwasser-Überflutungsflächen des Bundes (LFRZ), Genauigkeit ca. 15 m. Im 30-jährlichen Gebiet braucht ein Neubau zusätzlich eine wasserrechtliche Bewilligung.'));

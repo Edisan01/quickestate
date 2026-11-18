@@ -549,3 +549,4 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-hl .hlsel{stroke:#0B2340;stroke-width:1.8;stroke-linejoin:round;opacity:0;animation:qeHl .25s ease forwards}
 .g-hl .hlsel.f-b{fill:rgba(47,111,196,.62)}.g-hl .hlsel.f-g{fill:rgba(62,155,87,.62)}.g-hl .hlsel.f-r{fill:rgba(200,16,46,.55)}.g-hl .hlsel.f-n{fill:rgba(120,130,145,.5)}
 @media (prefers-reduced-motion:reduce){.g-hl .hlh,.g-hl .hlsel{animation:none;opacity:1}}
+.q-mz.q-folgt{display:block;font-size:13px;line-height:1.45;color:#5E6878;background:#F7F6F2}
