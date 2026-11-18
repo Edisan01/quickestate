@@ -510,3 +510,8 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 @media (prefers-reduced-motion:reduce){.g-hl .hld,.g-hl .hlu{animation:none;opacity:1;stroke-dashoffset:0}}
 .g-card.bau{border-color:#1F5FAE;background:rgba(38,104,190,.08)}
 .g-card.bau .g-ct,.g-card.bau h3{color:#174A88}
+/* v3.97 Fokus statt Stein: restlicher Bauplatz grau, gemeinte Fläche bleibt in Farbe */
+.g-hl .hlg{fill:rgba(214,214,214,.86);opacity:0;animation:qeHl .25s ease forwards}
+.g-hl .hlo{fill:none;stroke:#03203D;stroke-width:2.4;stroke-linejoin:round;opacity:0;animation:qeHl .25s ease forwards}
+.g-lb .g-hl .hlg{fill:rgba(60,60,60,.7)}
+@media (prefers-reduced-motion:reduce){.g-hl .hlg,.g-hl .hlo{animation:none;opacity:1}}

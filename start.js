@@ -572,7 +572,10 @@ function start() {
     const r = mapEl.getBoundingClientRect(), s = mapS(), px = e.clientX - r.left, py = e.clientY - r.top;
     const hit = M.marks.find(m => { const [mx, my] = kMerc(m.lon, m.lat); return Math.hypot((mx - M.cx) * M.k + s / 2 - px, (my - M.cy) * M.k + s / 2 - py) < (e.pointerType === 'touch' ? 22 : 12); });
     if (hit) { nummerWaehlen(hit); return; }
-    const [lon, lat] = kGeo(M.cx + (px - s / 2) / M.k, M.cy + (py - s / 2) / M.k); parzelleWaehlen(lon, lat); };
+    const [lon, lat] = kGeo(M.cx + (px - s / 2) / M.k, M.cy + (py - s / 2) / M.k);
+    const zz = M.zonZiel && M.zon && M.zonZiel.find(z => z.poly.reduce((a, r) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const [xi, yi] = r[i], [xj, yj] = r[j]; if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) c = !c; } return a !== c; }, false));
+    if (zz) { if (!zz.sec.classList.contains('auf')) zz.kopf.click(); if (zz.el !== zz.kopf && zz.el.getAttribute('aria-expanded') !== 'true') zz.el.click(); zz.sec.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }   // Fläche im Plan antippen = passender Abschnitt im Steckbrief
+    parzelleWaehlen(lon, lat); };
   mapEl.addEventListener('pointerup', dragEnde); mapEl.addEventListener('pointercancel', dragEnde);
 
   const flText = g => g.fl.toLocaleString('de-AT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -717,7 +720,7 @@ function start() {
       d.addEventListener('click', e => { if (!e.target.closest('details')) z(); }); d.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('details')) { e.preventDefault(); z(); } });
       const hz = document.createElement('span'); hz.className = 'g-zg'; hz.textContent = 'Im Plan zeigen'; d.append(hz); }
     return d; };
-  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null; if (M.hl) { M.hl = null; mapKick(); } };
+  const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null; M.zonZiel = null; if (M.hl) { M.hl = null; mapKick(); } };
   /* Einkreisen (Eduard 17.11.): Klick auf eine Karte → Stelle im Plan wird wie mit dem Bleistift eingekreist, leiser Bleistift-Ton. Geometrie aus den geprüften Daten. */
   const hlEl = document.createElementNS(NS, 'svg'); hlEl.setAttribute('class', 'g-hl blau'); hlEl.setAttribute('aria-hidden', 'true'); mapEl.append(hlEl);
   const wackel = (cx, cy, rx, ry, seed) => { let q = seed; const rnd = () => (q = (q * 9301 + 49297) % 233280) / 233280, N = 64, st = -2.2 + rnd() * 0.4, L = [];
@@ -726,21 +729,19 @@ function start() {
   function hlUpdate(css) { const s = mapS(); hlEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); const H = M.hl; if (!H) { hlEl.textContent = ''; return; }
     if (!H.els) { hlEl.textContent = ''; H.els = [];
       if (H.clip) { const df = document.createElementNS(NS, 'defs'), cp = document.createElementNS(NS, 'clipPath'), cpp = document.createElementNS(NS, 'path'); cp.setAttribute('id', 'qeHlClip'); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); df.append(cp); hlEl.append(df); H.clipEl = cpp; }
-      if (H.zonen.length) { const r = document.createElementNS(NS, 'rect'); r.setAttribute('class', 'hld'); r.setAttribute('width', '100%'); r.setAttribute('height', '100%'); hlEl.append(r); H.els.push(r); }   // Stein (Eduard 18.11.): Fläche hebt sich wie ein Tetrisstein aus dem Plan, Rest leicht abgedunkelt
-      H.zonen.forEach(() => { const g_ = document.createElementNS(NS, 'g'); g_.setAttribute('class', 'hls ' + (H.farbe || 'n')); ['hlsl', 'hlsw', 'hlst'].forEach(c => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', c); p.setAttribute('fill-rule', 'evenodd'); g_.append(p); }); if (H.clip) g_.setAttribute('clip-path', 'url(#qeHlClip)'); hlEl.append(g_); H.els.push(g_); });
+      H.grau = H.zonen.length && M.zon ? M.zon.clip : null;   // Fokus (Eduard 18.11.): gemeinte Fläche bleibt in Farbe, restlicher Bauplatz grau – Karte rundherum bleibt normal
+      if (H.grau) { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlg'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); }
+      H.zonen.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', H.grau ? 'hlo' : 'hlz'); p.setAttribute('fill-rule', 'evenodd'); if (H.clip) p.setAttribute('clip-path', 'url(#qeHlClip)'); hlEl.append(p); H.els.push(p); });
       H.polys.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlf'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); });
-      H.kreise.forEach((K, j) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', H.zonen.length ? 'hlu' : 'hlk'); p.setAttribute('pathLength', '1'); p.style.animationDelay = (j * 0.18) + 's'; hlEl.append(p); H.els.push(p); });
+      H.kreise.forEach((K, j) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlk'); p.setAttribute('pathLength', '1'); p.style.animationDelay = (j * 0.18) + 's'; hlEl.append(p); H.els.push(p); });
       (H.linien || []).forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlm'); hlEl.append(p); H.els.push(p); const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'hlmt'); hlEl.append(t); H.els.push(t); }); }
     let i = 0; const S = c => css(...kMerc(c[0], c[1])), D = pg => pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('');
     if (H.clipEl) H.clipEl.setAttribute('d', H.clip.map(D).join(''));
-    if (H.zonen.length) i++;
-    const ruhig = matchMedia('(prefers-reduced-motion: reduce)').matches; H.t0 = H.t0 || performance.now(); const tt = ruhig ? 1 : Math.min(1, (performance.now() - H.t0) / 320), hh = 12 * (1 - Math.pow(1 - tt, 3)); if (tt < 1) requestAnimationFrame(mapKick);
-    H.zonen.forEach(pg => { const g_ = H.els[i++], [lo, wa, to] = g_.children, Pz = pg.map(r => r.map(S)), f = v => v.toFixed(1), Dz = dy => Pz.map(r => 'M' + r.map(q => f(q[0]) + ' ' + f(q[1] + dy)).join('L') + 'Z').join('');
-      lo.setAttribute('d', Dz(0)); to.setAttribute('d', Dz(-hh));
-      wa.setAttribute('d', Pz.map(r => r.map((q, k) => { const q2 = r[(k + 1) % r.length]; return 'M' + f(q[0]) + ' ' + f(q[1]) + 'L' + f(q2[0]) + ' ' + f(q2[1]) + 'L' + f(q2[0]) + ' ' + f(q2[1] - hh) + 'L' + f(q[0]) + ' ' + f(q[1] - hh) + 'Z'; }).join('')).join('')); });
+    if (H.grau) H.els[i++].setAttribute('d', H.grau.map(D).join('') + H.zonen.map(D).join(''));
+    H.zonen.forEach(pg => { H.els[i++].setAttribute('d', D(pg)); });
     H.polys.forEach(pg => { H.els[i++].setAttribute('d', pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')); });
     H.kreise.forEach((K, j) => { const P = K.map(S), xs = P.map(p => p[0]), ys = P.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-      H.els[i++].setAttribute('d', H.zonen.length ? 'M' + (x0 - 2).toFixed(1) + ' ' + (y1 + 3).toFixed(1) + 'L' + (x1 + 2).toFixed(1) + ' ' + (y1 + 3).toFixed(1) : wackel((x0 + x1) / 2, (y0 + y1) / 2, Math.max(H.klein || 24, (x1 - x0) * 0.6 + 6), Math.max(H.klein ? H.klein * 0.62 : 15, (y1 - y0) * 0.6 + 6), 11 + j * 17)); });   // bei Flächen: Planzeichen golden unterstrichen statt Kreis
+      H.els[i++].setAttribute('d', wackel((x0 + x1) / 2, (y0 + y1) / 2, Math.max(H.klein || 24, (x1 - x0) * 0.6 + 6), Math.max(H.klein ? H.klein * 0.62 : 15, (y1 - y0) * 0.6 + 6), 11 + j * 17)); });
     (H.linien || []).forEach(L => { const [a, b] = L.p.map(S), dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l * 7, ny = dx / l * 7, f = v => v.toFixed(1);   // Maßband in Gold (Straßenfront)
       H.els[i++].setAttribute('d', 'M' + f(a[0]) + ' ' + f(a[1]) + 'L' + f(b[0]) + ' ' + f(b[1]) + 'M' + f(a[0] - nx) + ' ' + f(a[1] - ny) + 'L' + f(a[0] + nx) + ' ' + f(a[1] + ny) + 'M' + f(b[0] - nx) + ' ' + f(b[1] - ny) + 'L' + f(b[0] + nx) + ' ' + f(b[1] + ny));
       const t = H.els[i++], w = Math.atan2(dy, dx) * 180 / Math.PI, ww = w > 90 || w < -90 ? w + 180 : w; t.setAttribute('transform', 'translate(' + f((a[0] + b[0]) / 2 - nx * 1.6) + ' ' + f((a[1] + b[1]) / 2 - ny * 1.6) + ') rotate(' + ww.toFixed(1) + ')'); t.textContent = L.t || ''; }); }
@@ -751,6 +752,8 @@ function start() {
       hp.type = 'highpass'; hp.frequency.value = 1600; bp.type = 'bandpass'; bp.frequency.value = 4300; bp.Q.value = 0.8;
       gn.gain.setValueAtTime(0, t0); gn.gain.linearRampToValueAtTime(0.08, t0 + 0.04); gn.gain.setValueAtTime(0.08, t0 + d - 0.14); gn.gain.linearRampToValueAtTime(0, t0 + d);
       src.connect(hp); hp.connect(bp); bp.connect(gn); gn.connect(ac.destination); src.start(); } catch (e) { /* ohne Ton weiter */ } }
+  function vorschau(spec) { if (!spec || (M.hl && !M.hl.vor)) return; M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), klein: spec.klein, linien: spec.linien || [], vor: true }; mapKick(); }
+  function vorschauEnde() { if (M.hl && M.hl.vor) { M.hl = null; mapKick(); } }
   function zeigen(spec, el) { document.querySelectorAll('.g-card.an').forEach(c => c.classList.remove('an'));
     if (!spec || (el && M.hl && M.hl.el === el)) { M.hl = null; mapKick(); return; }                 // zweiter Klick auf dieselbe Karte = ausblenden
     el && el.classList.add('an'); M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), klein: spec.klein, linien: spec.linien || [], farbe: spec.farbe, el };
@@ -837,19 +840,24 @@ function start() {
     L.append(karte('meta', 'Aus dem Plan gelesen', 'Tippe auf eine Zeile – die Stelle wird im Plan eingekreist.', 'Jeder Wert ist im Flächenwidmungsplan nachgelesen und mit den Daten der Stadt Wien abgeglichen (Stand ' + e.stand.split('-').reverse().join('.') + ').'));
     const BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' }, BWX = { g: 'Haus an Haus gebaut, ohne Abstand zu den Nachbarn.', o: 'Freistehend, mit Abstand zu den Nachbarn.', gk: 'Zwei Häuser stehen zusammen an der gemeinsamen Grenze.' };
     const st = document.createElement('div'); st.className = 'g-steck'; L.append(st);
-    const zeile = (kz, titel, erkl, zeig) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'g-zl'; b.setAttribute('aria-expanded', 'false');
+    const zeile = (kz, titel, erkl, zeig, eigen) => { const b = document.createElement('button'); b._zeig = zeig; b.type = 'button'; b.className = 'g-zl'; b.setAttribute('aria-expanded', 'false');
       b.innerHTML = '<span class="kz"></span><span class="tt"></span><span class="pf" aria-hidden="true">›</span><span class="ex"></span>';
       b.querySelector('.kz').textContent = kz; b.querySelector('.tt').textContent = titel; b.querySelector('.ex').textContent = erkl;
-      b.addEventListener('click', () => { const auf = b.getAttribute('aria-expanded') !== 'true'; st.querySelectorAll('.g-zl[aria-expanded="true"]').forEach(x => x.setAttribute('aria-expanded', 'false')); b.setAttribute('aria-expanded', auf ? 'true' : 'false');
-        zeigen(auf ? zeig : null, auf ? b : null); if (auf && matchMedia('(max-width:1099px)').matches) { const m = $('resMap'), r = m.getBoundingClientRect(); if (r.bottom < 60 || r.top > innerHeight - 80) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); } });
+      if (matchMedia('(hover:hover)').matches) { b.addEventListener('mouseenter', () => vorschau(zeig)); b.addEventListener('mouseleave', vorschauEnde); }   // am Computer: Fläche schon beim Drüberfahren zeigen
+      if (!eigen) b.addEventListener('click', () => { const auf = b.getAttribute('aria-expanded') !== 'true'; st.querySelectorAll('.g-zl[aria-expanded="true"]').forEach(x => x.setAttribute('aria-expanded', 'false')); b.setAttribute('aria-expanded', auf ? 'true' : 'false');
+        if (M.hl && M.hl.vor) M.hl = null; const kp = !auf && b.closest('.g-sec.auf') && b.closest('.g-sec.auf').querySelector('.kopf');   // zweiter Klick schließt – zurück auf die Fläche des Abschnitts
+        if (kp && kp !== b) { kp.setAttribute('aria-expanded', 'true'); M.hl = null; zeigen(kp._zeig, kp); } else zeigen(auf ? zeig : null, auf ? b : null); if (auf && matchMedia('(max-width:1099px)').matches) { const m = $('resMap'), r = m.getBoundingClientRect(); if (r.bottom < 60 || r.top > innerHeight - 80) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); } });
       return b; };
+    const kopfKlick = (sec, b) => { const auf = !sec.classList.contains('auf'); st.querySelectorAll('.g-sec.auf').forEach(x => x.classList.remove('auf')); st.querySelectorAll('.g-zl[aria-expanded="true"]').forEach(x => x.setAttribute('aria-expanded', 'false'));
+      sec.classList.toggle('auf', auf); b.setAttribute('aria-expanded', auf ? 'true' : 'false'); M.hl = null; zeigen(auf && b._zeig && (b._zeig.zonen || []).length ? b._zeig : null, auf ? b : null); };   // Klick öffnet, zweiter Klick schließt
+    M.zonZiel = [];
     const RANG = { strasse: 0, vorgarten: 1, hof: 2, hof_links: 2, hof_rechts: 3, frei: 4, abtretung: 5 };
     [...e.teile].sort((a, b) => (RANG[a.rolle] ?? 4) - (RANG[b.rolle] ?? 4)).forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = (sx => sx.length ? [t.poly.concat(sx.flatMap(x => x.poly))] : t.poly.map(r => [r]))(t.rolle === 'strasse' && t.art === 'bebaubar' ? seitenStreifen(g, e) : []);   // blauer Stein ohne die grünen Seitenstreifen
       const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []), fb = { zb: 'b', za: 'r', zx: 'n' }[ZART(t)] || 'g', mit = (a, x) => { const k = boxen(a).concat(x || []); return { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6, farbe: fb }; };
       const k = ZART(t), sec = document.createElement('div'); sec.className = 'g-sec ' + k; st.append(sec);
-      const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'vorgarten' ? 'nicht bebaubar' : ZTXT[k]) + ' · ' + fl + ' m²';
-      sec.append(zeile('', kopf, ZERK[k], { zonen: zone, kreise: boxen('*'), klein: 7, farbe: fb })); sec.lastChild.classList.add('kopf');
-      sec.lastChild.addEventListener('click', () => { const auf = !sec.classList.contains('auf'); st.querySelectorAll('.g-sec.auf').forEach(x => x.classList.remove('auf')); sec.classList.toggle('auf', auf); });   // zugeklappt: nur die Kopfzeile, Klick zeigt die Einzelteile
+      const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'bebaubar' ? plText(p) || ZTXT[k] : t.art === 'G' ? 'G' + (p.bb ? ' ' + p.bb : '') : t.art === 'vorgarten' ? 'Vorgarten, nicht bebaubar' : ZTXT[k]) + ' · ' + fl + ' m²';   // ganze Widmung in der Kopfzeile wie in den Rechenbeispielen (z. B. „Straßentrakt · W I 6,5 m o BB1“)
+      const kb = zeile('', kopf, ZERK[k], { zonen: zone, kreise: boxen('*'), klein: 7, farbe: fb }, true); kb.classList.add('kopf'); sec.append(kb);
+      kb.addEventListener('click', () => kopfKlick(sec, kb)); M.zonZiel.push({ poly: t.poly, sec, kopf: kb, el: kb });   // zugeklappt: nur die Kopfzeile, Klick zeigt die Einzelteile
       if (t.art === 'G') { sec.append(zeile('G', 'gärtnerisch auszugestalten', 'Garten oder Grünfläche – hier darf kein Gebäude stehen.', mit('*'))); if (p.bb) sec.append(zeile(p.bb, 'Besondere Bestimmung' + (p.bb_text ? '' : ' (Hof)'), p.bb_text ? p.bb_text + ' (Plandokument ' + e.plandokument.nr + ')' : 'Eigene Zusatzregel für diese Fläche – der genaue Text steht im Plandokument.', mit('*'))); return; }
       if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sec.append(zeile(v && v.plan ? v.plan.toFixed(2).replace('.', ',') : 'Vg', 'Vorgarten', 'Streifen zwischen Straße und Baufluchtlinie. Hier darf nicht gebaut werden – Garten, Zugang, Zufahrt.', mit('*'))); return; }
       if (t.art !== 'bebaubar') return;
@@ -860,7 +868,7 @@ function start() {
       if (p.bb) sec.append(zeile(p.bb, 'Besondere Bestimmung', p.bb_text ? p.bb_text + ' (Plandokument ' + e.plandokument.nr + ')' : 'Zusätzliche Regel für diese Fläche – der genaue Text steht im Plandokument.', mit('bb')));
       if (t.tiefe) sec.append(zeile(t.tiefe.plan.toFixed(2).replace('.', ','), t.tiefe.art === 'baufenster' ? 'Bebaubare Tiefe' : 'Trakttiefe', t.tiefe.art === 'baufenster' ? 'Tiefe der bebaubaren Fläche zwischen den Baufluchtlinien – die Zahl mit den zwei Pfeilen im Plan (steht hier beim Nachbarn derselben Häuserzeile).' : 'So tief darf von der Straße aus gebaut werden – die Zahl mit den zwei Pfeilen im Plan.', mit('-', t.tiefe.box ? [t.tiefe.box] : [])));
       if (p.bauweise === 'o' && t.tiefe && t.rolle === 'strasse') { const tf = t.tiefe.plan, z = v => v.toFixed(2).replace('.', ','), A = abstand(p, tf), sts = seitenStreifen(g, e);
-        sec.append(zeile(z(A.m).replace(',00', '') + ' m', 'Abstand zum Nachbarn', 'Offene Bauweise: grundsätzlich 6 m zur seitlichen Grundstücksgrenze, auf eigenem Grund. In Bauklasse I darf man nach BO § 79 Abs. 3 bis auf die halbe Gebäudehöhe heranrücken (mindestens 3 m), wenn die Hausseite höchstens 15 m lang ist und der Teil über der 6-m-Linie je Seite höchstens 45 m², zusammen höchstens 90 m² hat. ' + (A.ok ? 'Geprüft: Gebäudehöhe ' + z(A.gh) + ' m ÷ 2 = ' + z(A.a) + ' m; Überstand ' + z(6 - A.a) + ' m × ' + z(tf) + ' m Tiefe = ' + z(A.f) + ' m² je Seite, zusammen ' + z(2 * A.f) + ' m² – passt.' : 'Hier nicht erfüllt, daher 6 m.') + ' Im Plan grün.', { zonen: sts.flatMap(x => x.poly.map(r => [r])), kreise: [], farbe: 'g' }));
+        sec.append(zeile(z(A.m).replace(',00', '') + ' m', 'Abstand zum Nachbarn', 'Offene Bauweise: grundsätzlich 6 m zur seitlichen Grundstücksgrenze, auf eigenem Grund. In Bauklasse I darf man nach BO § 79 Abs. 3 bis auf die halbe Gebäudehöhe heranrücken (mindestens 3 m), wenn die Hausseite höchstens 15 m lang ist und der Teil über der 6-m-Linie je Seite höchstens 45 m², zusammen höchstens 90 m² hat. ' + (A.ok ? 'Geprüft: Gebäudehöhe ' + z(A.gh) + ' m ÷ 2 = ' + z(A.a) + ' m; Überstand ' + z(6 - A.a) + ' m × ' + z(tf) + ' m Tiefe = ' + z(A.f) + ' m² je Seite, zusammen ' + z(2 * A.f) + ' m² – passt.' : 'Hier nicht erfüllt, daher 6 m.') + ' Im Plan grün.', { zonen: sts.flatMap(x => x.poly.map(r => [r])), kreise: [], farbe: 'g' })); sts.forEach(x => M.zonZiel.unshift({ poly: x.poly, sec, kopf: sec.querySelector('.kopf'), el: sec.lastChild }));
         if (e.front) { const Lf = frontLen(e), br = Math.round((Lf - 2 * A.m) * 100) / 100, net = br * tf, gfl = g.fl || 0, w = { W: 1, GB: 1 }[p.widmung], dr = w && gfl ? Math.min(gfl / 3, { I: 350, II: 700 }[p.bauklasse] || Infinity) : null, bbm = (p.bb_text || '').match(/höchstens (\d+) m² bebaut/), bm = bbm ? +bbm[1] : null;
           const kand = [[net, 'Hausbreite ' + z(br) + ' m (Front ' + z(Lf) + ' m − 2 × ' + z(A.m) + ' m Abstand) × Tiefe ' + z(tf) + ' m = ' + Math.floor(net) + ' m²']].concat(dr ? [[dr, 'Drittel-Regel (BO § 76 Abs. 10): ' + gfl + ' m² ÷ 3 = ' + Math.floor(dr) + ' m²']] : [], bm ? [[bm, p.bb + ': ' + bm + ' m²']] : []), min = Math.min(...kand.map(k => k[0]));
           if (br > 0) sec.append(zeile(Math.floor(min) + ' m²', 'Bebaubar höchstens', 'Es gilt der kleinste Wert: ' + kand.map(k => k[1]).join(' · ') + '. Annahme: Grundstück annähernd rechteckig.' + (min < net - 0.5 ? ' Die blaue Fläche ist größer – wo du innerhalb davon baust, entscheidest du.' : ''), { zonen: zone, kreise: [], farbe: 'b' }));
@@ -872,7 +880,7 @@ function start() {
     });
     if (e.plandokument && e.plandokument.allgemein) { const sec = document.createElement('div'); sec.className = 'g-sec zx'; st.append(sec);
       sec.append(zeile('', 'Allgemeine Regeln im Plangebiet (keine BB) · Plandokument ' + e.plandokument.nr, 'Textliche Bestimmungen für alle Grundstücke im Plangebiet, ohne eigenes Planzeichen. Regeln, die hier nichts ändern, sind ausgeblendet. Beschluss ' + e.plandokument.beschluss + '.', { zonen: [], kreise: [] })); sec.lastChild.classList.add('kopf');
-      sec.lastChild.addEventListener('click', () => { const auf = !sec.classList.contains('auf'); st.querySelectorAll('.g-sec.auf').forEach(x => x.classList.remove('auf')); sec.classList.toggle('auf', auf); });
+      { const kb = sec.lastChild; kb.addEventListener('click', e => { e.stopImmediatePropagation(); kopfKlick(sec, kb); }, true); }
       const tMax = Math.max(0, ...e.teile.filter(t => t.tiefe).map(t => t.tiefe.plan));
       e.plandokument.allgemein.filter(a => !(/^Trakttiefe höchstens/.test(a[1]) && tMax && parseFloat(a[0].replace(',', '.')) >= tMax)).forEach(a => sec.append(zeile(a[0], a[1], a[2], { zonen: [], kreise: [] }))); } }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
