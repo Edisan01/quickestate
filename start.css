@@ -492,3 +492,5 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 /* v3.91 Seitenabstand offene Bauweise grün schraffiert über Bauland */
 .zf.zs{fill:rgba(236,246,238,.92);stroke:#1E6B35;stroke-dasharray:4 3}
 .g-leg .sw.zs{background:repeating-linear-gradient(-45deg,rgba(30,107,53,.7) 0 1.4px,transparent 1.4px 5px),rgba(236,246,238,.92);border:1.2px dashed #1E6B35}
+/* v3.93 Legende darf die Mittelspalte nicht verbreitern (sonst werden die Boxen links/rechts zerquetscht) */
+.g-mid .g-leg{width:0;min-width:100%;box-sizing:border-box}
