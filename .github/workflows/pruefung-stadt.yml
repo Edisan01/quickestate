@@ -16,7 +16,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-deu
       - name: Stadt-Daten
-        run: python3 -u tools/pruefung/stadt_holen.py tools/pruefung/stadt_auftrag.json tools/pruefung/stadt | tee /tmp/log; tail -1 /tmp/log > /tmp/pd
+        run: |
+          git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
+          SOFORT_SPEICHERN=1 timeout 3000 python3 -u tools/pruefung/stadt_holen.py tools/pruefung/stadt_auftrag.json tools/pruefung/stadt | tee /tmp/log; cat tools/pruefung/stadt/*.json | python3 -c "import sys,re;print(','.join(sorted(set(re.findall(r'PLANNUMMER\": \"(\d{3,5}[A-Z]?)', sys.stdin.read())))))" > /tmp/pd; cat /tmp/pd
       - name: Stadt-Daten speichern
         run: |
           git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"

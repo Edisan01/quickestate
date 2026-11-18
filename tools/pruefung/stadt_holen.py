@@ -1,7 +1,7 @@
 # Stadt-Daten je Prüfadresse holen (läuft als GitHub Action; Sandbox/Mac erreichen data.wien.gv.at nicht).
 # Ebenen: GENFLWIDMUNGOGD, SCHUTZZONEOGD, GRPZONENOGD (Wohnzone), BAUSPERRE82/86OGD + WMS SCHNITTMUSTEROGD (Plandokument-Nr., Kundmachung).
 # Aufruf: python3 stadt_holen.py stadt_auftrag.json stadt/   → stadt/<kg>_<gnr>.json ; druckt Plandokument-Nummern (Komma-Liste) als letzte Zeile
-import json, sys, os, urllib.request, time, re
+import json, sys, os, urllib.request, time, re, subprocess
 A = json.load(open(sys.argv[1])); OUT = sys.argv[2]; os.makedirs(OUT, exist_ok=True)
 UA = {'User-Agent': 'quickestate.at Pruefstand (eb@quickestate.at)'}
 def hole(u):
@@ -11,6 +11,7 @@ def hole(u):
 LAYER = ['GENFLWIDMUNGOGD', 'SCHUTZZONEOGD', 'GRPZONENOGD', 'BAUSPERRE82OGD', 'BAUSPERRE86OGD']
 alle = set()
 for name, kg, gnr, lon, lat in A:
+    if os.path.exists(os.path.join(OUT, f"{kg}_{gnr.replace('/', '-')}.json")) and not os.environ.get('NEU'): continue   # schon geholt
     d = 0.0012; r = {'name': name, 'kg': kg, 'gnr': gnr, 'punkt': [lon, lat], 'geholt': time.strftime('%Y-%m-%d'), 'wfs': {}, 'pd': []}
     for L in LAYER:
         u = ('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:' + L +
@@ -29,4 +30,7 @@ for name, kg, gnr, lon, lat in A:
         if re.fullmatch(r'\d{3,5}[A-Z]?', p.get('PLANNUMMER', '').strip()): alle.add(p['PLANNUMMER'].strip())
     json.dump(r, open(os.path.join(OUT, f"{kg}_{gnr.replace('/', '-')}.json"), 'w'), ensure_ascii=False)
     print('ok', name, [p.get('PLANNUMMER') for p in r['pd']], flush=True)
+    if os.environ.get('SOFORT_SPEICHERN'):   # jede Adresse sofort sichern (GitHub→Stadt ist langsam, Lauf kann abbrechen)
+        sh = lambda c: subprocess.run(c, shell=True)
+        sh(f'git add {OUT} && git commit -qm "Prüfstand: Stadt-Daten {name} (Stadt Wien, CC BY 4.0)" && git pull -q --rebase origin main && git push -q origin HEAD:main')
 print(','.join(sorted(alle)))
