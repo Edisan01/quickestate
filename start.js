@@ -762,13 +762,13 @@ function start() {
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
   const LESER_TEST = true; let PL = null, plG = null;   // live seit 18.11. (Eduard): Planleser-Ergebnisse, Straßenfront-Regel, Farben
-  if (LESER_TEST) hol('planleser/ergebnis.json?v=5').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  if (LESER_TEST) hol('planleser/ergebnis.json?v=6').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung', vorgarten: 'Vorgarten', frei: 'Hinterer Teil' };
   const PL_W = { W: 'Wohngebiet', WGV: 'Wohngebiet – Geschäftsviertel', GB: 'Gemischtes Baugebiet', GBGV: 'Gemischtes Baugebiet – Geschäftsviertel', G: 'Garten' }, PL_BK = { I: [2.5, 9], II: [2.5, 12], III: [9, 16], IV: [12, 21], V: [16, 26] }, PL_BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' };
   const plLang = p => { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null;
     return [PL_W[p.widmung] || p.widmung, p.bauklasse ? 'Bauklasse ' + p.bauklasse + (bk ? ' (normal ' + String(bk[0]).replace('.', ',') + '–' + bk[1] + ' m)' : p.bauklasse === 'VI' ? ' (über 26 m)' : '') : '',
       h ? 'hier begrenzt auf höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt ' + bk[1] + ' m' : '') : '', PL_BW[p.bauweise] || ''].filter(Boolean).join(' · '); };
-  const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
+  const plText = p => [p.widmung && p.widmung.replace(/^(W|GB)GV$/, '$1 GV'), p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
   /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
   const ZART = t => t.art === 'G' ? 'zg' : t.art === 'vorgarten' ? 'zv' : t.art === 'frei' ? 'zn' : t.art === 'abtretung' ? 'za' : t.art === 'abstand' ? 'zs' : t.stadt_plan_gleich ? 'zb' : 'zx';
   const ZTXT = { zb: 'Bauland', zg: 'Garten (G)', zv: 'Vorgarten', zn: 'Nicht bebaubar', za: 'Grundabtretung', zs: 'Abstand zum Nachbarn', zx: 'Wird noch geprüft' };
