@@ -762,11 +762,23 @@ function start() {
       h ? 'hier begrenzt auf höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt ' + bk[1] + ' m' : '') : '', PL_BW[p.bauweise] || ''].filter(Boolean).join(' · '); };
   const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
   /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
-  const ZART = t => t.art === 'G' ? 'zg' : t.art === 'vorgarten' ? 'zv' : t.art === 'frei' ? 'zn' : t.art === 'abtretung' ? 'za' : t.stadt_plan_gleich ? 'zb' : 'zx';
-  const ZTXT = { zb: 'Bauland', zg: 'Garten (G)', zv: 'Vorgarten', zn: 'Nicht bebaubar', za: 'Grundabtretung', zx: 'Wird noch geprüft' };
+  const ZART = t => t.art === 'G' ? 'zg' : t.art === 'vorgarten' ? 'zv' : t.art === 'frei' ? 'zn' : t.art === 'abtretung' ? 'za' : t.art === 'abstand' ? 'zs' : t.stadt_plan_gleich ? 'zb' : 'zx';
+  const ZTXT = { zb: 'Bauland', zg: 'Garten (G)', zv: 'Vorgarten', zn: 'Nicht bebaubar', za: 'Grundabtretung', zs: 'Abstand zum Nachbarn', zx: 'Wird noch geprüft' };
   const ZERK = { zb: 'Hier darfst du bauen – innerhalb der Baulinien und Baufluchtlinien.', zg: 'Gärtnerisch auszugestalten: Grünfläche, hier darf kein Gebäude stehen.', zv: 'Streifen zwischen Straße und Baufluchtlinie – bleibt frei (Garten, Zugang, Zufahrt).',
-    zn: 'Liegt außerhalb der Baufluchtlinien – hier darf kein Gebäude stehen.', za: 'Liegt vor der Baulinie: Dieser Streifen muss beim Bauen an die Stadt abgetreten werden (für Straße oder Gehsteig).', zx: 'Diesen Teil prüfen wir noch.' };
-  const zKurz = t => t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'Abtretung' : t.art === 'vorgarten' ? 'Vorgarten' : t.art === 'frei' ? 'nicht bebaubar' : plText(t.plan) || '?';
+    zn: 'Liegt außerhalb der Baufluchtlinien – hier darf kein Gebäude stehen.', za: 'Liegt vor der Baulinie: Dieser Streifen muss beim Bauen an die Stadt abgetreten werden (für Straße oder Gehsteig).', zs: 'Seitenstreifen innerhalb der Baufluchtlinien – offene Bauweise, hier darf kein Gebäude stehen (BO § 79 Abs. 3).', zx: 'Diesen Teil prüfen wir noch.' };
+  const zKurz = t => t.art === 'abstand' ? '' : t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'Abtretung' : t.art === 'vorgarten' ? 'Vorgarten' : t.art === 'frei' ? 'nicht bebaubar' : plText(t.plan) || '?';
+  // Abstand offene Bauweise, BO § 79 Abs. 3: 6 m; BK I Heranrücken auf halbe Gebäudehöhe, mind. 3 m, Hausseite ≤ 15 m, Überstand ≤ 45 m² je Seite / 90 m² gesamt
+  const abstand = (p, tf) => { const gh = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : (PL_BK[p.bauklasse] || [0, 0])[1], a = Math.max(3, gh / 2), f = (6 - a) * tf, ok = p.bauklasse === 'I' && gh > 0 && tf <= 15 && f <= 45 && 2 * f <= 90; return { gh, a, f, ok, m: ok ? a : 6 }; };
+  const frontLen = e => { const kx = Math.cos(e.front[0][1] * Math.PI / 180) * 111320; return Math.hypot((e.front[1][0] - e.front[0][0]) * kx, (e.front[1][1] - e.front[0][1]) * 110574); };
+  // Seitenstreifen im Straßentrakt (Eduard 18.11.): grün statt blau. Annahme: Seitengrenzen annähernd rechtwinklig zur Straße.
+  function seitenStreifen(g, e) { const sTr = e.teile.find(t => t.rolle === 'strasse' && t.art === 'bebaubar' && t.tiefe && (t.plan || {}).bauweise === 'o'); if (!sTr || !e.front) return [];
+    const A = abstand(sTr.plan, sTr.tiefe.plan), o = e.front[0], kx = Math.cos(o[1] * Math.PI / 180) * 111320, ky = 110574;
+    const loc = c => [(c[0] - o[0]) * kx, (c[1] - o[1]) * ky], glo = q => [o[0] + q[0] / kx, o[1] + q[1] / ky], b = loc(e.front[1]), L = Math.hypot(b[0], b[1]), d = [b[0] / L, b[1] / L], u = q => q[0] * d[0] + q[1] * d[1];
+    const fl = R => Math.abs(R.reduce((a, q, i) => { const r = R[(i + 1) % R.length]; return a + q[0] * r[1] - r[0] * q[1]; }, 0)) / 2;
+    const clip = (R, sg, c) => { const out = []; R.forEach((P, i) => { const Q = R[(i + 1) % R.length], vp = sg * u(P) - c, vq = sg * u(Q) - c; if (vp <= 0) out.push(P); if ((vp < 0 && vq > 0) || (vp > 0 && vq < 0)) { const t = vp / (vp - vq); out.push([P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t]); } }); return out; };
+    const R = sTr.poly[0].map(loc), us = R.map(u), lot = (g.teile || [g]).flatMap(t => t.polys).reduce((a, pg) => a + fl(pg[0].map(loc)), 0);
+    return [clip(R, 1, Math.min(...us) + A.m), clip(R, -1, -(Math.max(...us) - A.m))].filter(r => r.length > 2 && fl(r) > 0.5)
+      .map(r => ({ art: 'abstand', rolle: 'abstand', poly: [r.map(glo)], anteil: fl(r) / lot, m2_plan: fl(r), labels: [], plan: {} })); }
   function zonDefs(svg, pre) { const d = document.createElementNS(NS, 'defs');
     d.innerHTML = '<pattern id="' + pre + 'G" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.1" fill="#1E6B35"/></pattern>'
       + '<pattern id="' + pre + 'A" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="7" fill="#C8102E" opacity=".55"/></pattern>'
@@ -774,7 +786,7 @@ function start() {
     svg.append(d); }
   function zonPfade(svg, Z, D, pre) { Z.teile.forEach(t => { const k = ZART(t), d = t.poly.map(D).join('');
       const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', 'zf ' + k); p.setAttribute('fill-rule', 'evenodd'); if (Z.clipId) p.setAttribute('clip-path', 'url(#' + Z.clipId + ')'); svg.append(p);
-      if (k === 'zg' || k === 'za' || k === 'zv') { const q = p.cloneNode(); q.setAttribute('class', 'zm'); q.setAttribute('fill', 'url(#' + pre + (k === 'zg' ? 'G' : k === 'zv' ? 'V' : 'A') + ')'); svg.append(q); } }); }
+      if (k === 'zg' || k === 'za' || k === 'zv' || k === 'zs') { const q = p.cloneNode(); q.setAttribute('class', 'zm'); q.setAttribute('fill', 'url(#' + pre + (k === 'zg' ? 'G' : k === 'zv' || k === 'zs' ? 'V' : 'A') + ')'); svg.append(q); } }); }
   function zonZeichnen(svg, P, css) { const Z = M.zon, D = r => 'M' + r.map(P).join('L') + 'Z';
     zonDefs(svg, 'qeZm'); const cp = document.createElementNS(NS, 'clipPath'); cp.setAttribute('id', 'qeZonClip'); const cpp = document.createElementNS(NS, 'path');
     cpp.setAttribute('d', Z.clip.map(pg => pg.map(D).join('')).join('')); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); svg.querySelector('defs').append(cp);
@@ -805,12 +817,12 @@ function start() {
       mass(xl, yF, xl, yF - tief * sk, sTr.tiefe ? 'Trakttiefe ' + tief.toFixed(2).replace('.', ',') + ' m' : 'Trakttiefe: Planzahl fehlt', true); }
     box.append(svg); const k = document.createElement('p'); k.className = 'g-skk'; k.textContent = 'So stehst du vor deinem Grundstück. Maße ca., aus dem Plan gemessen.'; box.append(k); return box; }
   function legende(g, e) { const box = document.createElement('div'); box.className = 'g-leg'; const fl = t => g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), sum = {};
-    e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); });
-    ['zb', 'zg', 'zv', 'zn', 'za', 'zx'].filter(k => sum[k]).forEach(k => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'), b_ = document.createElement('b');
+    e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); }); if (sum.zs && sum.zb) sum.zb -= sum.zs;
+    ['zb', 'zs', 'zg', 'zv', 'zn', 'za', 'zx'].filter(k => sum[k]).forEach(k => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'), b_ = document.createElement('b');
       b_.textContent = ZTXT[k] + ' · ca. ' + sum[k] + ' m²'; s_.append(b_, document.createTextNode(' – ' + ZERK[k])); z.append(s_); box.append(z); });
     return box; }
   function planAnzeige(g, e) { document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null;
-    if (e) { M.zon = { teile: e.teile, clip: (g.teile || [g]).flatMap(t => t.polys) }; const w = $('resHint'); w.before(legende(g, e)); $('resDeut').append(skizze(g, e)); }
+    if (e) { const ex = Object.assign({}, e, { teile: e.teile.concat(seitenStreifen(g, e)) }); M.zon = { teile: ex.teile, clip: (g.teile || [g]).flatMap(t => t.polys) }; const w = $('resHint'); w.before(legende(g, ex)); $('resDeut').append(skizze(g, ex)); }
     mapKick(); }
   function planKarten(g, L) { if (!PL) return; const e = (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean); planAnzeige(g, e); if (!e) return;
     L.append(karte('meta', 'Aus dem Plan gelesen', 'Tippe auf eine Zeile – die Stelle wird im Plan eingekreist.', 'Jeder Wert ist im Flächenwidmungsplan nachgelesen und mit den Daten der Stadt Wien abgeglichen (Stand ' + e.stand.split('-').reverse().join('.') + ').'));
@@ -838,18 +850,21 @@ function start() {
       if (p.bauweise) sec.append(zeile(p.bauweise, BW[p.bauweise] || 'Bauweise', 'Bauweise ' + p.bauweise + ': ' + (BWX[p.bauweise] || ''), mit('bauweise')));
       if (p.bb) sec.append(zeile(p.bb, 'Besondere Bestimmung', p.bb_text ? p.bb_text + ' (Plandokument ' + e.plandokument.nr + ')' : 'Zusätzliche Regel für diese Fläche – der genaue Text steht im Plandokument.', mit('bb')));
       if (t.tiefe) sec.append(zeile(t.tiefe.plan.toFixed(2).replace('.', ','), t.tiefe.art === 'baufenster' ? 'Bebaubare Tiefe' : 'Trakttiefe', t.tiefe.art === 'baufenster' ? 'Tiefe der bebaubaren Fläche zwischen den Baufluchtlinien – die Zahl mit den zwei Pfeilen im Plan (steht hier beim Nachbarn derselben Häuserzeile).' : 'So tief darf von der Straße aus gebaut werden – die Zahl mit den zwei Pfeilen im Plan.', mit('-', t.tiefe.box ? [t.tiefe.box] : [])));
-      if (p.bauweise === 'o' && t.tiefe) { const tf = t.tiefe.plan, z = v => v.toFixed(2).replace('.', ','), gh = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : (PL_BK[p.bauklasse] || [0, 0])[1];   // Abstand offene Bauweise, BO § 79 Abs. 3: 6 m; BK I Heranrücken auf halbe Gebäudehöhe, mind. 3 m, Front ≤ 15 m, Überstand ≤ 45 m² je Front / 90 m² gesamt
-        const a = Math.max(3, gh / 2), f = (6 - a) * tf, ok = p.bauklasse === 'I' && gh > 0 && tf <= 15 && f <= 45 && 2 * f <= 90;
-        sec.append(zeile(z(ok ? a : 6).replace(',00', '') + ' m', 'Abstand zum Nachbarn', 'Offene Bauweise: grundsätzlich 6 m zur seitlichen Grundstücksgrenze, auf eigenem Grund. In Bauklasse I darf man nach BO § 79 Abs. 3 bis auf die halbe Gebäudehöhe heranrücken (mindestens 3 m), wenn die Hausseite höchstens 15 m lang ist und der Teil über der 6-m-Linie je Seite höchstens 45 m², zusammen höchstens 90 m² hat. ' + (ok ? 'Geprüft: Gebäudehöhe ' + z(gh) + ' m ÷ 2 = ' + z(a) + ' m; Überstand ' + z(6 - a) + ' m × ' + z(tf) + ' m Tiefe = ' + z(f) + ' m² je Seite, zusammen ' + z(2 * f) + ' m² – passt.' : 'Hier nicht erfüllt, daher 6 m.'), mit('-', [])));
+      if (p.bauweise === 'o' && t.tiefe && t.rolle === 'strasse') { const tf = t.tiefe.plan, z = v => v.toFixed(2).replace('.', ','), A = abstand(p, tf), sts = seitenStreifen(g, e);
+        sec.append(zeile(z(A.m).replace(',00', '') + ' m', 'Abstand zum Nachbarn', 'Offene Bauweise: grundsätzlich 6 m zur seitlichen Grundstücksgrenze, auf eigenem Grund. In Bauklasse I darf man nach BO § 79 Abs. 3 bis auf die halbe Gebäudehöhe heranrücken (mindestens 3 m), wenn die Hausseite höchstens 15 m lang ist und der Teil über der 6-m-Linie je Seite höchstens 45 m², zusammen höchstens 90 m² hat. ' + (A.ok ? 'Geprüft: Gebäudehöhe ' + z(A.gh) + ' m ÷ 2 = ' + z(A.a) + ' m; Überstand ' + z(6 - A.a) + ' m × ' + z(tf) + ' m Tiefe = ' + z(A.f) + ' m² je Seite, zusammen ' + z(2 * A.f) + ' m² – passt.' : 'Hier nicht erfüllt, daher 6 m.') + ' Im Plan grün schraffiert.', { zonen: sts.flatMap(x => x.poly.map(r => [r])), kreise: [] }));
+        if (e.front) { const Lf = frontLen(e), br = Math.round((Lf - 2 * A.m) * 100) / 100, net = br * tf, gfl = g.fl || 0, w = { W: 1, GB: 1 }[p.widmung], dr = w && gfl ? Math.min(gfl / 3, { I: 350, II: 700 }[p.bauklasse] || Infinity) : null, bbm = (p.bb_text || '').match(/höchstens (\d+) m² bebaut/), bm = bbm ? +bbm[1] : null;
+          const kand = [[net, 'Hausbreite ' + z(br) + ' m (Front ' + Lf.toFixed(1).replace('.', ',') + ' − 2 × ' + z(A.m) + ' m Abstand) × Tiefe ' + z(tf) + ' m = ' + Math.floor(net) + ' m²']].concat(dr ? [[dr, 'Drittel-Regel (BO § 76 Abs. 10): ' + gfl + ' m² ÷ 3 = ' + Math.floor(dr) + ' m²']] : [], bm ? [[bm, p.bb + ': ' + bm + ' m²']] : []), min = Math.min(...kand.map(k => k[0]));
+          if (br > 0) sec.append(zeile(Math.floor(min) + ' m²', 'Bebaubar höchstens', 'Es gilt der kleinste Wert: ' + kand.map(k => k[1]).join(' · ') + '. Annahme: Grundstück annähernd rechteckig.' + (min < net - 0.5 ? ' Die blaue Fläche ist größer – wo du innerhalb davon baust, entscheidest du.' : ''), { zonen: zone, kreise: [] })); }
       }
       if (t.rolle === 'strasse' && e.front) { const kx = Math.cos(e.front[0][1] * Math.PI / 180) * 111320, Lf = Math.hypot((e.front[1][0] - e.front[0][0]) * kx, (e.front[1][1] - e.front[0][1]) * 110574); sec.append(zeile(Lf.toFixed(1).replace('.', ','), 'Straßenfront', 'Länge der Grundstücksgrenze an der Straße (aus dem Kataster) – im Plan als goldenes Maßband.', { zonen: [], kreise: [], linien: [{ p: e.front, t: Lf.toFixed(1).replace('.', ',') + ' m' }] })); }
       (t.strassenmasse || []).forEach(sm => sec.append(zeile(sm.v.toFixed(2).replace('.', ','), 'Breite Baulinie–Baulinie', 'Abstand von Baulinie zu Baulinie quer über die Straße, so im Plan eingetragen (Zahl mit Pfeilen) – gilt an der Stelle der Pfeile.', mit('-', [sm.box]))));
       if (t.strassenbreite && t.strassenbreite.plan) { const b = t.strassenbreite; sec.append(zeile(b.plan.toFixed(2).replace('.', ','), 'Straßenbreite', 'Zahl mit Pfeilen im Plan, am Grundstück nachgemessen (' + b.gemessen.toFixed(2).replace('.', ',') + ' m). Breitere Straße = oft mehr Höhe möglich.', mit('-', b.box ? [b.box] : []))); }
     });
     if (e.plandokument && e.plandokument.allgemein) { const sec = document.createElement('div'); sec.className = 'g-sec zx'; st.append(sec);
-      sec.append(zeile('', 'Gilt im ganzen Plangebiet · Plandokument ' + e.plandokument.nr, 'Textliche Bestimmungen ohne eigenes Planzeichen – Beschluss ' + e.plandokument.beschluss + '.', { zonen: [], kreise: [] })); sec.lastChild.classList.add('kopf');
+      sec.append(zeile('', 'Allgemeine Regeln im Plangebiet (keine BB) · Plandokument ' + e.plandokument.nr, 'Textliche Bestimmungen für alle Grundstücke im Plangebiet, ohne eigenes Planzeichen. Regeln, die hier nichts ändern, sind ausgeblendet. Beschluss ' + e.plandokument.beschluss + '.', { zonen: [], kreise: [] })); sec.lastChild.classList.add('kopf');
       sec.lastChild.addEventListener('click', () => { const auf = !sec.classList.contains('auf'); st.querySelectorAll('.g-sec.auf').forEach(x => x.classList.remove('auf')); sec.classList.toggle('auf', auf); });
-      e.plandokument.allgemein.forEach(a => sec.append(zeile(a[0], a[1], a[2], { zonen: [], kreise: [] }))); } }
+      const tMax = Math.max(0, ...e.teile.filter(t => t.tiefe).map(t => t.tiefe.plan));
+      e.plandokument.allgemein.filter(a => !(/^Trakttiefe höchstens/.test(a[1]) && tMax && parseFloat(a[0].replace(',', '.')) >= tMax)).forEach(a => sec.append(zeile(a[0], a[1], a[2], { zonen: [], kreise: [] }))); } }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
     const zG = { zonen: (g.teile || [g]).flatMap(t => t.polys), kreise: (g.teile || [g]).map(t => [proben({ polys: t.polys })[0]]) }, alleP = (g.teile || [g]).flatMap(t => t.polys.flatMap(pg => pg[0]));
