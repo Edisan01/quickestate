@@ -844,7 +844,7 @@ function start() {
         zeigen(auf ? zeig : null, auf ? b : null); if (auf && matchMedia('(max-width:1099px)').matches) { const m = $('resMap'), r = m.getBoundingClientRect(); if (r.bottom < 60 || r.top > innerHeight - 80) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); } });
       return b; };
     const RANG = { strasse: 0, vorgarten: 1, hof: 2, hof_links: 2, hof_rechts: 3, frei: 4, abtretung: 5 };
-    [...e.teile].sort((a, b) => (RANG[a.rolle] ?? 4) - (RANG[b.rolle] ?? 4)).forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = t.poly.map(r => [r]);
+    [...e.teile].sort((a, b) => (RANG[a.rolle] ?? 4) - (RANG[b.rolle] ?? 4)).forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = (sx => sx.length ? [t.poly.concat(sx.flatMap(x => x.poly))] : t.poly.map(r => [r]))(t.rolle === 'strasse' && t.art === 'bebaubar' ? seitenStreifen(g, e) : []);   // blauer Stein ohne die grünen Seitenstreifen
       const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []), fb = { zb: 'b', za: 'r', zx: 'n' }[ZART(t)] || 'g', mit = (a, x) => { const k = boxen(a).concat(x || []); return { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6, farbe: fb }; };
       const k = ZART(t), sec = document.createElement('div'); sec.className = 'g-sec ' + k; st.append(sec);
       const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'vorgarten' ? 'nicht bebaubar' : ZTXT[k]) + ' · ' + fl + ' m²';
