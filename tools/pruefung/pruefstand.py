@@ -193,3 +193,8 @@ if __name__ == '__main__':
             gp[adr] = {'stand': str(datetime.date.today()), 'prozent': round(100 * len(g) / max(1, len(F))), 'voll_gruen': len(g) == len(F), 'gruen': g,
                        'grundstueck': {k: v for k, v in detail.get(adr, {}).get('grundstueck', {}).items() if v.get('zustand') == 'bestaetigt'}}
         json.dump(gp, open(os.path.join(R, 'planleser', 'geprueft.json'), 'w'), ensure_ascii=False, indent=1)
+        # Prüfstand-Bericht für die Webseite (pruefstand.html)
+        alle = [z for F in zeilen.values() for z in F.values()]
+        rep = {'stand': str(datetime.date.today()), 'gesamt': {'gruen': sum(z[0] == 'gruen' for z in alle), 'rot': sum(z[0] == 'rot' for z in alle), 'offen': sum(z[0] == 'offen' for z in alle)},
+               'adressen': {adr: [{'feld': k, 'z': z[0], 'soll': z[1], 'ist': z[2]} for k, z in F.items()] for adr, F in zeilen.items()}}
+        json.dump(rep, open(os.path.join(R, 'planleser', 'pruefstand.json'), 'w'), ensure_ascii=False, default=str)
