@@ -762,7 +762,7 @@ function start() {
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
   const LESER_TEST = true; let PL = null, plG = null;   // live seit 18.11. (Eduard): Planleser-Ergebnisse, Straßenfront-Regel, Farben
-  if (LESER_TEST) hol('planleser/ergebnis.json?v=3').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  if (LESER_TEST) hol('planleser/ergebnis.json?v=4').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung', vorgarten: 'Vorgarten', frei: 'Hinterer Teil' };
   const PL_W = { W: 'Wohngebiet', WGV: 'Wohngebiet – Geschäftsviertel', GB: 'Gemischtes Baugebiet', GBGV: 'Gemischtes Baugebiet – Geschäftsviertel', G: 'Garten' }, PL_BK = { I: [2.5, 9], II: [2.5, 12], III: [9, 16], IV: [12, 21], V: [16, 26] }, PL_BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' };
   const plLang = p => { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null;
@@ -890,8 +890,8 @@ function start() {
       const bbT = p.bb ? p.bb + (p.bb_text ? ' · ' + p.bb_text.replace(/^Hier dürfen nur (.+?) \(§[^)]*\) gebaut werden – mit höchstens (\d+) m² bebauter Fläche\.?$/, 'nur $1, max. $2 m² bebaut').replace(/ \([^)]*\)/g, '').replace(/ erlaubt\.?$/, '').replace(/\.$/, '').replace(/^./, c => c.toLowerCase()) : '') : '';
       let w;
       if (t.art === 'bebaubar') { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null, ch = [];
-        if (p.widmung) ch.push({ k: p.widmung, t: PL_W[p.widmung] || 'Widmung', e: WX[p.widmung] || 'Die Widmung sagt, was hier gebaut werden darf.', box: bx('widmung') || bx('*'), zone });
-        if (p.bauklasse) ch.push({ k: p.bauklasse, t: 'Bauklasse ' + p.bauklasse, e: 'Die Bauklasse legt die Gebäudehöhe fest' + (bk ? ': normal ' + String(bk[0]).replace('.', ',') + ' bis ' + bk[1] + ' m.' : '.'), box: bx('bauklasse') || bx('*'), zone });
+        if (p.widmung) ch.push({ k: p.widmung, t: PL_W[p.widmung] || 'Widmung', e: (WX[p.widmung] || 'Die Widmung sagt, was hier gebaut werden darf.') + (p.quelle_widmung === 'stadt' ? ' Quelle: Flächenwidmungsplan der Stadt Wien (amtliche Daten).' : ''), box: p.quelle_widmung === 'stadt' ? null : bx('widmung') || bx('*'), zone });   // Widmung aus den Stadt-Daten, Planbild bestätigt nur (Eduard 18.11.)
+        if (p.bauklasse) ch.push({ k: p.bauklasse, t: 'Bauklasse ' + p.bauklasse, e: 'Die Bauklasse legt die Gebäudehöhe fest' + (bk ? ': normal ' + String(bk[0]).replace('.', ',') + ' bis ' + bk[1] + ' m.' : '.'), box: p.quelle_bauklasse === 'stadt' ? null : bx('bauklasse') || bx('*'), zone });
         if (h) ch.push({ k: p.hoehe.replace(' ', ' '), t: 'Höhe begrenzt', e: 'Die Meterzahl im Plan geht vor: höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt ' + bk[1] + ' m.' : '.'), box: bx('hoehe') || bx('*'), zone });
         if (p.bauweise) ch.push({ k: p.bauweise, t: PL_BW[p.bauweise] || 'Bauweise', e: BWX[p.bauweise] || '', box: bx('bauweise') || bx('*'), zone });
         if (p.bb) ch.push({ k: p.bb, t: 'Besondere Bestimmung', e: (p.bb_text || 'Zusätzliche Regel für diese Fläche – der Text steht im Plandokument.') + (e.plandokument ? ' Plandokument ' + e.plandokument.nr + '.' : ''), box: bx('bb') || bx('*'), zone });

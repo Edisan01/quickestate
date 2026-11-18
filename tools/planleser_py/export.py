@@ -1,6 +1,6 @@
 # Planleser-Ergebnis je Grundstück als JSON (vorberechnet, ohne KI)
 import sys,json,cv2,numpy as np,math,re,glob,datetime
-import os as _os; sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)))
+sys.path.insert(0,'/home/claude/pbtools')
 import kat, steckbrief as S
 def ll(m,x,y):
   n=2**19; X=x/256+m['x0']; Y=y/256+m['y0']
@@ -157,7 +157,13 @@ def fall(m,im,wfs):
     polys=[[ll(m,p[0][0]+x0,p[0][1]+y0) for p in cv2.approxPolyDP(c,1.2,True)] for c in cs if cv2.contourArea(c)>20]
     wk,bk=u['wk'],u['bk']; pl=u['plan']
     if u['G'] or u['stadt'] is None or u['art'] in ('V','F'): gleich=None
-    else: gleich=bool(pl.get('widmung')==wk and pl.get('bauklasse')==bk)
+    else:   # Eduard 18.11.: Widmung + Bauklasse kommen aus den Stadt-Daten (verlässlich), der Plan bestätigt nur – Widerspruch sperrt
+      gleich=not ((pl.get('widmung') and pl.get('widmung')!=wk) or (pl.get('bauklasse') and pl.get('bauklasse')!=bk))
+      pl=dict(pl,quelle_widmung='plan' if pl.get('widmung') else 'stadt',quelle_bauklasse='plan' if pl.get('bauklasse') else 'stadt'); pl.setdefault('widmung',wk); pl.setdefault('bauklasse',bk)
+      if pl.get('hoehe'):
+        try: hv=float(pl['hoehe'].replace(' m','').replace(',','.'))
+        except ValueError: hv=0
+        if not 2.5<=hv<=40: pl.pop('hoehe')
     out.append(dict(rolle='strasse' if fr and u is fr[0] else 'hof',art={'G':'G','A':'abtretung','V':'vorgarten','F':'frei'}.get(u['art'],'bebaubar'),
       stadt=dict(widmung=wk,bauklasse=bk,code=u['stadt']),
       plan={k:v for k,v in pl.items()},stadt_plan_gleich=gleich,anteil=round(u.get('nv',u['msk'].sum())/ges,4),m2_plan=round(u.get('nv',u['msk'].sum())*MPX**2,1),
