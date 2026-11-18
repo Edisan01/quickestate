@@ -42,6 +42,19 @@ def massgap(lin,t):
   if len(gs)<3: return None
   gs.sort(); g=gs[len(gs)//2]
   return g[0], p0+n*g[1], p0-n*g[2]
+TEILRX=[('widmung',r'^(GBGV|WGV|GB|W|G(?=BB|$)|G)'),('bauklasse',r'(?<=[A-Z])(VI|IV|V|III|II|I)(?=\d|[gok]|$)|^(VI|IV|V|III|II|I)$'),('hoehe',r'\d{1,2}[,.]?\d?m|(?<=[IV])\d{1,2}[,.]\d'),('bauweise',r'(gk|g|o)$'),('bb',r'BB\d*')]
+def teilboxen(m,t,gl):
+  # einzelne Planteile (Widmung, Bauklasse, Höhe, Bauweise, BB) mit eigenem Kästchen zum Einkreisen
+  if not gl or len(gl)!=len(t): return {}
+  out={}
+  for art,rx in TEILRX:
+    mm_=re.search(rx,t)
+    if not mm_ or mm_.end()<=mm_.start(): continue
+    pts=[q for g_ in gl[mm_.start():mm_.end()] for q in g_]
+    if art=='bauweise' and t in ('g','9'): pts=[q for g_ in gl for q in g_]
+    out[art]=[ll(m,*q) for q in pts]
+  if t in ('g','9'): out={'bauweise':[ll(m,*q) for g_ in gl for q in g_]}
+  return out
 MASS=re.compile(r'^(\d{1,2})[,.](\d\d)$')
 def masszahlen(lin,T):
   out=[]
@@ -100,7 +113,7 @@ def fall(m,im,wfs):
     out.append(dict(rolle='strasse' if fr and u is fr[0] else 'hof',art='G' if u['G'] else ('abtretung' if u['stadt'] is None else 'bebaubar'),
       stadt=dict(widmung=wk,bauklasse=bk,code=u['stadt']),
       plan={k:v for k,v in pl.items()},stadt_plan_gleich=gleich,anteil=round(u.get('nv',u['msk'].sum())/ges,4),m2_plan=round(u.get('nv',u['msk'].sum())*MPX**2,1),
-      poly=polys,labels=[dict(t=t,ll=ll(m,x,y),box=[ll(m,*q) for q in bx]) for x,y,t,bx in u['labels'] if re.match(r'^(W|GB|WGV|G|E|L|I|V|g|C?BB)',t) or re.fullmatch(r'\d{1,2}([,.]\d)?m',t)],quelle=u['quelle']))
+      poly=polys,labels=[dict(t=t,ll=ll(m,x,y),box=[ll(m,*q) for q in bx],teile=teilboxen(m,t,gl)) for x,y,t,bx,gl in u['labels'] if re.match(r'^(W|GB|WGV|G|E|L|I|V|g|C?BB)',t) or re.fullmatch(r'\d{1,2}([,.]\d)?m',t)],quelle=u['quelle']))
   # Hof links/rechts aus Sicht der Straße
   for o in out:
     if o['art']=='abtretung': o['rolle']='abtretung'
@@ -131,7 +144,7 @@ def fall(m,im,wfs):
       # Trakttiefe: Maßzahl im Straßentrakt, senkrecht zur Front, Messung bestätigt
       kand=[z for z in MZ if z['ok'] and abs(np.dot((z['a']-z['b'])/max(1e-6,np.hypot(*(z['a']-z['b']))),nv))>0.9]
       inT=[z for z in kand if any(cv2.pointPolygonTest(np.array([[kat.px(m,*q)[0]-x0,kat.px(m,*q)[1]-y0] for q in r],np.float32),(float(z['t']['x']),float(z['t']['y'])),True)>=-12 for r in o['poly'])]
-      if inT: z=inT[0]; o['tiefe']=dict(plan=z['v'],gemessen=z['gem'],ok=True)
+      if inT: z=inT[0]; o['tiefe']=dict(plan=z['v'],gemessen=z['gem'],ok=True,box=[ll(m,*(q+off)) for q in cv2.boxPoints(((z['t']['x'],z['t']['y']),(z['t']['w']+2,z['t']['h']+2),z['t']['ang']))])
       if DEBUG:
         for z in MZ:
           dd=min(cv2.pointPolygonTest(np.array([[kat.px(m,*q)[0]-x0,kat.px(m,*q)[1]-y0] for q in r],np.float32),(float(z['t']['x']),float(z['t']['y'])),True) for r in o['poly'])

@@ -436,3 +436,10 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-skk{margin:4px 2px 0;font:400 11.5px/1.35 "DM Sans",system-ui,sans-serif;opacity:.75}
 /* v3.74 Testmodus: Bauland-Zonen beim Einkreisen blau (Farbregel Eduard 18.11.) */
 .g-hl.blau .hlz{fill:rgba(38,104,190,.34);stroke:#1F5FAE}
+/* v3.75 Planleser-Karten: Kopf je Teilfläche in Flächenfarbe, Unterkarten je Planteil (Widmung, Bauklasse, Höhe, Bauweise, BB, Trakttiefe) */
+.g-card.zk-b{border-left:5px solid #1F5FAE}
+.g-card.zk-g{border-left:5px solid #1E6B35}
+.g-card.zk-a{border-left:5px solid #C8102E}
+.g-card.zk-x{border-left:5px solid #888}
+.g-card.sub{margin-left:18px;padding-top:9px;padding-bottom:9px}
+.g-card.sub h4,.g-card.sub .t{font-size:.95em}

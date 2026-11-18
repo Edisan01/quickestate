@@ -76,7 +76,9 @@ def tokens(crop,A,rings=None):
       if sc<0.78: continue
       x0=min(z['x'] for z in wd); y0=min(z['y'] for z in wd); x1=max(z['x']+z['w'] for z in wd); y1=max(z['y']+z['h'] for z in wd)
       cx,cy=(x0+x1)/2,(y0+y1)/2
-      T.append(dict(t=t,s=sc,x=Mi[0,0]*cx+Mi[0,1]*cy+Mi[0,2],y=Mi[1,0]*cx+Mi[1,1]*cy+Mi[1,2],w=(x1-x0)/SK,h=(y1-y0)/SK,n=len(wd),k=k,ang=ang))
+      mp=lambda X,Y:(Mi[0,0]*X+Mi[0,1]*Y+Mi[0,2],Mi[1,0]*X+Mi[1,1]*Y+Mi[1,2])
+      gls=[[mp(z['x'],z['y']),mp(z['x']+z['w'],z['y']),mp(z['x']+z['w'],z['y']+z['h']),mp(z['x'],z['y']+z['h'])] for z in sorted(wd,key=lambda z:z['x'])]
+      T.append(dict(t=t,s=sc,x=Mi[0,0]*cx+Mi[0,1]*cy+Mi[0,2],y=Mi[1,0]*cx+Mi[1,1]*cy+Mi[1,2],w=(x1-x0)/SK,h=(y1-y0)/SK,n=len(wd),k=k,ang=ang,gl=gls))
   T=[t for t in T if (t['n']>=2 and t['s']>=0.8) or (t['n']==1 and t['s']>=0.85 and t['h']>=9 and t['t'] in 'WGg')]
   T.sort(key=lambda r:-(r['s']+0.03*r['n'])); out=[]
   for r in T:

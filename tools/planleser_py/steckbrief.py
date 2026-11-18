@@ -109,7 +109,7 @@ def teilflaechen(m,im,wfs,rand=260):
     else: istG=bool(g)
     TF.append(dict(px=int(msk.sum()),m2=round(msk.sum()*(0.2986**2),1),stadt=SZ[z]['w'] if z>=0 else None,G=istG,
                    plan=Z.attrs(g if istG else rest),toks=[(t['t'],round(t['s'],2)) for t in toks],quelle=quelle,msk=msk,
-                   label_pos=[(t['x']+x0,t['y']+y0,t['t'],cv2.boxPoints(((t['x']+x0,t['y']+y0),(t['w']+2,t['h']+2),t['ang'])).tolist()) for t in (g if istG else rest)]))
+                   label_pos=[(t['x']+x0,t['y']+y0,t['t'],cv2.boxPoints(((t['x']+x0,t['y']+y0),(t['w']+2,t['h']+2),t['ang'])).tolist(),[[(q[0]+x0,q[1]+y0) for q in g_] for g_ in t.get('gl',[])]) for t in (g if istG else rest)]))
   return TF,T,lin,(x0,y0),rings
 def roemisch(w):
   m_=re.match(r'([A-Z]+)(\d)?',w or ''); return (m_.group(1),ROMAN.get(m_.group(2),'')) if m_ else (w,'')
