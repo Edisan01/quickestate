@@ -16,7 +16,7 @@ for name, kg, gnr, lon, lat in A:
         u = ('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:' + L +
              '&srsName=EPSG:4326&outputFormat=json&maxFeatures=300&bbox=%f,%f,%f,%f,EPSG:4326' % (lon - d, lat - d * 0.67, lon + d, lat + d * 0.67))
         b = hole(u); r['wfs'][L] = json.loads(b) if b else None; time.sleep(1)
-    for dx, dy in [(0, 0), (0.00008, 0), (-0.00008, 0), (0, 0.00006), (0, -0.00006)]:
+    for dx, dy in [(0, 0), (0.00006, 0.00004)]:
         x, y = lon + dx, lat + dy
         u = ('https://data.wien.gv.at/daten/wms?service=WMS&request=GetFeatureInfo&version=1.1.1&layers=SCHNITTMUSTEROGD&query_layers=SCHNITTMUSTEROGD'
              '&styles=&srs=EPSG:4326&bbox=%.6f,%.6f,%.6f,%.6f&width=101&height=101&x=50&y=50&info_format=text/xml&feature_count=10') % (x - 0.0005, y - 0.0002, x + 0.0005, y + 0.0002)
