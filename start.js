@@ -540,9 +540,12 @@ function start() {
       [...M.sel.teile].sort((a, b) => (b.fl || 0) - (a.fl || 0)).forEach(t => { const R = t.polys[0][0].map(c => css(...kMerc(c[0], c[1]))), xs = R.map(q => q[0]), ys = R.map(q => q[1]);
         let A = 0, cx = 0, cy = 0; for (let k = 0; k < R.length; k++) { const [x1, y1] = R[k], [x2, y2] = R[(k + 1) % R.length], f = x1 * y2 - x2 * y1; A += f; cx += (x1 + x2) * f; cy += (y1 + y2) * f; }
         if (Math.abs(A) < 1e-6) return; cx /= 3 * A; cy /= 3 * A; const w = t.gnr.length * 7.4 + 6;
-        if (Math.max(...xs) - Math.min(...xs) < w * 0.8 || Math.max(...ys) - Math.min(...ys) < 15) return;
-        if (lb.some(b => Math.abs(b[0] - cx) < (b[2] + w) / 2 && Math.abs(b[1] - cy) < 16)) return; lb.push([cx, cy, w]);
-        const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', cx.toFixed(1)); tx.setAttribute('y', (cy + 4).toFixed(1)); tx.setAttribute('class', 'gnr'); tx.textContent = t.gnr; ovEl.append(tx); }); }
+        const frei = (x, y) => !lb.some(b => Math.abs(b[0] - x) < (b[2] + w) / 2 + 2 && Math.abs(b[1] - y) < 17);
+        const passt = Math.max(...xs) - Math.min(...xs) >= w * 0.8 && Math.max(...ys) - Math.min(...ys) >= 15;
+        let x = cx, y = cy; if (!passt || !frei(x, y)) { const kand = [[0, -24], [0, 24], [w * 0.8, 0], [-w * 0.8, 0], [w * 0.6, -22], [-w * 0.6, -22], [w * 0.6, 22], [-w * 0.6, 22], [0, -44], [0, 44]]; const f = kand.find(([dx, dy]) => frei(cx + dx, cy + dy)); if (f) { x = cx + f[0]; y = cy + f[1]; } }
+        lb.push([x, y, w]); if (x !== cx || y !== cy) { const ln = document.createElementNS(NS, 'path'); ln.setAttribute('d', 'M' + cx.toFixed(1) + ' ' + cy.toFixed(1) + 'L' + x.toFixed(1) + ' ' + (y - 2).toFixed(1)); ln.setAttribute('class', 'gnrl'); ovEl.append(ln);
+          const pt = document.createElementNS(NS, 'circle'); pt.setAttribute('cx', cx.toFixed(1)); pt.setAttribute('cy', cy.toFixed(1)); pt.setAttribute('r', '2.2'); pt.setAttribute('class', 'gnrp'); ovEl.append(pt); }
+        const tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', x.toFixed(1)); tx.setAttribute('y', (y + 4).toFixed(1)); tx.setAttribute('class', 'gnr'); tx.textContent = t.gnr; ovEl.append(tx); }); }
     const belegt = [];                                                       // Hausnummern-Schilder; zu eng beisammen → weglassen statt Ameisenhaufen
     M.marks.forEach(m => { const [x, y] = css(...kMerc(m.lon, m.lat)); if (x < -20 || y < -20 || x > s + 20 || y > s + 20) return;
       const w = 10 + 6.2 * m.nr.length; if (m !== M.akt && belegt.some(b => Math.abs(b[0] - x) < (b[2] + w) / 2 + 2 && Math.abs(b[1] - y) < 17)) return; belegt.push([x, y, w]);
@@ -706,7 +709,7 @@ function start() {
   /* Ergebnis als Karten in Alltagssprache: links „Was ist das?“, rechts „Was heißt das für dich?“ – Ampel grün/gelb/rot, Fachbegriffe per „Was heißt das?“ */
   const karte = (art, titel, text, mehr, zeig) => { const d = document.createElement('div'); d.className = 'g-card ' + art;
     const h = document.createElement('p'); h.className = 'g-ct'; h.textContent = titel; d.append(h);
-    const lang = text && text.length > 70;   // kompakt (Eduard 18.11.): lange Erklärung erst beim Aufklappen
+    const lang = text && text.length > 70 && !/\bimmer\b/.test(art);   // kompakt (Eduard 18.11.): lange Erklärung erst beim Aufklappen
     if (text && !lang) { const t = document.createElement('p'); t.className = 'g-cx'; t.textContent = text; d.append(t); }
     if (lang || mehr) { const x = document.createElement('details'), sm = document.createElement('summary'); sm.textContent = 'Was heißt das?';
       x.append(sm); [lang ? text : '', mehr || ''].filter(Boolean).forEach(v => { const b = document.createElement('p'); b.textContent = v; x.append(b); }); d.append(x); }
@@ -819,11 +822,13 @@ function start() {
       b.addEventListener('click', () => { const auf = b.getAttribute('aria-expanded') !== 'true'; st.querySelectorAll('.g-zl[aria-expanded="true"]').forEach(x => x.setAttribute('aria-expanded', 'false')); b.setAttribute('aria-expanded', auf ? 'true' : 'false');
         zeigen(auf ? zeig : null, auf ? b : null); if (auf && matchMedia('(max-width:1099px)').matches) { const m = $('resMap'), r = m.getBoundingClientRect(); if (r.bottom < 60 || r.top > innerHeight - 80) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); } });
       return b; };
-    e.teile.forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = t.poly.map(r => [r]);
+    const RANG = { strasse: 0, vorgarten: 1, hof: 2, hof_links: 2, hof_rechts: 3, frei: 4, abtretung: 5 };
+    [...e.teile].sort((a, b) => (RANG[a.rolle] ?? 4) - (RANG[b.rolle] ?? 4)).forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = t.poly.map(r => [r]);
       const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []), mit = (a, x) => { const k = boxen(a).concat(x || []); return { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6 }; };
       const k = ZART(t), sec = document.createElement('div'); sec.className = 'g-sec ' + k; st.append(sec);
       const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'vorgarten' ? 'nicht bebaubar' : ZTXT[k]) + ' · ' + fl + ' m²';
       sec.append(zeile('', kopf, ZERK[k], { zonen: zone, kreise: boxen('*'), klein: 7 })); sec.lastChild.classList.add('kopf');
+      sec.lastChild.addEventListener('click', () => { const auf = !sec.classList.contains('auf'); st.querySelectorAll('.g-sec.auf').forEach(x => x.classList.remove('auf')); sec.classList.toggle('auf', auf); });   // zugeklappt: nur die Kopfzeile, Klick zeigt die Einzelteile
       if (t.art === 'G') { sec.append(zeile('G', 'gärtnerisch auszugestalten', 'Garten oder Grünfläche – hier darf kein Gebäude stehen.', mit('*'))); if (p.bb) sec.append(zeile(p.bb, 'Besondere Bestimmung' + (p.bb_text ? '' : ' (Hof)'), p.bb_text ? p.bb_text + ' (Plandokument ' + e.plandokument.nr + ')' : 'Eigene Zusatzregel für diese Fläche – der genaue Text steht im Plandokument.', mit('*'))); return; }
       if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sec.append(zeile(v && v.plan ? v.plan.toFixed(2).replace('.', ',') : 'Vg', 'Vorgarten', 'Streifen zwischen Straße und Baufluchtlinie. Hier darf nicht gebaut werden – Garten, Zugang, Zufahrt.', mit('*'))); return; }
       if (t.art !== 'bebaubar') return;
@@ -839,14 +844,15 @@ function start() {
     });
     if (e.plandokument && e.plandokument.allgemein) { const sec = document.createElement('div'); sec.className = 'g-sec zx'; st.append(sec);
       sec.append(zeile('', 'Gilt im ganzen Plangebiet · Plandokument ' + e.plandokument.nr, 'Textliche Bestimmungen ohne eigenes Planzeichen – Beschluss ' + e.plandokument.beschluss + '.', { zonen: [], kreise: [] })); sec.lastChild.classList.add('kopf');
+      sec.lastChild.addEventListener('click', () => { const auf = !sec.classList.contains('auf'); st.querySelectorAll('.g-sec.auf').forEach(x => x.classList.remove('auf')); sec.classList.toggle('auf', auf); });
       e.plandokument.allgemein.forEach(a => sec.append(zeile(a[0], a[1], a[2], { zonen: [], kreise: [] }))); } }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
     const zG = { zonen: (g.teile || [g]).flatMap(t => t.polys), kreise: (g.teile || [g]).map(t => [proben({ polys: t.polys })[0]]) }, alleP = (g.teile || [g]).flatMap(t => t.polys.flatMap(pg => pg[0]));
     const ca = g.amtl === false ? 'ca. ' : '', flQ = g.amtl === false ? ' Fläche aus den Grenzen errechnet – amtlicher Wert gerade nicht abrufbar.' : ' Fläche laut Grundbuch.';
-    L.append(n > 1 ? karte('', 'Bauplatz ' + ca + flText(g) + ' m²', 'Besteht aus ' + n + ' Grundstücken, die im Grundbuch zusammen geführt werden: ' + g.teile.map(t => t.gnr + ' (' + (t.amtl ? '' : 'ca. ') + flText(t) + ' m²)').join(' + ') + '.' + flQ, 'Ein Bauplatz ist die Fläche, auf der gebaut werden darf. Grundstücke mit derselben Grundbuch-Einlage (EZ) werden gemeinsam geführt und zählen zusammen. Flächen aus dem amtlichen Grundstücksverzeichnis des BEV.', zG)
+    L.append(n > 1 ? karte('immer', 'Bauplatz ' + ca + flText(g) + ' m²', 'Grundstücke ' + g.teile.map(t => t.gnr + ' (' + (t.amtl ? '' : 'ca. ') + flText(t) + ' m²)').join(' + '), 'Besteht aus ' + n + ' Grundstücken, die im Grundbuch zusammen geführt werden.' + flQ + ' Ein Bauplatz ist die Fläche, auf der gebaut werden darf. Grundstücke mit derselben Grundbuch-Einlage (EZ) werden gemeinsam geführt und zählen zusammen. Flächen aus dem amtlichen Grundstücksverzeichnis des BEV.', zG)
       : karte('', 'Grundstück ' + g.gnr + ' · ' + ca + flText(g) + ' m²', 'Ein einzelnes Grundstück.' + flQ, 'Grundstücksnummer und Fläche stammen aus dem amtlichen Grundstücksverzeichnis des Bundesamts für Eich- und Vermessungswesen (BEV) – dieselbe Fläche wie im Grundbuch.', zG));
-    L.append(karte('meta', 'KG ' + K + (g.ez ? ' · EZ ' + g.ez : ''), '', 'KG = Katastralgemeinde, der Vermessungsbezirk. EZ = Einlagezahl, die Nummer im Grundbuch.'));
+    $('resDeut').append(karte('meta kat', 'KG ' + K + (g.ez ? ' · EZ ' + g.ez : ''), '', 'KG = Katastralgemeinde, der Vermessungsbezirk. EZ = Einlagezahl, die Nummer im Grundbuch.'));   // Kataster rechts (Eduard 18.11.)
     if (!u) L.append(karte('bald', 'Widmung, Schutz und Hochwasser werden geladen …', ''));
     else {
       if (u.wid === undefined) L.append(karte('meta', 'Widmung gerade nicht abrufbar', 'Bitte im Plan ablesen (rote Schrift) oder später nochmal versuchen.'));

@@ -479,3 +479,13 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-hl.blau .hlz{fill:rgba(3,32,61,.06);stroke:#03203D;stroke-width:3px;stroke-dasharray:none}
 .g-hl .hlm{fill:none;stroke:#C9A96E;stroke-width:4px;stroke-linecap:round;filter:drop-shadow(0 0 1.5px rgba(3,32,61,.6))}
 .g-hl .hlmt{font:700 12px/1 "DM Sans",system-ui,sans-serif;fill:#8A6A2C;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:3px}
+/* v3.87 Steckbrief zugeklappt (nur Kopfzeile, Klick zeigt die Einzelteile) · Kataster rechts · Grundstücksnummer mit Hinweisstrich */
+.g-sec .g-zl:not(.kopf){display:none}
+.g-sec.auf .g-zl:not(.kopf){display:grid}
+.g-sec .g-zl.kopf .pf{transform:none}
+.g-sec.auf .g-zl.kopf .pf{transform:rotate(90deg)}
+.g-sec .g-zl.kopf .ex{display:none!important}
+.g-card.immer .g-cx{font-weight:500;opacity:.9}
+#resDeut .g-card.kat{order:8}
+.g-ov .gnrl{stroke:#03203D;stroke-width:1.2;fill:none}
+.g-ov .gnrp{fill:#03203D}
