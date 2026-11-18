@@ -434,3 +434,5 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-skiz .skm{stroke:#03203D;stroke-width:1;marker-start:none}
 .g-skiz .skmt{font:500 9.5px/1 "DM Sans",system-ui,sans-serif;fill:#03203D;text-anchor:middle}
 .g-skk{margin:4px 2px 0;font:400 11.5px/1.35 "DM Sans",system-ui,sans-serif;opacity:.75}
+/* v3.74 Testmodus: Bauland-Zonen beim Einkreisen blau (Farbregel Eduard 18.11.) */
+.g-hl.blau .hlz{fill:rgba(38,104,190,.34);stroke:#1F5FAE}

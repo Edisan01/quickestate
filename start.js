@@ -588,7 +588,15 @@ function start() {
           - Math.min(...fPolys(b.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9))))[0];
         const alle = [...new Set(P.map(an).filter(Boolean).map(f => f.properties.WIDMUNG))]; u.wid = f0 ? f0.properties : null; u.widAlle = alle; u.widRand = !an(p0); u.widGeo = f0 ? f0.geometry : null; u.widPts = f0 ? P.filter(p => an(p) === f0) : [];
         const Z = new Map(); P.forEach(p => { const f = an(p); if (f) { if (!Z.has(f)) Z.set(f, []); Z.get(f).push(p); } });   // Widmungszonen im Bauplatz (Straßentrakt/Hof)
-        u.widZonen = [...Z].map(([f, pts]) => ({ w: f.properties, geo: f.geometry, pts })); }
+        u.widZonen = [...Z].map(([f, pts]) => ({ w: f.properties, geo: f.geometry, pts }));
+        // Straßenfront (Eduard 18.11., Linzer Straße 22): Kante des Bauplatzes, hinter der 4 m außen keine Widmungszone liegt = Straße. Jede Zone an so einer Kante ist Straßentrakt – auch an der Ecke mit anderer Widmung.
+        const kante = [];
+        g.polys.forEach(pg => { const R = pg[0], n = R.length, cx = R.reduce((a, c) => a + c[0], 0) / n, cy = R.reduce((a, c) => a + c[1], 0) / n;
+          for (let i = 0; i < n; i++) { const a = R[i], b = R[(i + 1) % n], dx = (b[0] - a[0]) * 74000, dy = (b[1] - a[1]) * 111200, L = Math.hypot(dx, dy); if (L < 3) continue;
+            let nx = dy / L, ny = -dx / L; const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; if ((mx - cx) * 74000 * nx + (my - cy) * 111200 * ny < 0) { nx = -nx; ny = -ny; }
+            if (wi.v.some(f => drin(f, [mx + nx * 4 / 74000, my + ny * 4 / 111200]))) continue;
+            for (let k = 1; k < 10; k += 2) kante.push([a[0] + (b[0] - a[0]) * k / 10 - nx * 1.5 / 74000, a[1] + (b[1] - a[1]) * k / 10 - ny * 1.5 / 111200]); } });
+        u.widZonen.forEach(z => { z.front = kante.some(p => drin({ geometry: z.geo }, p)); }); }
       if (sz.ok) { const f = sz.v.find(f => P.some(p => drin(f, p))); u.schutz = f ? f.properties : false; u.schutzGeo = f ? f.geometry : null; }
       if (gz.ok) { const f = gz.v.find(f => f.properties.LAYER === 'DN_L-WZ' && P.some(p => drin(f, p))); u.wohnzone = !!f; u.wzGeo = f ? f.geometry : null; }
       if (b82.ok && b86.ok) { const f = b82.v.concat(b86.v).find(f => P.some(p => drin(f, p))); u.sperre = !!f; u.spGeo = f ? f.geometry : null; }
@@ -698,7 +706,7 @@ function start() {
     return d; };
   const kartenLeeren = () => { $('resFakten').textContent = ''; $('resDeut').textContent = ''; document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null; if (M.hl) { M.hl = null; mapKick(); } };
   /* Einkreisen (Eduard 17.11.): Klick auf eine Karte → Stelle im Plan wird wie mit dem Bleistift eingekreist, leiser Bleistift-Ton. Geometrie aus den geprüften Daten. */
-  const hlEl = document.createElementNS(NS, 'svg'); hlEl.setAttribute('class', 'g-hl'); hlEl.setAttribute('aria-hidden', 'true'); mapEl.append(hlEl);
+  const hlEl = document.createElementNS(NS, 'svg'); hlEl.setAttribute('class', 'g-hl' + (/[?&]leser=1/.test(location.search) ? ' blau' : '')); hlEl.setAttribute('aria-hidden', 'true'); mapEl.append(hlEl);
   const wackel = (cx, cy, rx, ry, seed) => { let q = seed; const rnd = () => (q = (q * 9301 + 49297) % 233280) / 233280, N = 64, st = -2.2 + rnd() * 0.4, L = [];
     for (let i = 0; i <= N * 1.1; i++) { const a = st + i / N * Math.PI * 2, f = 1 + (rnd() - 0.5) * 0.035 + i / N * 0.06; L.push((cx + Math.cos(a) * rx * f).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * f).toFixed(1)); }
     return 'M' + L.join('L'); };
@@ -807,9 +815,12 @@ function start() {
         let Z = (u.widZonen && u.widZonen.length ? u.widZonen : [{ w: u.wid, geo: u.widGeo, pts: u.widPts }]).filter(z => z.pts.length >= 2 || (u.widZonen || []).length === 1);
         if (!Z.length) Z = [{ w: u.wid, geo: u.widGeo, pts: u.widPts }];
         const ref = M.pt, dmin = z => ref ? Math.min(...z.pts.map(p => Math.hypot((p[0] - ref[0]) * 74000, (p[1] - ref[1]) * 111200))) : 0;
-        if (Z.length > 1) Z.sort((a, b) => dmin(a) - dmin(b));
+        if (Z.length > 1) Z.sort((a, b) => LESER_TEST ? (!!b.front - !!a.front) || dmin(a) - dmin(b) : dmin(a) - dmin(b));
+        const nFront = LESER_TEST ? Z.filter(z => z.front).length : 0;
         Z.forEach((z, zi) => { const w = z.w, kl = widKl(w), bk = +(String(w.WIDMUNG || '').match(/(\d)\s*$/) || [])[1] || 0, h = BKH[bk];
-          const vor = Z.length < 2 ? '' : zi === 0 ? 'Straßentrakt: ' : Z.length === 2 ? 'Hof: ' : Z.length === 3 ? (zi === 1 ? 'Hof vorne: ' : 'Hof hinten: ') : 'Hof ' + zi + ': ';
+          const nH = Z.length - nFront, hi = zi - nFront;
+          const vor = Z.length < 2 ? '' : !LESER_TEST ? (zi === 0 ? 'Straßentrakt: ' : Z.length === 2 ? 'Hof: ' : Z.length === 3 ? (zi === 1 ? 'Hof vorne: ' : 'Hof hinten: ') : 'Hof ' + zi + ': ')
+            : z.front ? (zi === 0 ? 'Straßentrakt: ' : 'Straßentrakt Ecke: ') : nFront === 0 && zi === 0 ? 'Straßentrakt: ' : nH === 1 ? 'Hof: ' : nH === 2 ? (hi === 0 ? 'Hof vorne: ' : 'Hof hinten: ') : 'Hof ' + (hi + 1) + ': ';
           const bkT = bk === 6 ? 'Bauklasse VI: über 26 m hoch.' : h ? 'Bauklasse ' + ROEM[bk] + ': höchstens ' + h[0] + ' m hoch (ca. ' + h[1] + ' Geschosse) – im Detailplan kann eine niedrigere Grenze stehen.' : '';
           const gross1 = t => t.charAt(0).toUpperCase() + t.slice(1), zz = { zonen: z.geo ? fPolys(z.geo) : [], clip: g.polys };
           if (!kl) { L.append(karte('rot', vor + (w.WIDMUNG_TXT || w.WIDMUNGSKLASSE_TXT || 'Kein Bauland'), 'Kein Bauland – hier darf grundsätzlich nicht gebaut werden.', 'Grünland, Parks, Wald, Verkehrsflächen und ähnliche Widmungen sind kein Bauland. Bauen ist dort nur in Ausnahmen erlaubt.', zz)); if (zi === 0) rot.push('Laut Flächenwidmung kein Bauland.'); }
