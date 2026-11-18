@@ -451,3 +451,27 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-leg .lz{align-items:flex-start}
 .g-leg .lz .sw{flex:0 0 16px;margin-top:2px}
 .g-leg .lz b{font-weight:600}
+/* v3.83 Kompakter Steckbrief (Eduard 18.11.): Zeile je Planteil, Erklärung zum Aufklappen, Karte bleibt beim Scrollen stehen */
+.g-card{padding:9px 12px}
+.g-card .g-ct{font-size:14px;line-height:1.3}
+.g-card .g-cx{font-size:12.5px;line-height:1.4;margin-top:3px}
+.g-card details{margin-top:4px}
+.g-zg{font-size:0!important;position:absolute;right:10px;top:9px;opacity:.55}
+.g-zg::before{content:"◎";font-size:13px}
+.g-card.zeigbar{position:relative;padding-right:30px}
+.g-steck{display:flex;flex-direction:column;gap:8px}
+.g-sec{border:1px solid rgba(3,32,61,.14);border-left:5px solid #888;border-radius:6px;background:#F7F2E8;overflow:hidden}
+.g-sec.zb{border-left-color:#1F5FAE}.g-sec.zg,.g-sec.zv,.g-sec.zn{border-left-color:#1E6B35}.g-sec.za{border-left-color:#C8102E}
+.g-zl{display:grid;grid-template-columns:56px 1fr 14px;align-items:center;gap:0 8px;width:100%;text-align:left;background:none;border:0;border-top:1px solid rgba(3,32,61,.08);padding:7px 10px;font:500 14px/1.3 "DM Sans",system-ui,sans-serif;color:#03203D;cursor:pointer}
+.g-zl:first-child{border-top:0}
+.g-zl.kopf{grid-template-columns:0 1fr 14px;font-weight:600;font-size:13.5px;background:rgba(3,32,61,.04)}
+.g-zl .kz{font:600 15px/1 "DM Sans",system-ui,sans-serif;color:#C8102E;white-space:nowrap}
+.g-zl .pf{opacity:.45;transition:transform .2s}
+.g-zl[aria-expanded="true"] .pf{transform:rotate(90deg)}
+.g-zl[aria-expanded="true"]{background:rgba(31,95,174,.08)}
+.g-zl .ex{grid-column:2/4;display:none;font-weight:400;font-size:12.5px;line-height:1.45;opacity:.85;margin-top:4px}
+.g-zl[aria-expanded="true"] .ex{display:block}
+.g-zl:focus-visible{outline:2px solid #1F5FAE;outline-offset:-2px}
+@media (min-width:1100px){.g-in.has-res .g-mid{position:sticky;top:0;align-self:start}}
+@media (max-width:1099px){.g-in.has-res .g-mapw{position:sticky;top:0;z-index:5;background:var(--beige)}}
+#resDeut .g-skiz{order:9}
