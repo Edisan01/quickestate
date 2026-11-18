@@ -85,7 +85,17 @@ def fall(m,im,wfs):
     for k,o in enumerate(hofs): o['rolle']=('hof_links','hof_rechts')[k] if len(hofs)==2 else f'hof_{k+1}'
   front_kante=None
   if sk and fr:
-    best=max(sk,key=lambda e:(int((cv2.line(np.zeros((H,W),np.uint8),tuple(np.round(e[0]).astype(int)),tuple(np.round(e[1]).astype(int)),1,9)&fr[0]['msk']).sum()),np.hypot(*(e[1]-e[0]))))
+    # zusammenhängende Straßenkanten zu Geraden vereinen, dann die längste (Eingangsseite)
+    def winkel(e): return math.degrees(math.atan2(e[1][1]-e[0][1],e[1][0]-e[0][0]))%180
+    gr=[]
+    for e in sk:
+      for g_ in gr:
+        if min(abs(winkel(e)-winkel(g_[0])),180-abs(winkel(e)-winkel(g_[0])))<8: g_.append(e); break
+      else: gr.append([e])
+    def spann(g_):
+      P_=np.array([q for e in g_ for q in e]); dd=np.array([math.cos(math.radians(winkel(g_[0]))),math.sin(math.radians(winkel(g_[0])))]); t_=P_@dd
+      return P_[np.argmin(t_)],P_[np.argmax(t_)]
+    best=max((spann(g_) for g_ in gr),key=lambda e:np.hypot(*(e[1]-e[0])))
     front_kante=[ll(m,*(best[0]+off)),ll(m,*(best[1]+off))]
   return out,front_kante
 if __name__=='__main__':
