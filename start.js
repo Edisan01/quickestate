@@ -757,7 +757,7 @@ function start() {
   function zeigen(spec, el) { document.querySelectorAll('.g-card.an').forEach(c => c.classList.remove('an'));
     if (!spec || (el && M.hl && M.hl.el === el)) { M.hl = null; mapKick(); return; }                 // zweiter Klick auf dieselbe Karte = ausblenden
     el && el.classList.add('an'); M.hl = { polys: spec.polys || [], zonen: spec.zonen || [], clip: spec.clip || null, kreise: (spec.kreise || []).filter(K => K && K.length), klein: spec.klein, linien: spec.linien || [], farbe: spec.farbe, el };
-    const pts = M.hl.kreise.flat().concat(M.hl.linien.flatMap(L => L.p)).concat(M.hl.clip ? M.hl.clip.flatMap(pg => pg[0]) : []); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
+    const pts = M.hl.kreise.flat().concat(M.hl.zonen.flat(2)).concat(M.hl.linien.flatMap(L => L.p)).concat(M.hl.clip ? M.hl.clip.flatMap(pg => pg[0]) : []); if (pts.length) { const B = bbox(pts), [x0, y0] = kMerc(B[0], B[3]), [x1, y1] = kMerc(B[2], B[1]), s = mapS() / 2 - 20;
       if ((x0 - M.cx) * M.k < -s || (x1 - M.cx) * M.k > s || (y0 - M.cy) * M.k < -s || (y1 - M.cy) * M.k > s) { M.cx = (x0 + x1) / 2; M.cy = (y0 + y1) / 2; } }
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
@@ -853,7 +853,8 @@ function start() {
     M.zonZiel = [];
     const RANG = { strasse: 0, vorgarten: 1, hof: 2, hof_links: 2, hof_rechts: 3, frei: 4, abtretung: 5 };
     [...e.teile].sort((a, b) => (RANG[a.rolle] ?? 4) - (RANG[b.rolle] ?? 4)).forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = (sx => sx.length ? [t.poly.concat(sx.flatMap(x => x.poly))] : t.poly.map(r => [r]))(t.rolle === 'strasse' && t.art === 'bebaubar' ? seitenStreifen(g, e) : []);   // blauer Stein ohne die grünen Seitenstreifen
-      const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []), fb = { zb: 'b', za: 'r', zx: 'n' }[ZART(t)] || 'g', mit = (a, x) => { const k = boxen(a).concat(x || []); return { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6, farbe: fb }; };
+      const zb_ = bbox(t.poly.flat()), mx = 30 / (111320 * Math.cos(zb_[1] * Math.PI / 180)), my = 30 / 110574, nah = B => B && B.every(c => c[0] > zb_[0] - mx && c[0] < zb_[2] + mx && c[1] > zb_[1] - my && c[1] < zb_[3] + my);   // nur Planzeichen in der Nähe einkreisen (G BB kann 100 m weiter stehen)
+      const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []).filter(nah), fb = { zb: 'b', za: 'r', zx: 'n' }[ZART(t)] || 'g', mit = (a, x) => { const k = boxen(a).concat(x || []); return { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6, farbe: fb }; };
       const k = ZART(t), sec = document.createElement('div'); sec.className = 'g-sec ' + k; st.append(sec);
       const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'bebaubar' ? (plText(p) || ZTXT[k]).replace(' · ', ' ') : t.art === 'G' ? 'G' + (p.bb ? ' ' + p.bb : '') : t.art === 'vorgarten' ? 'nicht bebaubar' : ZTXT[k]) + ' · ' + fl + ' m²';   // ganze Widmung in der Kopfzeile wie in den Rechenbeispielen (z. B. „Straßentrakt · W I 6,5 m o BB1“)
       const kb = zeile('', kopf, ZERK[k], { zonen: zone, kreise: boxen('*'), klein: 7, farbe: fb }, true); kb.classList.add('kopf'); sec.append(kb);
