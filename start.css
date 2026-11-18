@@ -494,3 +494,19 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-leg .sw.zs{background:repeating-linear-gradient(-45deg,rgba(30,107,53,.7) 0 1.4px,transparent 1.4px 5px),rgba(236,246,238,.92);border:1.2px dashed #1E6B35}
 /* v3.93 Legende darf die Mittelspalte nicht verbreitern (sonst werden die Boxen links/rechts zerquetscht) */
 .g-mid .g-leg{width:0;min-width:100%;box-sizing:border-box}
+/* v3.94 Plan nur blau/grün (+ rot Abtretung) · Stein statt Einkreisen */
+.zf.zg,.zf.zv,.zf.zn,.zf.zs{fill:rgba(64,160,84,.34);stroke:#1E6B35;stroke-dasharray:none}
+.g-leg .sw.zg{background:rgba(64,160,84,.34);border:1.2px solid #1E6B35}
+.g-hl .hld{fill:rgba(3,32,61,.22);opacity:0;animation:qeHl .3s ease forwards}
+.g-hl .hlsl{fill:rgba(3,20,40,.45);filter:blur(2px)}
+.g-hl .hls .hlst{stroke-width:1.6;stroke-linejoin:round}
+.g-hl .hls .hlsw{stroke-width:.6;stroke-linejoin:round}
+.g-hl .hls.b .hlst{fill:#4F8AD6;stroke:#1F5FAE}.g-hl .hls.b .hlsw{fill:#1F5FAE;stroke:#174A88}
+.g-hl .hls.g .hlst{fill:#6CBF7E;stroke:#1E6B35}.g-hl .hls.g .hlsw{fill:#2F7D45;stroke:#1E6B35}
+.g-hl .hls.r .hlst{fill:#E0566B;stroke:#C8102E}.g-hl .hls.r .hlsw{fill:#A80D27;stroke:#8A0A20}
+.g-hl .hls.n .hlst{fill:#8FA3B8;stroke:#03203D}.g-hl .hls.n .hlsw{fill:#4A5F75;stroke:#03203D}
+.g-hl .hls .hlst{fill-opacity:.88}
+.g-hl .hlu{fill:none;stroke:#C9A96E;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:qeKreis .35s .2s ease forwards;filter:drop-shadow(0 0 1.5px rgba(3,32,61,.6))}
+@media (prefers-reduced-motion:reduce){.g-hl .hld,.g-hl .hlu{animation:none;opacity:1;stroke-dashoffset:0}}
+.g-card.bau{border-color:#1F5FAE;background:rgba(38,104,190,.08)}
+.g-card.bau .g-ct,.g-card.bau h3{color:#174A88}
