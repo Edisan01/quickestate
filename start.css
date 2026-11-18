@@ -515,3 +515,37 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-hl .hlo{fill:none;stroke:#03203D;stroke-width:2.4;stroke-linejoin:round;opacity:0;animation:qeHl .25s ease forwards}
 .g-lb .g-hl .hlg{fill:rgba(60,60,60,.7)}
 @media (prefers-reduced-motion:reduce){.g-hl .hlg,.g-hl .hlo{animation:none;opacity:1}}
+/* v4.00 Steckbrief nach Entwurf 18.11.: das Wichtigste auf einen Blick, Einzelteile beim Antippen, Planausschnitt statt Kreis */
+.q-steck{display:flex;flex-direction:column;gap:12px;text-align:left}
+.q-steck button{font:inherit;color:inherit}
+.q-card,.q-solo{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(11,35,64,.06),0 8px 24px rgba(11,35,64,.06);overflow:hidden}
+.q-hero{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;border:0;cursor:pointer;background:#0B2340;color:#fff!important;border-radius:16px;padding:16px 18px;box-sizing:border-box}
+.q-hl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#C9D3E2}.q-hz{font-size:30px;font-weight:700;line-height:1.15}.q-hs{font-size:12.5px;color:#C9D3E2}
+.q-hsw{width:14px;height:14px;border-radius:4px;background:#2F6FC4;box-shadow:0 0 0 2px #fff;flex:none}
+.g-card.an.q-hero,.q-hero.an{box-shadow:0 0 0 3px #C9A96E}
+.q-it+.q-it{border-top:1px solid #ECEAE4}
+.q-row{display:grid;grid-template-columns:10px 1fr 12px;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:13px 16px;cursor:pointer;min-height:56px;box-sizing:border-box}
+.q-row:hover{background:#F7F6F2}
+.q-dot{width:10px;height:10px;border-radius:5px}
+.q-lab{font-size:12.5px;color:#5E6878}.q-val{font-size:16px;font-weight:600;margin-top:1px}.q-bb{font-size:13px;color:#3A4659;margin-top:2px}
+.q-chev{width:8px;height:8px;border-right:2px solid #8A94A6;border-bottom:2px solid #8A94A6;transform:rotate(-45deg);transition:transform .2s}
+.q-it.auf .q-chev{transform:rotate(45deg)}
+.q-auf{padding:0 16px 0 38px}.q-it.auf .q-auf{padding-bottom:14px}
+.q-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.q-chip{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid #E3E0D8;background:#fff;border-radius:12px;padding:7px 11px;min-height:44px;cursor:pointer;box-sizing:border-box;text-align:left}
+.q-chip b{font-size:15px}.q-chip span{font-size:11.5px;color:#5E6878}.q-chip:hover{border-color:#C9A96E}
+.q-chip.an{background:#0B2340;border-color:#0B2340;color:#fff}.q-chip.an span{color:#C9D3E2}
+.q-t,.q-det p{margin:0 0 10px;font-size:14px;line-height:1.5;color:#22304A}
+.q-det:empty{display:none}.q-det{background:#F7F6F2;border-radius:12px;padding:12px 14px}
+.q-cap{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#5E6878;margin-bottom:6px}
+.q-lupe{position:relative;width:280px;max-width:100%;height:84px;overflow:hidden;border-radius:8px;border:1px solid #E3E0D8;background:#fff}
+.q-lupi{position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0}.q-lupi img{position:absolute;width:256px;height:256px;max-width:none}
+.q-note{font-size:12.5px;color:#5E6878;margin-top:6px}
+.q-mz{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;font-size:15px}.q-mz+.q-mz{border-top:1px solid #ECEAE4}.q-mz span{color:#3A4659}
+/* Karte: Fokus */
+.g-ov .zf{transition:fill-opacity .25s ease,stroke-opacity .25s ease}
+.g-ov.fokus .zf{fill-opacity:.25;stroke-opacity:.3}
+.g-hl .hlh{fill:none;stroke:#fff;stroke-width:5;stroke-linejoin:round;opacity:0;animation:qeHl .25s ease forwards}
+.g-hl .hlsel{stroke:#0B2340;stroke-width:1.8;stroke-linejoin:round;opacity:0;animation:qeHl .25s ease forwards}
+.g-hl .hlsel.f-b{fill:rgba(47,111,196,.62)}.g-hl .hlsel.f-g{fill:rgba(62,155,87,.62)}.g-hl .hlsel.f-r{fill:rgba(200,16,46,.55)}.g-hl .hlsel.f-n{fill:rgba(120,130,145,.5)}
+@media (prefers-reduced-motion:reduce){.g-hl .hlh,.g-hl .hlsel{animation:none;opacity:1}}

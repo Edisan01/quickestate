@@ -574,7 +574,7 @@ function start() {
     if (hit) { nummerWaehlen(hit); return; }
     const [lon, lat] = kGeo(M.cx + (px - s / 2) / M.k, M.cy + (py - s / 2) / M.k);
     const zz = M.zonZiel && M.zon && M.zonZiel.find(z => z.poly.reduce((a, r) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const [xi, yi] = r[i], [xj, yj] = r[j]; if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) c = !c; } return a !== c; }, false));
-    if (zz) { if (!zz.sec.classList.contains('auf')) zz.kopf.click(); if (zz.el !== zz.kopf && zz.el.getAttribute('aria-expanded') !== 'true') zz.el.click(); zz.sec.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }   // Fläche im Plan antippen = passender Abschnitt im Steckbrief
+    if (zz) { zz.open(); return; }   // Fläche im Plan antippen = passende Zeile im Steckbrief
     parzelleWaehlen(lon, lat); };
   mapEl.addEventListener('pointerup', dragEnde); mapEl.addEventListener('pointercancel', dragEnde);
 
@@ -726,18 +726,18 @@ function start() {
   const wackel = (cx, cy, rx, ry, seed) => { let q = seed; const rnd = () => (q = (q * 9301 + 49297) % 233280) / 233280, N = 64, st = -2.2 + rnd() * 0.4, L = [];
     for (let i = 0; i <= N * 1.1; i++) { const a = st + i / N * Math.PI * 2, f = 1 + (rnd() - 0.5) * 0.035 + i / N * 0.06; L.push((cx + Math.cos(a) * rx * f).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * f).toFixed(1)); }
     return 'M' + L.join('L'); };
-  function hlUpdate(css) { const s = mapS(); hlEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); const H = M.hl; if (!H) { hlEl.textContent = ''; return; }
+  function hlUpdate(css) { const s = mapS(); hlEl.setAttribute('viewBox', '0 0 ' + s + ' ' + s); const H = M.hl; ovEl.classList.toggle('fokus', !!(H && H.zonen && H.zonen.length && M.zon)); if (!H) { hlEl.textContent = ''; return; }
     if (!H.els) { hlEl.textContent = ''; H.els = [];
       if (H.clip) { const df = document.createElementNS(NS, 'defs'), cp = document.createElementNS(NS, 'clipPath'), cpp = document.createElementNS(NS, 'path'); cp.setAttribute('id', 'qeHlClip'); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); df.append(cp); hlEl.append(df); H.clipEl = cpp; }
-      H.grau = H.zonen.length && M.zon ? M.zon.clip : null;   // Fokus (Eduard 18.11.): gemeinte Fläche bleibt in Farbe, restlicher Bauplatz grau – Karte rundherum bleibt normal
-      if (H.grau) { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlg'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); }
-      H.zonen.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', H.grau ? 'hlo' : 'hlz'); p.setAttribute('fill-rule', 'evenodd'); if (H.clip) p.setAttribute('clip-path', 'url(#qeHlClip)'); hlEl.append(p); H.els.push(p); });
+      H.grau = !!(H.zonen.length && M.zon);   // Fokus (Entwurf 18.11.): gemeinte Fläche kräftig mit weißem Rand, die anderen Flächen blass – keine Abdeckung, keine Kreise
+      if (H.grau) { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlh'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); }
+      H.zonen.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', H.grau ? 'hlsel f-' + (H.farbe || 'n') : 'hlz'); p.setAttribute('fill-rule', 'evenodd'); if (H.clip) p.setAttribute('clip-path', 'url(#qeHlClip)'); hlEl.append(p); H.els.push(p); });
       H.polys.forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlf'); p.setAttribute('fill-rule', 'evenodd'); hlEl.append(p); H.els.push(p); });
       H.kreise.forEach((K, j) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlk'); p.setAttribute('pathLength', '1'); p.style.animationDelay = (j * 0.18) + 's'; hlEl.append(p); H.els.push(p); });
       (H.linien || []).forEach(() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'hlm'); hlEl.append(p); H.els.push(p); const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'hlmt'); hlEl.append(t); H.els.push(t); }); }
     let i = 0; const S = c => css(...kMerc(c[0], c[1])), D = pg => pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('');
     if (H.clipEl) H.clipEl.setAttribute('d', H.clip.map(D).join(''));
-    if (H.grau) H.els[i++].setAttribute('d', H.grau.map(D).join('') + H.zonen.map(D).join(''));
+    if (H.grau) H.els[i++].setAttribute('d', H.zonen.map(D).join(''));
     H.zonen.forEach(pg => { H.els[i++].setAttribute('d', D(pg)); });
     H.polys.forEach(pg => { H.els[i++].setAttribute('d', pg.map(r => 'M' + r.map(c => S(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')); });
     H.kreise.forEach((K, j) => { const P = K.map(S), xs = P.map(p => p[0]), ys = P.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
@@ -837,53 +837,78 @@ function start() {
     if (e) { const sts = seitenStreifen(g, e), ex = Object.assign({}, e, { teile: e.teile.map(t => sts.length && t.rolle === 'strasse' && t.art === 'bebaubar' ? Object.assign({}, t, { poly: t.poly.concat(sts.flatMap(x => x.poly)) }) : t).concat(sts) }); M.zon = { teile: ex.teile, clip: (g.teile || [g]).flatMap(t => t.polys) }; const w = $('resHint'); w.before(legende(g, ex)); $('resDeut').append(skizze(g, ex)); }
     mapKick(); }
   function planKarten(g, L) { if (!PL) return; const e = (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean); planAnzeige(g, e); if (!e) return;
-    L.append(karte('meta', 'Aus dem Plan gelesen', 'Tippe auf eine Zeile – die Stelle wird im Plan eingekreist.', 'Jeder Wert ist im Flächenwidmungsplan nachgelesen und mit den Daten der Stadt Wien abgeglichen (Stand ' + e.stand.split('-').reverse().join('.') + ').'));
-    const BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' }, BWX = { g: 'Haus an Haus gebaut, ohne Abstand zu den Nachbarn.', o: 'Freistehend, mit Abstand zu den Nachbarn.', gk: 'Zwei Häuser stehen zusammen an der gemeinsamen Grenze.' };
-    const st = document.createElement('div'); st.className = 'g-steck'; L.append(st);
-    const zeile = (kz, titel, erkl, zeig, eigen) => { const b = document.createElement('button'); b._zeig = zeig; b.type = 'button'; b.className = 'g-zl'; b.setAttribute('aria-expanded', 'false');
-      b.innerHTML = '<span class="kz"></span><span class="tt"></span><span class="pf" aria-hidden="true">›</span><span class="ex"></span>';
-      b.querySelector('.kz').textContent = kz; b.querySelector('.tt').textContent = titel; b.querySelector('.ex').textContent = erkl;
-      if (matchMedia('(hover:hover)').matches) { b.addEventListener('mouseenter', () => vorschau(zeig)); b.addEventListener('mouseleave', vorschauEnde); }   // am Computer: Fläche schon beim Drüberfahren zeigen
-      if (!eigen) b.addEventListener('click', () => { const auf = b.getAttribute('aria-expanded') !== 'true'; st.querySelectorAll('.g-zl[aria-expanded="true"]').forEach(x => x.setAttribute('aria-expanded', 'false')); b.setAttribute('aria-expanded', auf ? 'true' : 'false');
-        if (M.hl && M.hl.vor) M.hl = null; const kp = !auf && b.closest('.g-sec.auf') && b.closest('.g-sec.auf').querySelector('.kopf');   // zweiter Klick schließt – zurück auf die Fläche des Abschnitts
-        if (kp && kp !== b) { kp.setAttribute('aria-expanded', 'true'); M.hl = null; zeigen(kp._zeig, kp); } else zeigen(auf ? zeig : null, auf ? b : null); if (auf && matchMedia('(max-width:1099px)').matches) { const m = $('resMap'), r = m.getBoundingClientRect(); if (r.bottom < 60 || r.top > innerHeight - 80) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); } });
-      return b; };
-    const kopfKlick = (sec, b) => { const auf = !sec.classList.contains('auf'); st.querySelectorAll('.g-sec.auf').forEach(x => x.classList.remove('auf')); st.querySelectorAll('.g-zl[aria-expanded="true"]').forEach(x => x.setAttribute('aria-expanded', 'false'));
-      sec.classList.toggle('auf', auf); b.setAttribute('aria-expanded', auf ? 'true' : 'false'); M.hl = null; zeigen(auf && b._zeig && (b._zeig.zonen || []).length ? b._zeig : null, auf ? b : null); };   // Klick öffnet, zweiter Klick schließt
-    M.zonZiel = [];
-    const RANG = { strasse: 0, vorgarten: 1, hof: 2, hof_links: 2, hof_rechts: 3, frei: 4, abtretung: 5 };
-    [...e.teile].sort((a, b) => (RANG[a.rolle] ?? 4) - (RANG[b.rolle] ?? 4)).forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), p = t.plan || {}, zone = (sx => sx.length ? [t.poly.concat(sx.flatMap(x => x.poly))] : t.poly.map(r => [r]))(t.rolle === 'strasse' && t.art === 'bebaubar' ? seitenStreifen(g, e) : []);   // blauer Stein ohne die grünen Seitenstreifen
-      const zb_ = bbox(t.poly.flat()), mx = 30 / (111320 * Math.cos(zb_[1] * Math.PI / 180)), my = 30 / 110574, nah = B => B && B.every(c => c[0] > zb_[0] - mx && c[0] < zb_[2] + mx && c[1] > zb_[1] - my && c[1] < zb_[3] + my);   // nur Planzeichen in der Nähe einkreisen (G BB kann 100 m weiter stehen)
-      const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []).filter(nah), fb = { zb: 'b', za: 'r', zx: 'n' }[ZART(t)] || 'g', mit = (a, x) => { const k = boxen(a).concat(x || []); return { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6, farbe: fb }; };
-      const k = ZART(t), sec = document.createElement('div'); sec.className = 'g-sec ' + k; st.append(sec);
-      const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'bebaubar' ? (plText(p) || ZTXT[k]).replace(' · ', ' ') : t.art === 'G' ? 'G' + (p.bb ? ' ' + p.bb : '') : t.art === 'vorgarten' ? 'nicht bebaubar' : ZTXT[k]) + ' · ' + fl + ' m²';   // ganze Widmung in der Kopfzeile wie in den Rechenbeispielen (z. B. „Straßentrakt · W I 6,5 m o BB1“)
-      const kb = zeile('', kopf, ZERK[k], { zonen: zone, kreise: boxen('*'), klein: 7, farbe: fb }, true); kb.classList.add('kopf'); sec.append(kb);
-      kb.addEventListener('click', () => kopfKlick(sec, kb)); M.zonZiel.push({ poly: t.poly, sec, kopf: kb, el: kb });   // zugeklappt: nur die Kopfzeile, Klick zeigt die Einzelteile
-      if (t.art === 'G') { sec.append(zeile('G', 'gärtnerisch auszugestalten', 'Garten oder Grünfläche – hier darf kein Gebäude stehen.', mit('*'))); if (p.bb) sec.append(zeile(p.bb, 'Besondere Bestimmung' + (p.bb_text ? '' : ' (Hof)'), p.bb_text ? p.bb_text + ' (Plandokument ' + e.plandokument.nr + ')' : 'Eigene Zusatzregel für diese Fläche – der genaue Text steht im Plandokument.', mit('*'))); return; }
-      if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sec.append(zeile(v && v.plan ? v.plan.toFixed(2).replace('.', ',') : 'Vg', 'Vorgarten', 'Streifen zwischen Straße und Baufluchtlinie. Hier darf nicht gebaut werden – Garten, Zugang, Zufahrt.', mit('*'))); return; }
-      if (t.art !== 'bebaubar') return;
-      if (p.widmung) sec.append(zeile(p.widmung, PL_W[p.widmung] || 'Widmung', 'Die Widmung sagt, was hier gebaut werden darf. ' + ({ W: 'W = Wohngebiet: Wohnhäuser.', GB: 'GB = Gemischtes Baugebiet: Wohnungen und Betriebe.', WGV: 'WGV = Wohngebiet Geschäftsviertel: Erdgeschoss für Geschäfte, Wohnungen erst ab 3,5 m.', GBGV: 'GBGV = Gemischtes Baugebiet Geschäftsviertel: Erdgeschoss für Geschäfte.' }[p.widmung] || ''), mit('widmung')));
-      if (p.bauklasse) { const bk = PL_BK[p.bauklasse]; sec.append(zeile(p.bauklasse, 'Bauklasse ' + p.bauklasse + (bk ? ' · ' + String(bk[0]).replace('.', ',') + '–' + bk[1] + ' m' : ''), 'Die Bauklasse (römische Zahl) legt die Gebäudehöhe fest' + (bk ? ': hier ' + String(bk[0]).replace('.', ',') + ' bis ' + bk[1] + ' m.' : '.'), mit('bauklasse'))); }
-      if (p.hoehe) { const bk = PL_BK[p.bauklasse], h = parseFloat(p.hoehe.replace(',', '.')); sec.append(zeile(p.hoehe.replace(' ', ''), 'Höhe begrenzt', 'Die Meterzahl im Plan geht vor: höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt der ' + bk[1] + ' m der Bauklasse.' : '.'), mit('hoehe'))); }
-      if (p.bauweise) sec.append(zeile(p.bauweise, BW[p.bauweise] || 'Bauweise', 'Bauweise ' + p.bauweise + ': ' + (BWX[p.bauweise] || ''), mit('bauweise')));
-      if (p.bb) sec.append(zeile(p.bb, 'Besondere Bestimmung', p.bb_text ? p.bb_text + ' (Plandokument ' + e.plandokument.nr + ')' : 'Zusätzliche Regel für diese Fläche – der genaue Text steht im Plandokument.', mit('bb')));
-      if (t.tiefe) sec.append(zeile(t.tiefe.plan.toFixed(2).replace('.', ','), t.tiefe.art === 'baufenster' ? 'Bebaubare Tiefe' : 'Trakttiefe', t.tiefe.art === 'baufenster' ? 'Tiefe der bebaubaren Fläche zwischen den Baufluchtlinien – die Zahl mit den zwei Pfeilen im Plan (steht hier beim Nachbarn derselben Häuserzeile).' : 'So tief darf von der Straße aus gebaut werden – die Zahl mit den zwei Pfeilen im Plan.', mit('-', t.tiefe.box ? [t.tiefe.box] : [])));
-      if (p.bauweise === 'o' && t.tiefe && t.rolle === 'strasse') { const tf = t.tiefe.plan, z = v => v.toFixed(2).replace('.', ','), A = abstand(p, tf), sts = seitenStreifen(g, e);
-        sec.append(zeile(z(A.m).replace(',00', '') + ' m', 'Abstand zum Nachbarn', 'Offene Bauweise: grundsätzlich 6 m zur seitlichen Grundstücksgrenze, auf eigenem Grund. In Bauklasse I darf man nach BO § 79 Abs. 3 bis auf die halbe Gebäudehöhe heranrücken (mindestens 3 m), wenn die Hausseite höchstens 15 m lang ist und der Teil über der 6-m-Linie je Seite höchstens 45 m², zusammen höchstens 90 m² hat. ' + (A.ok ? 'Geprüft: Gebäudehöhe ' + z(A.gh) + ' m ÷ 2 = ' + z(A.a) + ' m; Überstand ' + z(6 - A.a) + ' m × ' + z(tf) + ' m Tiefe = ' + z(A.f) + ' m² je Seite, zusammen ' + z(2 * A.f) + ' m² – passt.' : 'Hier nicht erfüllt, daher 6 m.') + ' Im Plan grün.', { zonen: sts.flatMap(x => x.poly.map(r => [r])), kreise: [], farbe: 'g' })); sts.forEach(x => M.zonZiel.unshift({ poly: x.poly, sec, kopf: sec.querySelector('.kopf'), el: sec.lastChild }));
-        if (e.front) { const Lf = frontLen(e), br = Math.round((Lf - 2 * A.m) * 100) / 100, net = br * tf, gfl = g.fl || 0, w = { W: 1, GB: 1 }[p.widmung], dr = w && gfl ? Math.min(gfl / 3, { I: 350, II: 700 }[p.bauklasse] || Infinity) : null, bbm = (p.bb_text || '').match(/höchstens (\d+) m² bebaut/), bm = bbm ? +bbm[1] : null;
-          const kand = [[net, 'Hausbreite ' + z(br) + ' m (Front ' + z(Lf) + ' m − 2 × ' + z(A.m) + ' m Abstand) × Tiefe ' + z(tf) + ' m = ' + Math.floor(net) + ' m²']].concat(dr ? [[dr, 'Drittel-Regel (BO § 76 Abs. 10): ' + gfl + ' m² ÷ 3 = ' + Math.floor(dr) + ' m²']] : [], bm ? [[bm, p.bb + ': ' + bm + ' m²']] : []), min = Math.min(...kand.map(k => k[0]));
-          if (br > 0) sec.append(zeile(Math.floor(min) + ' m²', 'Bebaubar höchstens', 'Es gilt der kleinste Wert: ' + kand.map(k => k[1]).join(' · ') + '. Annahme: Grundstück annähernd rechteckig.' + (min < net - 0.5 ? ' Die blaue Fläche ist größer – wo du innerhalb davon baust, entscheidest du.' : ''), { zonen: zone, kreise: [], farbe: 'b' }));
-            g.bebaubar = { m2: Math.floor(min), text: 'Kleinster Wert aus: ' + kand.map(k => k[1]).join(' · ') + '. Annahme: Grundstück annähernd rechteckig.', zeig: { zonen: [t.poly.concat(sts.flatMap(x => x.poly))], kreise: [], farbe: 'b' } }; }
-      }
-      if (t.rolle === 'strasse' && e.front) { const kx = Math.cos(e.front[0][1] * Math.PI / 180) * 111320, Lf = Math.hypot((e.front[1][0] - e.front[0][0]) * kx, (e.front[1][1] - e.front[0][1]) * 110574); sec.append(zeile(Lf.toFixed(1).replace('.', ','), 'Straßenfront', 'Länge der Grundstücksgrenze an der Straße (aus dem Kataster) – im Plan als goldenes Maßband.', { zonen: [], kreise: [], linien: [{ p: e.front, t: Lf.toFixed(1).replace('.', ',') + ' m' }] })); }
-      (t.strassenmasse || []).forEach(sm => sec.append(zeile(sm.v.toFixed(2).replace('.', ','), 'Breite Baulinie–Baulinie', 'Abstand von Baulinie zu Baulinie quer über die Straße, so im Plan eingetragen (Zahl mit Pfeilen) – gilt an der Stelle der Pfeile.', mit('-', [sm.box]))));
-      if (t.strassenbreite && t.strassenbreite.plan) { const b = t.strassenbreite; sec.append(zeile(b.plan.toFixed(2).replace('.', ','), 'Straßenbreite', 'Zahl mit Pfeilen im Plan, am Grundstück nachgemessen (' + b.gemessen.toFixed(2).replace('.', ',') + ' m). Breitere Straße = oft mehr Höhe möglich.', mit('-', b.box ? [b.box] : []))); }
-    });
-    if (e.plandokument && e.plandokument.allgemein) { const sec = document.createElement('div'); sec.className = 'g-sec zx'; st.append(sec);
-      sec.append(zeile('', 'Allgemeine Regeln im Plangebiet (keine BB) · Plandokument ' + e.plandokument.nr, 'Textliche Bestimmungen für alle Grundstücke im Plangebiet, ohne eigenes Planzeichen. Regeln, die hier nichts ändern, sind ausgeblendet. Beschluss ' + e.plandokument.beschluss + '.', { zonen: [], kreise: [] })); sec.lastChild.classList.add('kopf');
-      { const kb = sec.lastChild; kb.addEventListener('click', e => { e.stopImmediatePropagation(); kopfKlick(sec, kb); }, true); }
-      const tMax = Math.max(0, ...e.teile.filter(t => t.tiefe).map(t => t.tiefe.plan));
-      e.plandokument.allgemein.filter(a => !(/^Trakttiefe höchstens/.test(a[1]) && tMax && parseFloat(a[0].replace(',', '.')) >= tMax)).forEach(a => sec.append(zeile(a[0], a[1], a[2], { zonen: [], kreise: [] }))); } }
+    // Steckbrief nach Entwurf 18.11. (Eduard: „auf den ersten Blick das Wichtigste, gut leserlich“): Bebaubar-Zahl, Maße, Widmung je Teil wie in den Rechenbeispielen, Einzelteile beim Antippen, Planausschnitt statt Kreis
+    const z2 = v => v.toFixed(2).replace('.', ','), BWX = { g: 'Haus an Haus, ohne Abstand zu den Nachbarn.', o: 'Das Haus steht frei, mit Abstand zu den Nachbarn links und rechts.', gk: 'Zwei Häuser stehen zusammen an der gemeinsamen Grenze, sonst frei.' };
+    const WX = { W: 'Hier dürfen Wohnhäuser gebaut werden.', GB: 'Wohnungen und Betriebe sind erlaubt.', WGV: 'Wohngebiet, Erdgeschoss für Geschäfte.', GBGV: 'Gemischtes Baugebiet, Erdgeschoss für Geschäfte.', G: 'Garten – hier darf kein Gebäude stehen.' };
+    const RANG = { strasse: 0, vorgarten: 1, hof: 2, hof_links: 2, hof_rechts: 3, frei: 4, abtretung: 5 }, teile = [...e.teile].sort((a, b) => (RANG[a.rolle] ?? 4) - (RANG[b.rolle] ?? 4));
+    const sts = seitenStreifen(g, e), sTr = e.teile.find(t => t.rolle === 'strasse' && t.art === 'bebaubar'), FB = t => ({ zb: 'b', za: 'r', zx: 'n' }[ZART(t)] || 'g');
+    const zoneVon = t => t === sTr && sts.length ? [t.poly.concat(sts.flatMap(x => x.poly))] : t.poly.map(r => [r]);
+    const wrap = document.createElement('div'); wrap.className = 'q-steck'; L.append(wrap); M.zonZiel = []; let offen = null;
+    const el = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt != null) x.textContent = txt; return x; };
+    const vor = (b, sp) => { if (matchMedia('(hover:hover)').matches) { b.addEventListener('mouseenter', () => vorschau(sp)); b.addEventListener('mouseleave', vorschauEnde); } };
+    // Planausschnitt: genau das Zeichen aus dem Planbild, gedreht zum Lesen
+    const lupe = (box, zone) => { const P = box.map(c => kMerc(c[0], c[1]).map(v => v * 524288)), cx = P.reduce((a, q) => a + q[0], 0) / 4, cy = P.reduce((a, q) => a + q[1], 0) / 4;
+      const ed = [0, 1, 2, 3].map(k => [P[(k + 1) % 4][0] - P[k][0], P[(k + 1) % 4][1] - P[k][1]]); let v = ed.reduce((m, q) => Math.hypot(...q) > Math.hypot(...m) ? q : m), sh = Math.min(...ed.map(q => Math.hypot(...q)));
+      if (Math.abs(v[1]) > Math.abs(v[0]) ? v[1] > 0 : v[0] < 0) v = [-v[0], -v[1]]; const lg = Math.hypot(...v), ang = Math.atan2(v[1], v[0]), W = 280, H = 84, sc = Math.min((W - 20) / (lg + 16), (H - 12) / (sh + 10), 3.2), R = lg / 2 + 40;
+      const box_ = el('div', 'q-lupe'), inn = el('div', 'q-lupi'); inn.style.transform = 'translate(' + W / 2 + 'px,' + H / 2 + 'px) rotate(' + (-ang) + 'rad) scale(' + sc + ')';
+      for (let tx = Math.floor((cx - R) / 256); tx <= Math.floor((cx + R) / 256); tx++) for (let ty = Math.floor((cy - R) / 256); ty <= Math.floor((cy + R) / 256); ty++) { const im = el('img'); im.alt = ''; im.src = 'https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/19/' + ty + '/' + tx + '.jpeg'; im.style.left = (tx * 256 - cx) + 'px'; im.style.top = (ty * 256 - cy) + 'px'; inn.append(im); }
+      box_.append(inn); box_.setAttribute('role', 'img'); box_.setAttribute('aria-label', 'Ausschnitt aus dem Flächenwidmungsplan mit dem Planzeichen');
+      const f = el('div', 'q-lupf'); f.append(el('div', 'q-cap', 'So steht es im Plan'), box_);
+      if (zone) { const zb = bbox(zone.flat(2)), kx = 111320 * Math.cos(cy ? (zb[1] + zb[3]) / 2 * Math.PI / 180 : 0), bc = [(box[0][0] + box[2][0]) / 2, (box[0][1] + box[2][1]) / 2], dx = Math.max(zb[0] - bc[0], 0, bc[0] - zb[2]) * kx, dy = Math.max(zb[1] - bc[1], 0, bc[1] - zb[3]) * 110574, d = Math.hypot(dx, dy);
+        if (d > 25) f.append(el('div', 'q-note', 'Steht im Plan ca. ' + Math.round(d / 10) * 10 + ' m weiter – gilt für die ganze Fläche.')); }
+      return f; };
+    const zeile = (dot, lab, val, bb, spez, chips, text) => { const w = el('div', 'q-it'), b = el('button', 'q-row'); b.type = 'button'; b.setAttribute('aria-expanded', 'false');
+      const d = el('i', 'q-dot'); d.style.background = dot; const t = el('div', 'q-txt'); t.append(el('div', 'q-lab', lab), el('div', 'q-val', val)); if (bb) t.append(el('div', 'q-bb', bb));
+      b.append(d, t, el('span', 'q-chev')); b.querySelector('.q-chev').setAttribute('aria-hidden', 'true'); w.append(b); const auf = el('div', 'q-auf'); w.append(auf); vor(b, spez);
+      let akt = null; const detail = el('div', 'q-det');
+      const zu = () => { w.classList.remove('auf'); b.setAttribute('aria-expanded', 'false'); auf.textContent = ''; akt = null; };
+      const oeffnen = () => { if (offen && offen !== w) offen._zu(); offen = w; w.classList.add('auf'); b.setAttribute('aria-expanded', 'true'); auf.textContent = ''; detail.textContent = '';
+        if (chips && chips.length) { const cs = el('div', 'q-chips'); chips.forEach(c => { const cb = el('button', 'q-chip'); cb.type = 'button'; cb.append(el('b', '', c.k), el('span', '', c.t)); vor(cb, c.spez || spez);
+          cb.addEventListener('click', () => { const an = akt !== cb; cs.querySelectorAll('.q-chip').forEach(x => x.classList.remove('an')); detail.textContent = ''; akt = an ? cb : null; M.hl = null;
+            if (an) { cb.classList.add('an'); detail.append(el('p', '', c.e)); if (c.box) detail.append(lupe(c.box, c.zone)); zeigen(c.spez || spez, cb); } else zeigen(spez, b); }); cs.append(cb); }); auf.append(cs); }
+        if (text) auf.append(el('p', 'q-t', text)); auf.append(detail); M.hl = null; zeigen(spez, b); };
+      w._zu = zu; w._auf = oeffnen; b.addEventListener('click', () => { if (w.classList.contains('auf')) { zu(); offen = null; M.hl = null; zeigen(null); } else oeffnen(); }); return w; };
+    // 1) Bebaubar höchstens + Maße
+    let held = null;
+    if (sTr && e.front && sTr.tiefe && (sTr.plan || {}).bauweise) { const p = sTr.plan, tf = sTr.tiefe.plan, Lf = frontLen(e), A = p.bauweise === 'o' ? abstand(p, tf) : { m: 0 }, br = Math.round((Lf - 2 * A.m) * 100) / 100, net = br * tf, gfl = g.fl || 0;
+      const dr = { W: 1, GB: 1 }[p.widmung] && gfl && /^(o|gk)$/.test(p.bauweise) ? Math.min(gfl / 3, { I: 350, II: 700 }[p.bauklasse] || Infinity) : null, bbm = (p.bb_text || '').match(/höchstens (\d+) m² bebaut/), bm = bbm ? +bbm[1] : null;
+      const kand = [[net, 'Hausbreite ' + z2(br) + ' m × Tiefe ' + z2(tf) + ' m']].concat(dr ? [[dr, 'Drittel-Regel ' + Math.floor(dr) + ' m²']] : [], bm ? [[bm, p.bb + ' ' + bm + ' m²']] : []), min = Math.min(...kand.map(k => k[0]));
+      const sp = { zonen: [sTr.poly.concat(sts.flatMap(x => x.poly))], kreise: [], farbe: 'b' }; g.bebaubar = { m2: Math.floor(min) };
+      held = el('button', 'q-hero'); held.type = 'button'; held.setAttribute('aria-label', 'Bebaubare Fläche im Plan zeigen'); const ht = el('div', 'q-htx'); ht.append(el('div', 'q-hl', 'Bebaubar höchstens'), el('div', 'q-hz', Math.floor(min) + ' m²'), el('div', 'q-hs', kand.map(k => k[1]).join(' · ')));
+      held.append(ht, el('i', 'q-hsw')); vor(held, sp); held.addEventListener('click', () => { if (offen) { offen._zu(); offen = null; } M.hl = null; zeigen(sp, held); }); wrap.append(held);
+      // Maße: Front aus dem Kataster (goldenes Maßband), Tiefe als Maßpfeil quer über die blaue Fläche
+      const o = e.front[0], kx = Math.cos(o[1] * Math.PI / 180) * 111320, ky = 110574, loc = c => [(c[0] - o[0]) * kx, (c[1] - o[1]) * ky], glo = q => [o[0] + q[0] / kx, o[1] + q[1] / ky];
+      const fb_ = loc(e.front[1]), Lg = Math.hypot(...fb_), dd = [fb_[0] / Lg, fb_[1] / Lg], cen = loc(bbox(sTr.poly.flat()).slice(0, 2).map((v, k) => (v + bbox(sTr.poly.flat())[k + 2]) / 2)); let nn = [-dd[1], dd[0]]; if (cen[0] * nn[0] + cen[1] * nn[1] < 0) nn = [dd[1], -dd[0]];
+      const ns = sTr.poly[0].map(loc).map(q => q[0] * nn[0] + q[1] * nn[1]), um = Lg / 2, n0 = Math.min(...ns), n1 = n0 + tf, pt = n => glo([dd[0] * um + nn[0] * n, dd[1] * um + nn[1] * n]);
+      const mz = zeile('#C9A96E', 'Maße', 'Front ' + z2(Lf) + ' m · Tiefe ' + z2(tf) + ' m', 'Front aus dem Kataster, Tiefe aus dem Plan', { zonen: [], kreise: [], linien: [{ p: e.front, t: z2(Lf) + ' m' }, { p: [pt(n0), pt(n1)], t: z2(tf) + ' m' }] }, null,
+        'Front: Länge der Grundstücksgrenze an der Straße, aus dem Kataster. Tiefe: so tief darf gebaut werden – Planzahl ' + z2(tf) + ' m (Zahl mit zwei Pfeilen im Plan).'); mz.classList.add('q-solo'); wrap.append(mz); }
+    // 2) Widmung je Teil, wie in den Rechenbeispielen
+    const k1 = el('div', 'q-card'); wrap.append(k1);
+    const NAME = { strasse: 'Widmung Straßentrakt', hof: 'Widmung Hoffläche', hof_links: 'Widmung Hoffläche links', hof_rechts: 'Widmung Hoffläche rechts', vorgarten: 'Vorgarten', frei: 'Hinterer Teil', abtretung: 'Grundabtretung' };
+    teile.forEach(t => { const p = t.plan || {}, zone = zoneVon(t), sp = { zonen: zone, kreise: [], farbe: FB(t) }, box = a => (t.labels.find(l => a === '*' || (l.teile && l.teile[a])) || {}), bx = a => { const l = box(a); return a === '*' ? l.box : l.teile && l.teile[a]; };
+      const bbT = p.bb ? p.bb + (p.bb_text ? ' · ' + p.bb_text.replace(/^Hier dürfen nur /, 'nur ').replace(/ \(z\. B\.[^)]*\)/, '').replace(/\.$/, '') : '') : '';
+      let w;
+      if (t.art === 'bebaubar') { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null, ch = [];
+        if (p.widmung) ch.push({ k: p.widmung, t: PL_W[p.widmung] || 'Widmung', e: WX[p.widmung] || 'Die Widmung sagt, was hier gebaut werden darf.', box: bx('widmung') || bx('*'), zone });
+        if (p.bauklasse) ch.push({ k: p.bauklasse, t: 'Bauklasse ' + p.bauklasse, e: 'Die Bauklasse legt die Gebäudehöhe fest' + (bk ? ': normal ' + String(bk[0]).replace('.', ',') + ' bis ' + bk[1] + ' m.' : '.'), box: bx('bauklasse') || bx('*'), zone });
+        if (h) ch.push({ k: p.hoehe.replace(' ', ' '), t: 'Höhe begrenzt', e: 'Die Meterzahl im Plan geht vor: höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt ' + bk[1] + ' m.' : '.'), box: bx('hoehe') || bx('*'), zone });
+        if (p.bauweise) ch.push({ k: p.bauweise, t: PL_BW[p.bauweise] || 'Bauweise', e: BWX[p.bauweise] || '', box: bx('bauweise') || bx('*'), zone });
+        if (p.bb) ch.push({ k: p.bb, t: 'Besondere Bestimmung', e: (p.bb_text || 'Zusätzliche Regel für diese Fläche – der Text steht im Plandokument.') + (e.plandokument ? ' Plandokument ' + e.plandokument.nr + '.' : ''), box: bx('bb') || bx('*'), zone });
+        if (t.tiefe) ch.push({ k: z2(t.tiefe.plan) + ' m', t: t.tiefe.art === 'baufenster' ? 'Bebaubare Tiefe' : 'Trakttiefe', e: 'So tief darf gebaut werden – Planzahl mit zwei Pfeilen.' + (t.tiefe.box ? '' : ''), box: t.tiefe.box || null, zone });
+        if (t === sTr && sts.length && p.bauweise === 'o' && t.tiefe) { const A = abstand(p, t.tiefe.plan); ch.push({ k: z2(A.m).replace(',00', '') + ' m', t: 'Abstand zum Nachbarn', e: A.ok ? 'Offene Bauweise, Bauklasse I: bis auf die halbe Gebäudehöhe (' + z2(A.gh) + ' m ÷ 2) an die Grenze heran (BO § 79 Abs. 3). Die grünen Streifen bleiben frei.' : 'Offene Bauweise: 6 m zur seitlichen Grenze (BO § 79 Abs. 3). Die grünen Streifen bleiben frei.', spez: { zonen: sts.flatMap(x => x.poly.map(r => [r])), kreise: [], farbe: 'g' } }); }
+        w = zeile('#2F6FC4', NAME[t.rolle] || 'Widmung', (plText(Object.assign({}, p, { bb: null })) || ZTXT[ZART(t)]).replace(/ · .*$/, ''), bbT, sp, ch); }
+      else if (t.art === 'G') { const ch = [{ k: 'G', t: 'gärtnerisch auszugestalten', e: 'Garten oder Grünfläche – hier darf kein Gebäude stehen.', box: bx('*'), zone }]; if (p.bb) ch.push({ k: p.bb, t: 'Besondere Bestimmung', e: (p.bb_text || 'Zusätzliche Regel – der Text steht im Plandokument.') + (e.plandokument ? ' Plandokument ' + e.plandokument.nr + '.' : ''), box: bx('*'), zone });
+        w = zeile('#3E9B57', NAME[t.rolle] || 'Widmung', 'G', bbT || 'gärtnerisch auszugestalten', sp, ch); }
+      else if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; w = zeile('#3E9B57', 'Vorgarten', v && v.plan ? z2(v.plan) + ' m' : 'nicht bebaubar', 'zwischen Straße und Haus – bleibt frei', sp, null, 'Streifen zwischen Straße und Baufluchtlinie. Garten, Zugang und Zufahrt – aber kein Gebäude.'); }
+      else w = zeile(t.art === 'abtretung' ? '#C8102E' : '#3E9B57', NAME[t.rolle] || ZTXT[ZART(t)], ZTXT[ZART(t)], null, sp, null, ZERK[ZART(t)]);
+      k1.append(w); M.zonZiel.push({ poly: t.poly, open: () => { if (!w.classList.contains('auf')) w._auf(); w.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } }); });
+    sts.forEach(x => { const sw = k1.querySelector('.q-it'); M.zonZiel.unshift({ poly: x.poly, open: () => { if (!sw.classList.contains('auf')) sw._auf(); const c = [...sw.querySelectorAll('.q-chip')].find(b => /Abstand/.test(b.textContent)); if (c && !c.classList.contains('an')) c.click(); } }); });
+    const dach = e.plandokument && (e.plandokument.allgemein || []).find(a => /^4,5 m$/.test(a[0]));
+    if (dach) k1.append(zeile('#8A94A6', 'Dach', 'max. 4,5 m', 'über der Gebäudehöhe („First über Traufe“)', { zonen: [], kreise: [] }, null, dach[2] + ' Plandokument ' + e.plandokument.nr + '.'));
+    // 3) Straße und Abtretung
+    const k2 = el('div', 'q-card q-mehr'); const mz_ = (l, v) => { const r = el('div', 'q-mz'); r.append(el('span', '', l), el('b', '', v)); k2.append(r); };
+    const sb = e.teile.map(t => t.strassenbreite).find(x => x && x.plan); if (sb) mz_('Straßenbreite', z2(sb.plan) + ' m');
+    mz_('Grundstück abtreten', e.teile.some(t => t.art === 'abtretung') ? 'Ja' : 'Nein'); wrap.append(k2); }
   const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
     const zG = { zonen: (g.teile || [g]).flatMap(t => t.polys), kreise: (g.teile || [g]).map(t => [proben({ polys: t.polys })[0]]) }, alleP = (g.teile || [g]).flatMap(t => t.polys.flatMap(pg => pg[0]));
@@ -938,7 +963,7 @@ function start() {
       : karte('gruen', u ? 'Keine Auffälligkeiten' : 'Grundstück eindeutig gefunden', u ? 'Bauland, kein Schutzgebiet, kein Hochwasser, Grundstück eindeutig.' : 'Fläche und Grenzen stammen aus dem amtlichen Kataster.');
     if (!rot.length && gelb.length) { const ul = document.createElement('ul'); ul.className = 'g-pl'; gelb.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.append(li); }); kopf.append(ul); }
     D.append(kopf);
-    D.append(g.bebaubar ? karte('bau', 'Bebaubar höchstens ' + g.bebaubar.m2 + ' m²', 'So viel Grundfläche darf dein Haus haben – die blaue Fläche im Plan.', g.bebaubar.text, g.bebaubar.zeig) : karte('bald', 'Wie viel darfst du hier bauen?', 'Erlaubte Höhe, Geschosse und Reserve in m² berechnen wir im nächsten Schritt.')); requestAnimationFrame(ueberlauf);
+    if (!g.bebaubar) D.append(karte('bald', 'Wie viel darfst du hier bauen?', 'Erlaubte Höhe, Geschosse und Reserve in m² berechnen wir im nächsten Schritt.')); requestAnimationFrame(ueberlauf);
     if (!u && g.teile) umfeld(g).then(v => { g.umf = v; if (M.sel === g) zeigeInfo(g, g.infoO); }, () => { g.umf = {}; if (M.sel === g) zeigeInfo(g, g.infoO); }); };
   const ladeKg = () => { if (!kgNamen) kgNamen = fetch('kataster/kg.json').then(r => r.json()).then(j => (M.kg = j.kg)).catch(() => (M.kg = {})); return kgNamen; };
   const ueberlauf = () => gBox.toggleAttribute('data-lenis-prevent', gBox.scrollHeight > gBox.clientHeight + 2);   // nur wenn die Box selbst scrollen muss, sonst scrollt die Seite
