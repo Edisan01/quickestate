@@ -1,0 +1,67 @@
+{
+ "dokumente": {
+  "6951": {
+   "beschluss": "Gemeinderat 31.01.1997, Pr.Zl. 12 GPZ/97",
+   "bb": {
+    "BB1": "Hier dürfen nur Kleinhäuser (§ 116 Abs. 1 BO) gebaut werden – mit höchstens 200 m² bebauter Fläche.",
+    "BB2": "Gebäude an den seitlichen Grundgrenzen höchstens 8,0 m tief, höchstens die halbe Bauplatzbreite bebaut; an der seitlichen Grenze höchstens 2,0 m über der Gebäudehöhe.",
+    "BB3": "Keine unterirdischen Bauten (z. B. Keller, Tiefgarage) erlaubt."
+   },
+   "allgemein": [
+    [
+     "15,00",
+     "Trakttiefe höchstens 15,00 m",
+     "Bei offener (oder gekuppelter) Bauweise dürfen Gebäude höchstens 15,00 m tief sein (Punkt 3.1.5)."
+    ],
+    [
+     "2+DG",
+     "Höchstens 2 Hauptgeschosse + Dachgeschoss",
+     "Wo höchstens 7,5 m Gebäudehöhe erlaubt sind: maximal zwei Hauptgeschosse und ein Dachgeschoss (3.1.3)."
+    ],
+    [
+     "4,5 m",
+     "Dach höchstens 4,5 m über Gebäudehöhe",
+     "Der höchste Punkt des Daches darf höchstens 4,5 m über der tatsächlich gebauten Gebäudehöhe liegen (3.1.4)."
+    ],
+    [
+     "30 m²",
+     "Nebengebäude höchstens 30 m²",
+     "Nebengebäude (z. B. Garage, Gartenhaus) zusammen höchstens 30 m² je Bauplatz; Flachdächer ab 5 m² begrünen (3.1.7)."
+    ],
+    [
+     "Erker",
+     "Keine Erker zur Straße",
+     "An Fronten direkt zur Straße keine Erker und vorragenden Loggien (3.1.1)."
+    ],
+    [
+     "Staffel",
+     "Keine Staffelgeschosse zur Straße",
+     "Staffelgeschosse an den zur Baulinie gerichteten Seiten sind verboten (3.1.2)."
+    ],
+    [
+     "2,0 m",
+     "Zaun höchstens 2,0 m",
+     "Einfriedungen seitlich und hinten höchstens 2,0 m hoch, ab 0,5 m durchsichtig (3.1.8)."
+    ],
+    [
+     "Regen",
+     "Regenwasser nicht in den Kanal",
+     "Niederschlagswasser darf nicht in den Kanal geleitet werden (Versickerung am Grundstück) (3.1.9)."
+    ],
+    [
+     "Garten",
+     "Unbebaute Flächen begrünen",
+     "Nicht bebaute, aber bebaubare Flächen sind gärtnerisch zu gestalten – ausgenommen Zufahrt, Rangierflächen, offene Stellplätze (3.1.6)."
+    ]
+   ],
+   "quelle": "Plandokument 6951 (Scan), BB-Nummern am Plan 6951 abgelesen"
+  }
+ },
+ "zuordnung": {
+  "01806_382/4+382/15": {
+   "pd": "6951",
+   "bebaubar": "BB1",
+   "G": "BB3"
+  }
+ }
+}

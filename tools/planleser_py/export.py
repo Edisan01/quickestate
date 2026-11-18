@@ -216,6 +216,12 @@ def fall(m,im,wfs):
       q=np.array([z['t']['x'],z['t']['y']]); al=np.dot(q-a_,dv); pe=np.dot(q-a_,nv)
       if cv2.pointPolygonTest(hull[cv2.convexHull(hull,returnPoints=False).ravel()],(float(q[0]),float(q[1])),False)>=0: continue
       if not(-25/MPX<=pe<=0 and -120/MPX<=al<=L_+120/MPX): continue
+      zon=S.stadtzonen(m,wfs,off)
+      if any(cv2.pointPolygonTest(zz['P'].astype(np.float32),(float(q[0]),float(q[1])),False)>=0 for zz in zon):
+        # Maß liegt im Bauland (z. B. Baufenster-Tiefe 12,00 beim Nachbarn derselben Zeile) → Tiefe, nicht Straße
+        for o in out:
+          if o['rolle']=='strasse' and 'tiefe' not in o: o['tiefe']=dict(plan=z['v'],gemessen=z['gem'],ok=True,art='baufenster',box=[ll(m,*(qq+off)) for qq in cv2.boxPoints(((z['t']['x'],z['t']['y']),(z['t']['w']+2,z['t']['h']+2),z['t']['ang']))])
+        continue
       if abs(np.dot((z['a']-z['b'])/max(1e-6,np.hypot(*(z['a']-z['b']))),nv))<0.9: continue
       if sbm and 'sbr' in dir() and sbr.get('plan')==z['v']: continue
       if any(abs(x['v']-z['v'])<0.01 for x in sm): continue
@@ -252,6 +258,13 @@ if __name__=='__main__':
     m=M[i]; im=cv2.imread(BILD%i)
     fs=[f for g in m['gnr'].split('+') for f in glob.glob(f"/home/claude/pb/wfs/{m['kg']}_{g.replace('/','-')}_GENFLWIDMUNGOGD.json")]
     out,fk,dbg=fall(m,im,json.load(open(fs[0])))
-    res[m['kg']+'_'+m['gnr']]=dict(name=m['name'],kg=m['kg'],gnr=m['gnr'],stand=str(datetime.date.today()),version='planleser-py-2',front=fk,teile=out)
+    key=m['kg']+'_'+m['gnr']
+    res[key]=dict(name=m['name'],kg=m['kg'],gnr=m['gnr'],stand=str(datetime.date.today()),version='planleser-py-2',front=fk,teile=out)
+    pdz=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'plandokumente.json')))
+    if key in pdz.get('zuordnung',{}):
+      z_=pdz['zuordnung'][key]; pdo=pdz['dokumente'][z_['pd']]; res[key]['plandokument']=dict(pdo,nr=z_['pd'])
+      for t in out:
+        b_=z_.get(t['art'] if t['art']!='bebaubar' else 'bebaubar')
+        if b_ and t['plan'].get('bb'): t['plan']['bb']=b_; t['plan']['bb_text']=pdo['bb'][b_]
     print(m['name'],'Maßzahlen:',dbg); [print('  ',o['rolle'],o['art'],o['stadt']['code'],o['plan'],o['stadt_plan_gleich'],o['m2_plan'],[l['t'] for l in o['labels']],o.get('tiefe'),o.get('vorgarten')) for o in out]
   json.dump(res,open(sys.argv[1],'w'),ensure_ascii=False)
