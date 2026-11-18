@@ -55,6 +55,46 @@
     ]
    ],
    "quelle": "Plandokument 6951 (Scan), BB-Nummern am Plan 6951 abgelesen"
+  },
+  "7537": {
+   "beschluss": "26.11.2003",
+   "quelle": "Plandokument 7537, MA 21 A (von Eduard 18.11.2026)",
+   "bb": {
+    "BB1": "Die geschlossene Bauweise darf unterbrochen werden.",
+    "BB2": "Höchstens 40 % des jeweiligen Teils des Bauplatzes dürfen bebaut werden.",
+    "BB3": "Höchstens 60 % des jeweiligen Teils des Bauplatzes dürfen bebaut werden.",
+    "BB4": "Höchstens 80 % des jeweiligen Teils des Bauplatzes dürfen bebaut werden.",
+    "BB5": "Dächer als begrünte Flachdächer.",
+    "BB6": "Keine unterirdischen Bauten (z. B. Keller, Tiefgarage) erlaubt.",
+    "Ak öDg": "Öffentlicher Durchgang mit 2,5 m lichter Höhe freihalten."
+   },
+   "allgemein": [
+    [
+     "Erker",
+     "Keine Erker, Balkone, Loggien an Baulinien",
+     "An allen Baulinien keine Erker, Balkone und vorragenden Loggien; Gliederungen max. 0,6 m (Straße bis 16 m) bzw. 0,8 m (3.1)."
+    ],
+    [
+     "4,5 m",
+     "Dach höchstens 4,5 m über Gebäudehöhe",
+     "Der höchste Punkt des Daches höchstens 4,5 m über der gebauten Gebäudehöhe – „4,5 m First über Traufe“ (3.4)."
+    ],
+    [
+     "Flachdach",
+     "Bauklasse I: begrünte Flachdächer",
+     "In W/GB Bauklasse I bis 7,5 m Gebäudehöhe begrünte Flachdächer (3.5)."
+    ],
+    [
+     "30 m²",
+     "Nebengebäude höchstens 30 m²",
+     "Nebengebäude zusammen höchstens 30 m² je Bauplatz, ab 5 m² begrüntes Flachdach (3.7)."
+    ],
+    [
+     "Garten",
+     "Unbebaute Flächen begrünen",
+     "Nicht bebaute, aber bebaubare Baulandflächen gärtnerisch gestalten (3.8)."
+    ]
+   ]
   }
  },
  "zuordnung": {
