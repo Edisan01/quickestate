@@ -1,4 +1,10 @@
 {
+"6538": {
+"geholt": "2026-11-18",
+"ocr": false,
+"seiten": 3,
+"zeichen": 7991
+},
 "6848": {
 "art": "",
 "geholt": "2026-11-17",
@@ -22,6 +28,12 @@
 "ocr": true,
 "seiten": 2,
 "zeichen": 2400
+},
+"6999": {
+"geholt": "2026-11-18",
+"ocr": false,
+"seiten": 2,
+"zeichen": 6596
 },
 "7057": {
 "art": "",
@@ -55,6 +67,18 @@
 "seiten": 2,
 "zeichen": 3434
 },
+"7208": {
+"geholt": "2026-11-18",
+"ocr": false,
+"seiten": 3,
+"zeichen": 5678
+},
+"7216": {
+"geholt": "2026-11-18",
+"ocr": false,
+"seiten": 4,
+"zeichen": 9866
+},
 "7223": {
 "art": "",
 "geholt": "2026-11-17",
@@ -81,11 +105,17 @@
 },
 "7294": {
 "art": "",
-"geholt": "2026-11-17",
+"geholt": "2026-11-18",
 "kund": "",
 "ocr": false,
 "seiten": 3,
 "zeichen": 5329
+},
+"7318": {
+"geholt": "2026-11-18",
+"ocr": false,
+"seiten": 3,
+"zeichen": 7114
 },
 "7379": {
 "art": "",
@@ -110,6 +140,18 @@
 "ocr": false,
 "seiten": 4,
 "zeichen": 8147
+},
+"7462": {
+"geholt": "2026-11-18",
+"ocr": false,
+"seiten": 2,
+"zeichen": 4380
+},
+"7486": {
+"geholt": "2026-11-18",
+"ocr": false,
+"seiten": 2,
+"zeichen": 3648
 },
 "7525": {
 "art": "",

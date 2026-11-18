@@ -26,33 +26,49 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "6538",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "05.06.2003",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "Keine Erker/Balkone zur Straße.",
+     "Dach höchstens 4,5 m über der Gebäudehöhe.",
+     "Über einer Tiefgarage unter Gartenflächen ausreichend Erdkerne für Bäume lassen – Menge nicht festgelegt, mit der Baupolizei klären.",
+     "Zaun ab 0,5 m Höhe durchsichtig (kein blickdichter Zaun/Sichtschutz).",
+     "Unbebaute Flächen gärtnerisch gestalten (Garten statt Pflaster) – Kosten einplanen.",
+     "Nebengebäude (Gartenhaus, Carport) höchstens 30 m² je Bauplatz.",
+     "Dachbegrünung verlangt – Kosten einplanen.",
+     "Flachdach (meist begrünt) – kein Dachgeschoß; Gründach-Kosten einplanen.",
+     "Laut PD-Satz unzulässig: Erker, Balkone, Loggien"
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 6538 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD (DN_L-WZ 597.1 m²)"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -72,8 +88,26 @@
     "wert": [
      18.6
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "1": "4.1. Auf der mit BB1 bezeichneten und als Grünland/Erholungs-gebiet/Sportund Spielplatz gewidmeten Grundfläche dürfen keine Gebäude errichtet werden.",
+     "2": "4.2. Auf den mit BB2 bezeichneten Grundflächen dürfen Gebäude bis zu einer maximalen Gebäudehöhe von 5,5 m errichtet werden; der höchste Punkt des Daches darf nicht mehr als 2,0 m über der tatsächlich ausgeführten Gebäudehöhe liegen.",
+     "3": "4.3. Innerhalb der mit G BB 3 bezeichneten Grundflächen müssen 30 v.H. der Fläche des Bauplatzes von jeder ober- und unterirdischer Bebauung frei bleiben.",
+     "4": "4.4. Auf der mit G BB4 bezeichneten Grundfläche ist die Errichtung von unterirdischen Bauten untersagt.",
+     "5": "4.5. Die mit P BB5 bezeichnete und für Anlagen zum Einstellen von Kraftfahrzeugen vorbehaltene Grundfläche ist in einem Ausmaß von mindestens 30 v.H. dieser durch Fluchtlinien bestimmten Fläche gärtnerisch auszugestalten.",
+     "6": "4.6. In den mit BB6 bezeichneten Bereichen ist eine maximale Gebäudehöhe von 5,5 m zulässig. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig. Der höchste Punkt der zur Ausführung gelangenden Dächer darf die tatsächlich ausgeführte Gebäudehöhe um höchstens 2,0",
+     "7": "4.7. Auf den mit BB7 bezeichneten Flächen wird die Herstellung der Höhenlage der Grundfläche mit +6,5 m über Wiener Null angeordnet.",
+     "8": "4.8. Die mit BB8 bezeichneten Flächen sind von jeder ober- und unterirdischen Bebauung freizuhalten.",
+     "9": "4.9. Auf der mit BB9 bezeichneten Fläche im Gemischten Baugebiet, Bauklasse IV bzw. Bauklasse IV beschränkt auf 19 m werden Durchgänge bzw. durchgängige Arkaden mit einer lichten Höhe von 3,0 m angeordnet.",
+     "10": "4.10. Auf den mit BB10 bezeichneten Flächen im Gemischten Baugebiet - Geschäftsviertel ist die Errichtung von Wohnungen erst ab einer Höhe der Fußbodenoberkante von 12 m über der anschließenden Verkehrsfläche zulässig.",
+     "Widmung Wohnzone gemäß § 7a Abs.1 der BO für Wien": "4.11. In den als Wohnzone gemäß § 7a Abs.1 der BO für Wien ausgewiesenen Bereichen ist mit Ausnahme der Bauplätze an der Ausstellungsstraße und der Lassallestraße sowie der mit der Bestimmung Geschäftsviertel ausgewiesenen Bereiche des Baulandes, nur die Errichtung von Wohngebäuden zulässig, in dene",
+     "11": "5. Gemäß § 4 Abs. 3 und § 5 Abs. 7 der BO für Wien wird bestimmt: Auf der mit BB11 bezeichneten Fläche wird eine Widmung für zwei übereinanderliegende Räume derart festgesetzt, dass der Raum bis zu einer Höhe von 3,5 m über Straßenniveau dem öffentlichen Gut, der darüberliegende Raum dem Bauland - G"
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 6538"
    }
   },
   "pro_front": {
@@ -253,33 +287,46 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "7318",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "13.07.2000",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "Dach höchstens 4,5 m über der Gebäudehöhe.",
+     "Flachdach (meist begrünt) – kein Dachgeschoß; Gründach-Kosten einplanen.",
+     "Dachbegrünung verlangt – Kosten einplanen.",
+     "Unbebaute Flächen gärtnerisch gestalten (Garten statt Pflaster) – Kosten einplanen.",
+     "Im Erdgeschoß keine Wohnungen – EG als Geschäft, Büro oder Allgemeinflächen.",
+     "Nebengebäude (Gartenhaus, Carport) höchstens 30 m² je Bauplatz."
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7318 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -299,8 +346,16 @@
     "wert": [
      16.16
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "3": "3. Bestimmungen gemäß § 4 Abs. 3 und § 5 Abs. 7 der BÖ für Wien: 3.l.Für die mit BB 3 bezeichnete Fläche werden gesonderte Widmungen für zwei übereinander liegende Räume derart getroffen, dass der Raum unterhalb von +36,90 m über Wiener Null ab der nördlichen Grenzlinie in einer Neigung von 4% anste",
+     "2": "Bestimmungen gemäß § 5 Abs. 4 der BÖ für Wien mit Plandarstellung: 5. l. In den mit BB l bezeichneten Teilen des Wohn- oder Gemischten Baugebietes darf die bebaute Fläche maximal 30% der Bauplatzgröße betragen. 5.2.Auf den mit G BB 2 bezeichneten Grundflächen dürfen weder unterirdische Bauten noch N"
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7318"
    }
   },
   "pro_front": {
@@ -475,33 +530,44 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "7486",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "13.05.2004",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "Keine Erker/Balkone zur Straße.",
+     "Gesimse/Lisenen (Gliederung) zur Straße höchstens 0,6 m vorragend.",
+     "Dach höchstens 4,5 m über der Gebäudehöhe.",
+     "Laut PD-Satz unzulässig: Erker, Loggien"
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7486 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -521,8 +587,17 @@
     "wert": [
      22.31
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "1": "3.2.1. Auf den mit BB1 bezeichneten Grundflächen darf die bebaute Fläche nicht mehr als 50 % des jeweiligen Teiles des Bauplatzes betragen. Unbebaute Flächen sind gärtnerisch auszugestalten.",
+     "2": "3.2.2. Entlang der mit BB2 bezeichneten Baulinien dürfen im Erdgeschoß keine Hauptfenster von Aufenthaltsräumen von Wohnungen zu den Verkehrsflächen hin orientiert werden.",
+     "3": "3.2.3. Die Dächer der auf den mit BB3 bezeichneten Flächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der technischen Wissenschaften als begrünte, begehbare Flachdächer auszubilden. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig. Bebaubar"
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7486"
    }
   },
   "pro_front": {
@@ -700,33 +775,43 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "7216",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "30.12.1999",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "10 % der Garagenfläche unter G als Erdkern für Bäume – fällt als Garage weg.",
+     "Dach höchstens 4,5 m über der Gebäudehöhe.",
+     "Unbebaute Flächen gärtnerisch gestalten (Garten statt Pflaster) – Kosten einplanen."
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7216 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -746,8 +831,28 @@
     "wert": [
      17.65
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "Widmung Geschäftsviertel": "3.2. In den als Geschäftsviertel ausgewiesenen Flächen ist die Errichtung von Wohnungen nicht zulässig.",
+     "1": "4.1. Auf den mit BB1 gekennzeichneten Bereichen ist die Unterbrechung der geschlossenen Bauweise zulässig.",
+     "2": "4.2. Die' Dächer von Gebäuden mit einer Grundfläche von mehr als 100 m 2 , die auf den mit BB2 bezeichneten Flächen errichtet werden, sind als begrünte Flachdächer mit einer Neigung von maximal 5° auszubilden. Technische oder der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "3": "4.3. Auf der mit Erholungsgebiet/Sport- und Spielplatz, Grundfläche für öffentliche Zwecke (Esp ÖZ) und mit BB3 bezeichneten Fläche ist die Errichtung von Gebäuden im Gesamtausmaß von 450 m 2 zulässig. Die Gebäudehöhe darf 4,0 m nicht überschreiten, die Dachneigung muß zwischen 20 und 30 Grad betrag",
+     "4": "4.4. Auf den mit G BB4 bezeichneten Flächen ist die Herstellung von Anlagen für die Benutzung als Schulsport- und Spielplatz zulässig.",
+     "Pkt. 4.5": "4.5. Die mit der besonderen Bestimmung BBS versehenen gärtnerisch auszugestaltenden Flächen sind von jeder Bebauung freizuhalten",
+     "Pkt. 4.6": "4.6. In den als Grünland/Erholungsgebiet - Uferpromenade gewidmeten und mit BBS bezeichneten Flächen ist die Errichtung von Gebäuden für gastronomische Zwecke oder für Zwecke der Bootsvermietung bzw. für Rudervereine zulässig. Dabei darf die maximal bebaute Fläche bis zu 30 % der Gesamtfläche je Tre",
+     "9": "4.7. Auf den als Grünland/Erholungsgebiet - Badehütten ausgewiesenen und mit BB9 bezeichneten Flächen ist die Errichtung von Gebäuden mit einer bebauten Fläche von maximal 20 m 2 je Trennstück zulässig. Die Gebäudehöhe darf den tiefsten Punkt des anschließenden Geländes um nicht mehr als 3,0 m, der ",
+     "10": "4.8. Auf den als Grünland/Erholungsgebiet - Badehütten ausgewiesenen und mit BB10 bezeichneten Flächen darf die Gebäudehöhe den tiefsten Punkt des anschließenden Geländes um nicht mehr als 3,5 m, der höchste Punkt des Daches darf den tiefsten Punkt des anschließenden Geländes um nicht mehr als 5,0 m",
+     "11": "4.9. Auf den mit BB11 bezeichneten Grundflächen sind die Einfriedungen an der nördlichen, der Verkehrsfläche nächstgelegenen, Grundgrenze so herzustellen, daß sie ab einer Höhe von 1,5 m den freien Durchblick nicht hindern. 4.10.In der als Grünland/Erholungsgebiet Uferpromenade gewidmeten und mit BB",
+     "6": "5.1. Für die mit BB6 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zur Brückenkonstruktionsunterkante als öffentliche Verkehrsfläche und der Raum darüber als Verkehrsband ausgewiesen wird.",
+     "7": "5.2. Für die mit BB7 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zu einer lichten Höhe von 7,0 m dem Bauland als öffentliche Verkehrsfläche mit einer Mindestbreite von 14,0 m zugeordnet wird und der Raum darüber als Baula",
+     "12": "5.3. Für die mit BB12 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zur Brückenkonstruktionsunterkante als Erholungsgebiet/Freie Wasserfläche und der Raum darüber als Verkehrsband ausgewiesen wird.",
+     "13": "5.4. Für die mit BB13 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zur Brückenkonstruktionsunterkante als Erholungsgebiet/Park und der Raum darüber als Verkehrsband ausgewiesen wird."
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7216"
    }
   },
   "pro_front": {
@@ -921,33 +1026,48 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "7208",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "06.04.2000",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "Dach höchstens 4,5 m über der Gebäudehöhe.",
+     "Flachdach (meist begrünt) – kein Dachgeschoß; Gründach-Kosten einplanen.",
+     "Dachbegrünung verlangt – Kosten einplanen.",
+     "Unbebaute Flächen gärtnerisch gestalten (Garten statt Pflaster) – Kosten einplanen.",
+     "Im Erdgeschoß keine Wohnungen – EG als Geschäft, Büro oder Allgemeinflächen.",
+     "Nebengebäude (Gartenhaus, Carport) höchstens 30 m² je Bauplatz.",
+     "30 % des Bauplatzes bleiben frei – weder oberirdisch noch unterirdisch bebaut (Garage begrenzt).",
+     "Diese Fläche bleibt oberirdisch unbebaut (im Plan prüfen, bis zu welcher Höhe)."
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7208 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -967,8 +1087,16 @@
     "wert": [
      23.66
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "2": "4.2. Auf den mit BB 2 bezeichneten Grundflächen dürfen weder unterirdische Bauten noch Nebengebäude errichtet werden.",
+     "3": "4.3. Innerhalb der mit BB 3 bezeichneten und als Bauland, gemischtes Baugebiet, Bauklasse III bzw. IV, geschlossene Bauweise gewidmeten Grundfläche ist im Niveau der anschließenden Verkehrsflächen ein Raum für einen öffentlichen Durchgang mit einer lichten Höhe von 3,5 m freizuhalten und zu dulden."
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7208"
    }
   },
   "pro_front": {
@@ -1141,33 +1269,47 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "6999",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "09.10.1997",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "Keine Erker/Balkone zur Straße.",
+     "Dach höchstens 4,5 m über der Gebäudehöhe.",
+     "Flachdach (meist begrünt) – kein Dachgeschoß; Gründach-Kosten einplanen.",
+     "Dachbegrünung verlangt – Kosten einplanen.",
+     "Nebengebäude (Gartenhaus, Carport) höchstens 30 m² je Bauplatz.",
+     "Unbebaute Flächen gärtnerisch gestalten (Garten statt Pflaster) – Kosten einplanen.",
+     "Laut PD-Satz unzulässig: Erker, Balkone, Loggien"
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 6999 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD (DN_L-WZ 356.5 m²)"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -1187,8 +1329,18 @@
     "wert": [
      21.08
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "1": "4.1. Auf den mit BB 1 bezeichneten Grundflächen ist die Unterbrechung der geschlossenen Bauweise zulässig.",
+     "2": "4.2. Auf den mit G BB 2 bezeichneten Grundflächen dürfen weder unterirdische Bauten noch Nebengebäude errichtet werden.",
+     "3": "Der mit BB 3 bezeichnete, als gemischtes Baugebiet ausgewiesene Raum ist gemäß § 5 Abs. 4 lit. t der BO für Wien der Errichtung von baulichen Anlagen zum Einstellen von Kraftfahrzeugen unter den in § 4 Abs. 3 des Wiener Garagengesetzes normierten Voraussetzungen vorbehalten. Auf der mit BB 3 bezeich",
+     "4": "4.3. Auf den mit BB 4 bezeichneten Flächen wird die höchstzulässige Anzahl der Hauptgeschoße für die Liegenschaften Strozzigasse ONr. 41 (EZ 770) und Strozzigasse ONr. 47 (EZ 774) mit drei, für die Liegenschaften Strozzigasse ONr. 39 (EZ 768), Strozzigasse ONr. 43 (EZ 772) und Strozzigasse ONr. 45 ("
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 6999"
    }
   },
   "pro_front": {
@@ -1362,33 +1514,44 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "7462",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "10.06.2004",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "Keine Erker/Balkone zur Straße.",
+     "Gesimse/Lisenen (Gliederung) zur Straße höchstens 0,6 m vorragend.",
+     "Dach höchstens 4,5 m über der Gebäudehöhe.",
+     "Laut PD-Satz unzulässig: Erker, Loggien"
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7462 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD (DN_L-WZ 760.3 m², DN_L-WZ 711.3 m²)"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD ( 798.0 m²)"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -1409,8 +1572,18 @@
     "wert": [
      20.46
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "öDg": "3.1.4. Die mit öDg bezeichneten Grundflächen sind zur Errichtung und Duldung von öffentlichen Durchgängen freizuhalten. Überbauungen haben eine lichte Durchgangshöhe von 3,0 m einzuhalten.",
+     "1": "3.2.1. In den mit G/BB1 bezeichneten Bereichen ist die Errichtung von unterirdischen Gebäuden untersagt.",
+     "2": "3.2.2. Die Dächer der auf den mit BB2 bezeichneten Flächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der technischen Wissenschaften als begrünte, begehbare Flachdächer auszubilden. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig. Bebaubar",
+     "3": "3.2.3. Entlang der mit BB3 bezeichneten Baulinien dürfen im Erdgeschoß keine Hauptfenster von Aufenthaltsräumen von Wohnungen zu den Verkehrsflächen hin orientiert werden."
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7462"
    }
   },
   "pro_front": {
@@ -1642,33 +1815,44 @@
     "quelle": "kataster"
    },
    "eckgrundstueck": {
-    "wert": null,
-    "zustand": "offen",
-    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "Stadt-Zonen + Kataster"
    },
    "plandokument_nr": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "7294",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "kundmachung": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": "04.10.2001",
+    "zustand": "bestaetigt",
+    "quelle": "stadt WMS SCHNITTMUSTEROGD"
    },
    "allgemeine_bestimmungen": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": [
+     "Unbebaute Flächen gärtnerisch gestalten (Garten statt Pflaster) – Kosten einplanen.",
+     "10 % der Garagenfläche unter G als Erdkern für Bäume – fällt als Garage weg.",
+     "Jeder Erdkern mindestens 25 m² groß.",
+     "Dach höchstens 4,5 m über der Gebäudehöhe."
+    ],
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7294 (BB-Leser v204)"
    },
    "schutzzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt SCHUTZZONEOGD"
    },
    "wohnzone": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt GRPZONENOGD"
    },
    "bausperre": {
-    "wert": null,
-    "zustand": "offen"
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "stadt BAUSPERRE82/86OGD"
    },
    "abbruch_vor_1945": {
     "wert": null,
@@ -1688,8 +1872,22 @@
     "wert": [
      15.38
     ],
-    "zustand": "offen",
-    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+    "zustand": "bestaetigt",
+    "quelle": "kataster-Seiten + Stadt-Zonen (4 m außerhalb keine Zone)"
+   },
+   "pd_bb": {
+    "wert": {
+     "1": "4.1. Auf den mit BB1 bezeichneten Bereichen ist die Unterbrechung der geschlossenen Bauweise zulässig.",
+     "2": "4.2. Auf den mit GV BB2 ausgewiesenen Flächen ist die Errichtung von Wohnungen nicht zulässig. Die Dächer der zur Errichtung gelangenden Gebäude sind als begrünte Flachdächer auszubilden. Technische oder der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "3": "4.3. Auf den mit BB3 bezeichneten Flächen bezieht sich die Beschränkung der baulichen Ausnutzbarkeit jeweils auf die mit Prozentsätzen bezeichneten und durch Fluchtlinien umgrenzten Flächen. Bei Teilung dieser Flächen auf verschiedene Bauplätze oder sonstige bebaubare Flächen beziehen sich die angeg",
+     "4": "4.4. Die mit Esp BB4 bezeichneten Flächen sind von jeder Bebauung freizuhalten.",
+     "5": "4.5. Die mit G BB5 bezeichneten Flächen sind mit Ausnahme der erforderlichen Müllgefäß- und Fahrradabstellanlagen gärtnerisch auszugestalten.",
+     "A–B": "4.6. In Verbindung der Punkte A und B ist ein Bereich für die Herstellung und Instandhaltung eines öffentlichen Durchganges durch die Gemeinde mit einer lichten Breite und einer lichten Höhe von 2,5 m freizuhalten, und dessen Benutzung zu dulden.",
+     "C–D": "4.7. In Verbindung der Punkte C und D ist ein Bereich für die Herstellung und Instandhaltung eines öffentlichen Durchganges durch die Gemeinde mit einer lichten Breite von 1,7 m und einer lichten Höhe von 3,0 m freizuhalten, und dessen Benutzung zu dulden.",
+     "D–E": "4.8. In Verbindung der Punkte D und E ist ein Bereich für die Herstellung und Instandhaltung eines öffentlichen Durchganges durch die Gemeinde mit einer lichten Breite und einer lichten Höhe von 3,0 m freizuhalten, und dessen Benutzung zu dulden."
+    },
+    "zustand": "bestaetigt",
+    "quelle": "Plandokument 7294"
    }
   },
   "pro_front": {

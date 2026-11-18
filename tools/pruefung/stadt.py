@@ -73,6 +73,14 @@ def ergaenzen(gs, e, adr):
         gs['kundmachung'] = feld(h.get('KUNDMACHUNG') or None, quelle='stadt WMS SCHNITTMUSTEROGD')
         r = bb_lesen(h['PLANNUMMER'].strip())
         if r is None: gs['allgemeine_bestimmungen'] = feld(None, 'offen', grund=f"Text Plandokument {h['PLANNUMMER']} fehlt"); return
-        allg = [t['text'] if isinstance(t.get('text'), str) else t['art'] for t in r['treffer'] if t.get('geltung') == 'alle' and not t.get('teilweise')]
+        # allgemein = Treffer ohne BB-Bezug (v204 überspringt BB-Sätze, solange die BB nicht gewählt ist); Kopfzeile „ohne Plandarstellung“ wird in -layout-Texten oft nicht erkannt
+        allg = [t['text'] if isinstance(t.get('text'), str) else t['art'] for t in r['treffer'] if not t.get('bb') and not t.get('teilweise')]
+        if any(t['id'] == 'vorbauten_nein' and not t.get('bb') for t in r['treffer']):
+            # v204-Text nennt nur „Erker/Balkone“ → welche Vorbauten genau, steht im Satz des PD (z. B. auch Loggien)
+            roh = re.sub(r'-\s*\n\s*', '', open(pd_text(h['PLANNUMMER'])).read()); roh = re.sub(r'\s+', ' ', roh)
+            for satz in re.split(r'(?<=[.;])\s', roh):
+                if re.search(r'(Erker|Balkon|Loggi)', satz) and re.search(r'unzul[äa]ssig|nicht\s+zul[äa]ssig|untersagt|nicht\s+gestattet', satz):
+                    w = sorted(set(re.findall(r'Erker|Balkon|Loggi', satz)), key=['Erker', 'Balkon', 'Loggi'].index)
+                    allg.append('Laut PD-Satz unzulässig: ' + ', '.join({'Erker': 'Erker', 'Balkon': 'Balkone', 'Loggi': 'Loggien'}[x] for x in w)); break
         gs['allgemeine_bestimmungen'] = feld(allg, quelle=f"Plandokument {h['PLANNUMMER']} (BB-Leser v204)")
         gs['pd_bb'] = feld({p['nr']: p['text'] for p in r['plan']}, quelle=f"Plandokument {h['PLANNUMMER']}")
