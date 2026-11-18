@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "stand": "2026-11-18",
+  "hinweis": "Verbindliche Prüfliste pro Adresse (Wissensbasis/23). Jedes Feld pro Teilfläche bzw. pro Grundstück; Zustand genau einer von: bestaetigt | trifft_nicht_zu | offen. Leeres Feld = Fehler = nicht online.",
+  "zustaende": ["bestaetigt", "trifft_nicht_zu", "offen"],
+  "toleranzen": {
+    "planzahl_gegen_messung_m": 0.6,
+    "summe_gegen_grundbuch_prozent": 1.0,
+    "summe_gegen_grundbuch_max_m2": 5.0,
+    "_status": "vorläufig – Bestätigung Eduard offen"
+  },
+  "rundung": { "masse_nachkomma": 2, "flaechen_nachkomma": 2, "geschosse": "abrunden" },
+  "rechenwerte": {
+    "p75_4_zuschlag_m": { "III": 3.0, "IV": 4.0, "_status": "vorläufig – aus Eduards Blättern, Bestätigung offen" },
+    "hoehe_bauklasse_m": { "III": 16.0, "IV": 21.0, "_status": "übrige Bauklassen offen" },
+    "p76_10a": { "grenze_m2": 500, "teiler": 10, "ab_m2": 10 },
+    "p76_10_drittel": { "I": 350, "II": 700 },
+    "offene_bauweise": { "abstand": "halbe Gebäudehöhe, min 3 m", "front_max_m": 15 }
+  },
+  "grundstueck": [
+    { "id": "kg_gnr", "quelle": "kataster", "pflicht": true },
+    { "id": "ez", "quelle": "grundbuch", "pflicht": true },
+    { "id": "flaeche_grundbuch", "quelle": "grundbuch", "pflicht": true },
+    { "id": "grenzkataster", "quelle": "kataster", "pflicht": true },
+    { "id": "mehrere_gnr", "quelle": "kataster", "pflicht": true },
+    { "id": "eckgrundstueck", "quelle": "kataster", "pflicht": true },
+    { "id": "plandokument_nr", "quelle": "stadt", "pflicht": true },
+    { "id": "kundmachung", "quelle": "stadt", "pflicht": true },
+    { "id": "allgemeine_bestimmungen", "quelle": "plandokument_text", "pflicht": true },
+    { "id": "schutzzone", "quelle": "stadt", "pflicht": true },
+    { "id": "wohnzone", "quelle": "stadt", "pflicht": true },
+    { "id": "bausperre", "quelle": "stadt", "pflicht": true },
+    { "id": "abbruch_vor_1945", "quelle": "hinweis", "pflicht": false }
+  ],
+  "teilflaeche_arten": ["vorgarten", "strassentrakt", "hof", "garage", "abtretung", "abstandsstreifen", "arkade"],
+  "teilflaeche": [
+    { "id": "art", "pflicht": true },
+    { "id": "farbe", "werte": ["blau", "gruen", "rot"], "pflicht": true },
+    { "id": "widmung", "quelle": "stadt", "bestaetigt_durch": "plan", "pflicht": true },
+    { "id": "bauklasse", "quelle": "stadt", "bestaetigt_durch": "plan", "pflicht": "wenn_bauland" },
+    { "id": "hoehe_m", "quelle": "plan", "pflicht": "wenn_bauland" },
+    { "id": "bauweise", "quelle": "plan", "pflicht": "wenn_bebaubar" },
+    { "id": "bb", "quelle": "plan+plandokument_text", "regel": "Nummer in Teilfläche oder Pfeil darauf; Text aus PD dieser Adresse; mehrere möglich", "pflicht": true },
+    { "id": "breite_m", "quelle": "kataster", "pflicht": true },
+    { "id": "tiefe_links_m", "quelle": "plan|kataster", "pflicht": true },
+    { "id": "tiefe_rechts_m", "quelle": "plan|kataster", "pflicht": true },
+    { "id": "tiefe_mittel_m", "quelle": "rechnung", "pflicht": true },
+    { "id": "flaeche_m2", "quelle": "rechnung", "pflicht": true }
+  ],
+  "pro_front": [
+    { "id": "strassenbreite_m", "quelle": "planzahl", "regel": "an der eigenen Front gültig", "pflicht": true },
+    { "id": "trakttiefe_m", "quelle": "planzahl", "regel": "ohne Planzahl offen, nie gemessen statt gelesen", "pflicht": "wenn_strassentrakt" },
+    { "id": "vorgarten_m", "quelle": "planzahl", "pflicht": "wenn_vorgarten" },
+    { "id": "abtretung", "quelle": "planzahl|linie", "pflicht": true },
+    { "id": "baufluchtlinie_sprung", "quelle": "plan", "pflicht": true }
+  ],
+  "bedingungen": [
+    { "wenn": "bauweise offen", "dann": ["abstandsstreifen", "front_max_15"] },
+    { "wenn": "bauklasse I oder II", "dann": ["p76_10_drittel"] },
+    { "wenn": "flaeche_gesamt > 500", "dann": ["p76_10a"] },
+    { "wenn": "baufluchtlinie_sprung", "dann": ["mehrere_strassentrakt_zeilen"] },
+    { "wenn": "tiefe_links != tiefe_rechts", "dann": ["trapez"] },
+    { "wenn": "eckgrundstueck", "dann": ["zweite_front", "zweite_strassenbreite"] },
+    { "wenn": "bb mit prozent", "dann": ["bb_flaeche_m2"] },
+    { "wenn": "bb keine unterirdischen bauten", "dann": ["keine_garage"] },
+    { "wenn": "garage oder G", "dann": ["ueberdeckung_1_5m"] },
+    { "wenn": "vor 1945 oder wohnzone", "dann": ["hinweis_ma19_abbruch"] },
+    { "wenn": "kein grenzkataster", "dann": ["warnung_flaeche_unsicher"] },
+    { "wenn": "bausperre", "dann": ["adresse_sperren"] },
+    { "wenn": "kein bauland", "dann": ["nur_hinweis"] }
+  ],
+  "kontrollen": [
+    "jede Maßzahl im Umkreis zugeordnet oder mit Grund verworfen",
+    "jede Linie im Grundstück mit Rolle",
+    "Breiten = Front",
+    "Tiefen = Grundstückstiefe",
+    "blau + grün + rot = Grundstücksfläche",
+    "Summe Abschnitte = Grundbuch (Toleranz)",
+    "Planzahl = Messung (Toleranz)",
+    "Stadt-Widmung = Plan-Widmung, sonst Adresse sperren"
+  ],
+  "rechnungen": ["p76_10a", "p75_4", "bb_prozent", "hoehe_geschosse"],
+  "schritte": [
+    "Grundstück festlegen", "Stadt-Daten + Plandokument", "Planausschnitt + 40 m Rand",
+    "Inventar: Linien, Maßlinien, Texte", "Maßzahlen → Maßlinien", "Teilflächen nach Planzahlen",
+    "Texte → Teilflächen + Abgleich Stadt", "Bedingte Pflichtfelder", "Pflichtmaße pro Teilfläche",
+    "Färben + Flächensumme", "Vollständigkeits-Kontrolle", "Rechnungen", "Freigabe + Bericht",
+    "Prüfstand vor jedem Deploy"
+  ]
+}
