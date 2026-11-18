@@ -1,0 +1,17 @@
+name: Planbild-Kacheln zählen (Branch kacheln, nicht Webseite)
+on: { workflow_dispatch: {} }
+permissions:
+  contents: write
+jobs:
+  zaehlen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p /tmp/k && python3 -u tools/kacheln_zaehlen.py /tmp/k
+      - name: Auf eigenen Branch legen
+        run: |
+          git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
+          git checkout --orphan kacheln; git rm -rq --cached . ; rm -rf ./* .github
+          cp /tmp/k/* .; git add kacheln_*
+          git commit -qm "Kachelzählung Planbild Stufe 19 (Widmungszonen Stadt Wien, CC BY 4.0)"; git push -fq origin kacheln
