@@ -1,0 +1,28 @@
+name: Prüfstand – Stadt-Daten + Plandokumente der Prüfadressen
+# Nur die Adressen in tools/pruefung/stadt_auftrag.json (kein Abruf für ganz Wien). Startet bei Änderung des Auftrags.
+on:
+  push:
+    branches: [main]
+    paths: ['tools/pruefung/stadt_auftrag.json']
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency: { group: pruefung-stadt, cancel-in-progress: false }
+jobs:
+  holen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-deu
+      - name: Stadt-Daten
+        run: python3 -u tools/pruefung/stadt_holen.py tools/pruefung/stadt_auftrag.json tools/pruefung/stadt | tee /tmp/log; tail -1 /tmp/log > /tmp/pd
+      - name: Plandokument-Texte
+        run: PD_NUR="$(cat /tmp/pd)" PD_BUDGET_MIN=25 python3 tools/pd_sammeln.py
+      - name: Speichern
+        run: |
+          git config user.name "Eduard Beches"; git config user.email "eb@quickestate.at"
+          git add tools/pruefung/stadt plandokumente
+          git diff --cached --quiet && exit 0
+          git commit -qm "Prüfstand: Stadt-Daten + Plandokumente der Prüfadressen (Stadt Wien, CC BY 4.0)"
+          git pull -q --rebase origin main && git push -q origin HEAD:main

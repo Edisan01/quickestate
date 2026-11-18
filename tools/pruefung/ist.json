@@ -1,0 +1,1839 @@
+{
+ "Ybbsstraße 7, 1020": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01657 1496/78",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 596,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 596 + Geometrie 597.14"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     18.6,
+     32.03,
+     18.54,
+     32.11
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     18.6
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "keine Planzahl, gemessen 18.7"
+   },
+   "trakttiefe_m": {
+    "wert": 12.0,
+    "zustand": "bestaetigt",
+    "quelle": "planzahl+messung"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [
+      "BB"
+     ],
+     "zustand": "offen",
+     "quelle": "plan"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 384.4,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "W",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "bauklasse": {
+     "wert": "IV",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": 18.5,
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": 12.0,
+     "zustand": "bestaetigt",
+     "quelle": "planzahl"
+    },
+    "tiefe_rechts_m": {
+     "wert": 12.0,
+     "zustand": "bestaetigt",
+     "quelle": "planzahl"
+    },
+    "tiefe_mittel_m": {
+     "wert": 12.0,
+     "zustand": "bestaetigt",
+     "quelle": "planzahl"
+    },
+    "flaeche_m2": {
+     "wert": 223.2,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ },
+ "Leitermayergasse 50, 1180": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01514 300/22",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 364,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 364 + Geometrie 363.97"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     22.24,
+     16.16,
+     22.42,
+     16.41
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     16.16
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "keine Planzahl, gemessen 11.34"
+   },
+   "trakttiefe_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "W",
+     "zustand": "offen",
+     "quelle": "stadt"
+    },
+    "bauklasse": {
+     "wert": "III",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 224.6,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 145.7,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ },
+ "Zentagasse 6, 1050": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01008 929/7",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 503,
+    "zustand": "offen",
+    "quelle": "BEV-Verzeichnis 503 + Geometrie 488.1",
+    "grund": "Geometrie weicht -3.0 % ab"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     23.75,
+     22.31,
+     20.44,
+     22.17
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     22.31
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": 15.0,
+    "zustand": "bestaetigt",
+    "quelle": "planzahl+messung"
+   },
+   "trakttiefe_m": {
+    "wert": 12.0,
+    "zustand": "bestaetigt",
+    "quelle": "planzahl+messung"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "W",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "bauklasse": {
+     "wert": "IV",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": 12.0,
+     "zustand": "bestaetigt",
+     "quelle": "planzahl"
+    },
+    "tiefe_rechts_m": {
+     "wert": 12.0,
+     "zustand": "bestaetigt",
+     "quelle": "planzahl"
+    },
+    "tiefe_mittel_m": {
+     "wert": 12.0,
+     "zustand": "bestaetigt",
+     "quelle": "planzahl"
+    },
+    "flaeche_m2": {
+     "wert": 268.7,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 224.1,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ },
+ "Nordmanngasse 20, 1210": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01603 454",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 536,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 536 + Geometrie 544.15"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     30.97,
+     17.55,
+     30.84,
+     17.65
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     17.65
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "keine Planzahl, gemessen 15.12"
+   },
+   "trakttiefe_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 362.7,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "W",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "bauklasse": {
+     "wert": "III",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 187.8,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ },
+ "Theresiengasse 47, 1180": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01514 430/18",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 762,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 762 + Geometrie 749.01"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     22.93,
+     31.67,
+     23.66,
+     32.72
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     23.66
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": 15.17,
+    "zustand": "bestaetigt",
+    "quelle": "planzahl+messung"
+   },
+   "trakttiefe_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "W",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "bauklasse": {
+     "wert": "III",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 327.7,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "WGV",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "bauklasse": {
+     "wert": "I",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 434.0,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ },
+ "Tigergasse 21, 1080": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01005 1021",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 358,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 358 + Geometrie 358.47"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     17.3,
+     20.97,
+     16.93,
+     21.08
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     21.08
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "keine Planzahl, gemessen 9.65"
+   },
+   "trakttiefe_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "GB",
+     "zustand": "offen",
+     "quelle": "stadt"
+    },
+    "bauklasse": {
+     "wert": "III",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 304.1,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 63.9,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ },
+ "Gartengasse 8, 1050": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01008 174+175",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 814,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 814 + Geometrie 797.98"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     20.46,
+     16.9,
+     22.94,
+     19.71,
+     39.85
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     20.46
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "keine Planzahl, gemessen 13.23"
+   },
+   "trakttiefe_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "W",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "bauklasse": {
+     "wert": "III",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 304.1,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [
+      "BB"
+     ],
+     "zustand": "offen",
+     "quelle": "plan"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 461.3,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "abtretung",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "rot",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "Grundabtretung"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "Grundabtretung"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "Grundabtretung"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "Grundabtretung"
+    },
+    "bb": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 41.5,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ },
+ "Gerstlgasse 18, 1210": {
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01609 674+675",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "ez": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "flaeche_grundbuch": {
+    "wert": 588,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 588 + Geometrie 599.01"
+   },
+   "grenzkataster": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Kennzeichen nicht in den Kataster-Daten (BEV-Kacheln/GPKG prüfen)"
+   },
+   "mehrere_gnr": {
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "eckgrundstueck": {
+    "wert": null,
+    "zustand": "offen",
+    "grund": "Leser speichert nur die längste Straßenkante → Phase 2 (alle Straßenkanten aus Stadt-Zonen)"
+   },
+   "plandokument_nr": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "kundmachung": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "allgemeine_bestimmungen": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "schutzzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "wohnzone": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "bausperre": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abbruch_vor_1945": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "seiten_m": {
+    "wert": [
+     38.65,
+     15.38,
+     38.73,
+     15.61
+    ],
+    "zustand": "offen",
+    "quelle": "kataster (digital, nicht Grenzkataster)"
+   },
+   "fronten_m": {
+    "wert": [
+     15.38
+    ],
+    "zustand": "offen",
+    "quelle": "kataster-Kanten auf Leser-Straßenkante (Stadt-Zonen)"
+   }
+  },
+  "pro_front": {
+   "strassenbreite_m": {
+    "wert": 15.17,
+    "zustand": "bestaetigt",
+    "quelle": "planzahl+messung"
+   },
+   "trakttiefe_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "vorgarten_m": {
+    "wert": null,
+    "zustand": "offen"
+   },
+   "abtretung": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "leser"
+   },
+   "baufluchtlinie_sprung": {
+    "wert": null,
+    "zustand": "offen"
+   }
+  },
+  "teilflaechen": [
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 373.2,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   },
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "GB",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "bauklasse": {
+     "wert": "II",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 239.0,
+     "zustand": "offen",
+     "quelle": "planfläche (gemessen)"
+    }
+   }
+  ]
+ }
+}
