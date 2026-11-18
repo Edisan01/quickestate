@@ -13,7 +13,7 @@ def regionen(m,T,gl=None):
   klein=np.isin(l_,[i for i in range(1,n_) if max(s_[i][2],s_[i][3])<7])
   lin[klein]=0
   lin=cv2.dilate(lin,np.ones((3,3),np.uint8))
-  lin=cv2.morphologyEx(lin,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(19,19)))
+  lin=cv2.morphologyEx(lin,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(11,11)))
   lin=verlaengern(lin)
   n,lab,st,_=cv2.connectedComponentsWithStats((lin==0).astype(np.uint8),4)
   return lab,st,lin
@@ -107,6 +107,7 @@ def attrs(toks):
     h=re.search(r'(\d{1,2})[,.]?(\d)?m',t['t']) or re.search(r'^(?:W|GB|WGV)(?:VI|IV|V|III|II|I)(\d{1,2})[,.](\d)',t['t'])
     if h and 'hoehe' not in a: a['hoehe']=h.group(1)+(','+h.group(2) if h.group(2) else '')+' m'
     if s in ('9','g') and 'bauweise' not in a: a['bauweise']='g'; continue
+    if re.match(r'^(W|GB|WGV)',t['t']) and re.search(r'(gk|g|o)(?=BB\d*$)',t['t']) and 'bauweise' not in a: a['bauweise']=re.search(r'(gk|g|o)(?=BB\d*$)',t['t']).group(1)
     if re.match(r'^(W|GB|WGV)',t['t']) and re.search(r'(gk|g|o)$',t['t']) and 'bauweise' not in a: a['bauweise']=re.search(r'(gk|g|o)$',t['t']).group(1)
     if re.search(r'(^|[IVm])(gk|g|o)$',s) and 'bauweise' not in a: a['bauweise']=re.search(r'(gk|g|o)$',s).group(1)
     if re.search(r'BB\d*',s): a['bb']=re.search(r'BB\d*',s).group(0)

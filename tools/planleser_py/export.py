@@ -42,7 +42,7 @@ def massgap(lin,t):
   if len(gs)<3: return None
   gs.sort(); g=gs[len(gs)//2]
   return g[0], p0+n*g[1], p0-n*g[2]
-TEILRX=[('widmung',r'^(GBGV|WGV|GB|W|G(?=BB|$)|G)'),('bauklasse',r'(?<=[A-Z])(VI|IV|V|III|II|I)(?=\d|[gok]|$)|^(VI|IV|V|III|II|I)$'),('hoehe',r'\d{1,2}[,.]?\d?m|(?<=[IV])\d{1,2}[,.]\d'),('bauweise',r'(gk|g|o)$'),('bb',r'BB\d*')]
+TEILRX=[('widmung',r'^(GBGV|WGV|GB|W|G(?=BB|$)|G)'),('bauklasse',r'(?<=[A-Z])(VI|IV|V|III|II|I)(?=\d|[gok]|$)|^(VI|IV|V|III|II|I)$'),('hoehe',r'\d{1,2}[,.]?\d?m|(?<=[IV])\d{1,2}[,.]\d'),('bauweise',r'(gk|g|o)(?=BB\d*$)|(gk|g|o)$'),('bb',r'BB\d*')]
 def teilboxen(m,t,gl):
   # einzelne Planteile (Widmung, Bauklasse, Höhe, Bauweise, BB) mit eigenem Kästchen zum Einkreisen
   if not gl or len(gl)!=len(t): return {}
@@ -72,12 +72,30 @@ def fall(m,im,wfs):
   H,W=lin.shape; front=np.zeros((H,W),np.uint8)
   for a,b in sk: cv2.line(front,tuple(np.round(a).astype(int)),tuple(np.round(b).astype(int)),1,9)
   # kleine unbeschriftete Splitter an gleichartigen Nachbarn anhängen
+  # Vorgarten-Tiefe früh messen (Front → erste Linie innen)
+  vgm0=None
+  if sk:
+    a0_,b0_=max(sk,key=lambda e:np.hypot(*(e[1]-e[0]))); dv0=(b0_-a0_)/np.hypot(*(b0_-a0_)); c0_=np.vstack(rings).mean(0); nv0=np.array([-dv0[1],dv0[0]])
+    if np.dot(c0_-(a0_+b0_)/2,nv0)<0: nv0=-nv0
+    vg0=[]
+    for f_ in np.linspace(0.2,0.8,7):
+      p_=a0_+(b0_-a0_)*f_; r_=[x-8 for x in laeufe(lin,p_-nv0*8,nv0,8+9/MPX)]
+      if len(r_)>=2 and abs(r_[0])<=1.5/MPX: vg0.append((r_[0],r_[1]))
+    if len(vg0)>=4: vgm0=(float(np.median([v[0] for v in vg0])),float(np.median([v[1] for v in vg0])))
+  # Baufenster-Gebiet (offene/gekuppelte Bauweise): Teile ohne eigene Beschriftung liegen außerhalb der Baufluchtlinien
+  offen={t['stadt'] for t in TF if t['plan'].get('bauweise') in ('o','gk') or any(re.search(r'(gk|o)(BB\d*)?\]?$',x[2]) for x in t['label_pos'])}
   teile=[]
   for t in sorted(TF,key=lambda t:-t['px']):
     wk,bk=S.roemisch(t['stadt'])
-    key=('G' if t['G'] else ('A' if t['stadt'] is None else 'B'),t['stadt'])
+    art='G' if t['G'] else ('A' if t['stadt'] is None else 'B')
+    if art=='B' and vgm0 and sk:
+      ys_,xs_=np.nonzero(t['msk']); dd=(np.column_stack([xs_,ys_])-a0_)@nv0
+      if dd.max()<=vgm0[1]+3 and vgm0[1]*MPX<=9: art='V'
+    if art=='B' and t['stadt'] in offen and ('nachbar' in t['quelle'] or t['quelle'].startswith('innen')): art='F'
+    key=(art,t['stadt'])
     attrs=dict(t['plan'])
-    teile.append(dict(key=key,msk=t['msk'].copy(),stadt=t['stadt'],G=t['G'],plan=attrs,labels=t['label_pos'],quelle=t['quelle'],wk=wk,bk=bk))
+    if art in ('V','F'): attrs={}
+    teile.append(dict(key=key,art=art,msk=t['msk'].copy(),stadt=t['stadt'],G=t['G'],plan=attrs,labels=t['label_pos'] if art not in ('V','F') else [],quelle=t['quelle'],wk=wk,bk=bk))
   merged=[]
   for t in teile:
     tgt=None
@@ -100,7 +118,8 @@ def fall(m,im,wfs):
     voll=idx2lab[lbl]*(pmk>0)
     for k,u in enumerate(merged): u['nv']=int((voll==k+1).sum()); u['msk']=(voll==k+1).astype(np.uint8)
   for u in merged: u['front']=int((u['msk']&front).sum())
-  fr=sorted([u for u in merged if u['front']>0 and not u['G'] and u['stadt'] is not None],key=lambda u:-u['front'])
+  fr=sorted([u for u in merged if u['front']>0 and u['art']=='B'],key=lambda u:-u['front'])
+  if not fr: fr=sorted([u for u in merged if u['art']=='B'],key=lambda u:-u['msk'].sum())
   hof=[u for u in merged if u not in fr[:1]]
   out=[]
   ges=sum(u.get('nv',u['msk'].sum()) for u in merged)
@@ -108,15 +127,15 @@ def fall(m,im,wfs):
     cs,_=cv2.findContours(u['msk'],cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     polys=[[ll(m,p[0][0]+x0,p[0][1]+y0) for p in cv2.approxPolyDP(c,1.2,True)] for c in cs if cv2.contourArea(c)>20]
     wk,bk=u['wk'],u['bk']; pl=u['plan']
-    if u['G'] or u['stadt'] is None: gleich=None
+    if u['G'] or u['stadt'] is None or u['art'] in ('V','F'): gleich=None
     else: gleich=bool(pl.get('widmung')==wk and pl.get('bauklasse')==bk)
-    out.append(dict(rolle='strasse' if fr and u is fr[0] else 'hof',art='G' if u['G'] else ('abtretung' if u['stadt'] is None else 'bebaubar'),
+    out.append(dict(rolle='strasse' if fr and u is fr[0] else 'hof',art={'G':'G','A':'abtretung','V':'vorgarten','F':'frei'}.get(u['art'],'bebaubar'),
       stadt=dict(widmung=wk,bauklasse=bk,code=u['stadt']),
       plan={k:v for k,v in pl.items()},stadt_plan_gleich=gleich,anteil=round(u.get('nv',u['msk'].sum())/ges,4),m2_plan=round(u.get('nv',u['msk'].sum())*MPX**2,1),
       poly=polys,labels=[dict(t=t,ll=ll(m,x,y),box=[ll(m,*q) for q in bx],teile=teilboxen(m,t,gl)) for x,y,t,bx,gl in u['labels'] if re.match(r'^(W|GB|WGV|G|E|L|I|V|g|C?BB)',t) or re.fullmatch(r'\d{1,2}([,.]\d)?m',t)],quelle=u['quelle']))
   # Hof links/rechts aus Sicht der Straße
   for o in out:
-    if o['art']=='abtretung': o['rolle']='abtretung'
+    if o['art'] in ('abtretung','vorgarten','frei'): o['rolle']=o['art']
   hofs=[o for o in out if o['rolle']=='hof']
   if len(hofs)>=2 and sk:
     a,b=sk[0]; d=(b-a)/np.hypot(*(b-a))
@@ -149,6 +168,17 @@ def fall(m,im,wfs):
         for z in MZ:
           dd=min(cv2.pointPolygonTest(np.array([[kat.px(m,*q)[0]-x0,kat.px(m,*q)[1]-y0] for q in r],np.float32),(float(z['t']['x']),float(z['t']['y'])),True) for r in o['poly'])
           print('    MZ',z['v'],z['gem'],z['ok'],'dot',round(abs(np.dot((z['a']-z['b'])/max(1e-6,np.hypot(*(z['a']-z['b']))),nv)),2),'dist',round(dd,1))
+    # Straßenbreite am eigenen Grundstück: von der Front nach außen bis zur Linie gegenüber; Planzahl im Straßenraum mit gleicher Breite
+    sb=[]
+    for f_ in np.linspace(0.2,0.8,7):
+      p_=a_+(b_-a_)*f_; r_=[x-15 for x in laeufe(lin,p_+nv*15,-nv,15+40/MPX)]
+      if len(r_)>=2 and abs(r_[0])<=3/MPX: sb.append((r_[-1] if len(r_)==2 else r_[1])-r_[0])
+    sbm=float(np.median(sb))*MPX if len(sb)>=4 else None
+    if sbm:
+      kz=[z for z in MZ if z['ok'] and abs(z['v']-sbm)<=0.6 and cv2.pointPolygonTest(np.vstack(rings).astype(np.float32)[cv2.convexHull(np.vstack(rings).astype(np.float32),returnPoints=False).ravel()],(float(z['t']['x']),float(z['t']['y'])),False)<0]
+      sbr=dict(gemessen=round(sbm,2),plan=kz[0]['v'] if kz else None,ok=bool(kz),box=[ll(m,*(q+off)) for q in cv2.boxPoints(((kz[0]['t']['x'],kz[0]['t']['y']),(kz[0]['t']['w']+2,kz[0]['t']['h']+2),kz[0]['t']['ang']))] if kz else None)
+      for o in out:
+        if o['rolle']=='strasse': o['strassenbreite']=sbr
     if vgm and 1.5<=vgm<=9:
       kz=[z for z in MZ if z['ok'] and abs(z['v']-vgm)<=0.45]
       vor=dict(gemessen=round(vgm,2),plan=kz[0]['v'] if kz else None,ok=bool(kz))

@@ -737,7 +737,7 @@ function start() {
     mapKick(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) bleistift(); }
   /* Planleser (Testmodus ?leser=1): vorberechnete Ergebnisse aus dem Planbild – Stadt-Daten + gelesener Plan müssen übereinstimmen. Kunden sehen das noch nicht. */
   const LESER_TEST = /[?&]leser=1/.test(location.search); let PL = null, plG = null;
-  if (LESER_TEST) hol('planleser/test.json?v=6').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
+  if (LESER_TEST) hol('planleser/test.json?v=7').then(r => r.json()).then(d => { PL = {}; Object.values(d).forEach(e => e.gnr.split('+').forEach(n => { PL[e.kg + '_' + n] = e; })); if (plG) zeigeInfo(plG, plG.infoO); }).catch(() => {});
   const PL_ROLLE = { strasse: 'Straßentrakt', hof: 'Hof', hof_links: 'Hof links', hof_rechts: 'Hof rechts', abtretung: 'Grundabtretung' };
   const PL_W = { W: 'Wohngebiet', WGV: 'Wohngebiet – Geschäftsviertel', GB: 'Gemischtes Baugebiet', GBGV: 'Gemischtes Baugebiet – Geschäftsviertel', G: 'Garten' }, PL_BK = { I: [2.5, 9], II: [2.5, 12], III: [9, 16], IV: [12, 21], V: [16, 26] }, PL_BW = { g: 'geschlossene Bauweise', o: 'offene Bauweise', gk: 'gekuppelte Bauweise' };
   const plLang = p => { const bk = PL_BK[p.bauklasse], h = p.hoehe ? parseFloat(p.hoehe.replace(',', '.')) : null;
@@ -745,16 +745,17 @@ function start() {
       h ? 'hier begrenzt auf höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt ' + bk[1] + ' m' : '') : '', PL_BW[p.bauweise] || ''].filter(Boolean).join(' · '); };
   const plText = p => [p.widmung, p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
   /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
-  const ZART = t => t.art === 'G' ? 'zg' : t.art === 'abtretung' ? 'za' : t.stadt_plan_gleich ? 'zb' : 'zx';
-  const ZTXT = { zb: 'Bauland – hier darfst du bauen', zg: 'Garten (G) – nicht bebaubar', za: 'Grundabtretung – geht an die Stadt', zx: 'Wird noch geprüft' };
-  const zKurz = t => t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'Abtretung' : plText(t.plan) || '?';
+  const ZART = t => t.art === 'G' ? 'zg' : t.art === 'vorgarten' ? 'zv' : t.art === 'frei' ? 'zn' : t.art === 'abtretung' ? 'za' : t.stadt_plan_gleich ? 'zb' : 'zx';
+  const ZTXT = { zb: 'Bauland – hier darfst du bauen', zg: 'Garten (G) – nicht bebaubar', zv: 'Vorgarten – nicht bebaubar', zn: 'Nicht bebaubar (außerhalb der Baulinien)', za: 'Grundabtretung – geht an die Stadt', zx: 'Wird noch geprüft' };
+  const zKurz = t => t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'Abtretung' : t.art === 'vorgarten' ? 'Vorgarten' : t.art === 'frei' ? 'nicht bebaubar' : plText(t.plan) || '?';
   function zonDefs(svg, pre) { const d = document.createElementNS(NS, 'defs');
     d.innerHTML = '<pattern id="' + pre + 'G" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.1" fill="#1E6B35"/></pattern>'
-      + '<pattern id="' + pre + 'A" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="7" fill="#C8102E" opacity=".55"/></pattern>';
+      + '<pattern id="' + pre + 'A" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="7" fill="#C8102E" opacity=".55"/></pattern>'
+      + '<pattern id="' + pre + 'V" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="1.4" height="6" fill="#1E6B35" opacity=".7"/></pattern>';
     svg.append(d); }
   function zonPfade(svg, Z, D, pre) { Z.teile.forEach(t => { const k = ZART(t), d = t.poly.map(D).join('');
       const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', 'zf ' + k); p.setAttribute('fill-rule', 'evenodd'); if (Z.clipId) p.setAttribute('clip-path', 'url(#' + Z.clipId + ')'); svg.append(p);
-      if (k === 'zg' || k === 'za') { const q = p.cloneNode(); q.setAttribute('class', 'zm'); q.setAttribute('fill', 'url(#' + pre + (k === 'zg' ? 'G' : 'A') + ')'); svg.append(q); } }); }
+      if (k === 'zg' || k === 'za' || k === 'zv') { const q = p.cloneNode(); q.setAttribute('class', 'zm'); q.setAttribute('fill', 'url(#' + pre + (k === 'zg' ? 'G' : k === 'zv' ? 'V' : 'A') + ')'); svg.append(q); } }); }
   function zonZeichnen(svg, P, css) { const Z = M.zon, D = r => 'M' + r.map(P).join('L') + 'Z';
     zonDefs(svg, 'qeZm'); const cp = document.createElementNS(NS, 'clipPath'); cp.setAttribute('id', 'qeZonClip'); const cpp = document.createElementNS(NS, 'path');
     cpp.setAttribute('d', Z.clip.map(pg => pg.map(D).join('')).join('')); cpp.setAttribute('clip-rule', 'evenodd'); cp.append(cpp); svg.querySelector('defs').append(cp);
@@ -781,12 +782,12 @@ function start() {
     const mass = (xa, ya, xb, yb, txt, sen) => { const l = document.createElementNS(NS, 'path'); l.setAttribute('d', 'M' + xa.toFixed(1) + ' ' + ya.toFixed(1) + 'L' + xb.toFixed(1) + ' ' + yb.toFixed(1)); l.setAttribute('class', 'skm'); svg.append(l);
       const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'skmt'); if (sen) t.setAttribute('transform', 'translate(' + (xa - 5).toFixed(1) + ' ' + ((ya + yb) / 2).toFixed(1) + ') rotate(-90)'); else { t.setAttribute('x', ((xa + xb) / 2).toFixed(1)); t.setAttribute('y', (ya + 12).toFixed(1)); } t.textContent = txt; svg.append(t); };
     const f0 = S(e.front[0]), f1 = S(e.front[1]); mass(Math.min(f0[0], f1[0]), yF + 31, Math.max(f0[0], f1[0]), yF + 31, 'Front ca. ' + L.toFixed(1).replace('.', ',') + ' m');
-    const sTr = e.teile.find(t => t.rolle === 'strasse'); if (sTr) { const tief = sTr.tiefe ? sTr.tiefe.plan : Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = Math.min(...alle.flatMap(pg => pg[0]).map(c => S(c)[0])) - 9;   // Planzahl geht vor – Messung nur zur Kontrolle
+    const sTr = e.teile.find(t => t.rolle === 'strasse' && t.tiefe); if (sTr) { const tief = sTr.tiefe ? sTr.tiefe.plan : Math.max(...sTr.poly.flat().map(c => T(c)[1])), xl = Math.min(...alle.flatMap(pg => pg[0]).map(c => S(c)[0])) - 9;   // Planzahl geht vor – Messung nur zur Kontrolle
       mass(xl, yF, xl, yF - tief * sk, sTr.tiefe ? 'Trakttiefe ' + tief.toFixed(2).replace('.', ',') + ' m' : 'Trakttiefe: Planzahl fehlt', true); }
     box.append(svg); const k = document.createElement('p'); k.className = 'g-skk'; k.textContent = 'So stehst du vor deinem Grundstück. Maße ca., aus dem Plan gemessen.'; box.append(k); return box; }
   function legende(g, e) { const box = document.createElement('div'); box.className = 'g-leg'; const fl = t => g.fl ? Math.round(t.anteil * g.fl) : Math.round(t.m2_plan), sum = {};
     e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); });
-    ['zb', 'zg', 'za', 'zx'].filter(k => sum[k]).forEach(k => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'); s_.textContent = ZTXT[k] + ' · ca. ' + sum[k] + ' m²'; z.append(s_); box.append(z); });
+    ['zb', 'zg', 'zv', 'zn', 'za', 'zx'].filter(k => sum[k]).forEach(k => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'); s_.textContent = ZTXT[k] + ' · ca. ' + sum[k] + ' m²'; z.append(s_); box.append(z); });
     return box; }
   function planAnzeige(g, e) { document.querySelectorAll('.g-leg,.g-skiz').forEach(x => x.remove()); M.zon = null;
     if (e) { M.zon = { teile: e.teile, clip: (g.teile || [g]).flatMap(t => t.polys) }; const w = $('resHint'); w.before(legende(g, e)); w.before(skizze(g, e)); }
@@ -796,13 +797,16 @@ function start() {
     const BW = { g: 'geschlossen – Haus an Haus, ohne Abstand zum Nachbarn', o: 'offen – freistehend, mit Abstand zu den Nachbarn', gk: 'gekuppelt – zwei Häuser an der gemeinsamen Grenze' };
     e.teile.forEach(t => { const fl = g.fl ? Math.round(t.anteil * g.fl) : t.m2_plan, p = t.plan || {}, zone = t.poly.map(r => [r]);
       const boxen = a => t.labels.flatMap(l => a === '*' ? [l.box] : l.teile && l.teile[a] ? [l.teile[a]] : []);
-      const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'G' ? 'Garten (G)' : t.art === 'abtretung' ? 'Grundabtretung' : 'Bauland') + ' · ca. ' + fl + ' m²';
-      const art = t.art === 'G' ? 'zk-g' : t.art === 'abtretung' ? 'zk-a' : t.stadt_plan_gleich ? 'zk-b' : 'zk-x';
-      L.append(karte(art, kopf, t.art === 'G' ? 'Gärtnerisch auszugestalten – hier darf kein Gebäude stehen.' : t.art === 'abtretung' ? 'Liegt vor der Baulinie und geht an die Stadt.' : t.stadt_plan_gleich ? 'Stadt-Daten und Plan stimmen überein.' : 'Wird noch geprüft.',
+      const kopf = (PL_ROLLE[t.rolle] || t.rolle) + ' · ' + (t.art === 'G' ? 'Garten (G)' : t.art === 'abtretung' ? 'Grundabtretung' : t.art === 'vorgarten' ? 'nicht bebaubar' : t.art === 'frei' ? 'nicht bebaubar' : 'Bauland') + ' · ca. ' + fl + ' m²';
+      const art = t.art === 'G' || t.art === 'vorgarten' || t.art === 'frei' ? 'zk-g' : t.art === 'abtretung' ? 'zk-a' : t.stadt_plan_gleich ? 'zk-b' : 'zk-x';
+      L.append(karte(art, kopf, t.art === 'G' ? 'Gärtnerisch auszugestalten – hier darf kein Gebäude stehen.' : t.art === 'vorgarten' ? 'Streifen zwischen Straße und Baufluchtlinie – bleibt frei (Garten, Zufahrt).' : t.art === 'frei' ? 'Liegt außerhalb der Baufluchtlinien – hier darf kein Gebäude stehen.' : t.art === 'abtretung' ? 'Liegt vor der Baulinie und geht an die Stadt.' : t.stadt_plan_gleich ? 'Stadt-Daten und Plan stimmen überein.' : 'Wird noch geprüft.',
         'Quelle: ' + t.quelle + ' · gelesen: ' + t.labels.map(l => l.t).join(', '), { zonen: zone, kreise: boxen('*'), klein: 7 }));
       const sub = (titel, text, a, extra) => { const k = boxen(a).concat(extra || []); L.append(karte('sub', titel, text, '', { zonen: zone, kreise: k.length ? k : boxen('*'), klein: 6 })); };
       if (t.art === 'G') { sub('G = gärtnerisch auszugestalten', 'Garten oder Grünfläche. Keine Gebäude.' + (p.bb ? ' Dazu gilt eine Besondere Bestimmung (BB).' : ''), '*'); return; }
-      if (t.art === 'abtretung') return;
+      if (t.art === 'vorgarten') { const v = (e.teile.find(x => x.vorgarten) || {}).vorgarten; sub('Vorgarten' + (v && v.plan ? ': ' + v.plan.toFixed(2).replace('.', ',') + ' m' : ''), v && v.plan ? 'Tiefe laut Plan (Zahl mit Pfeilen).' : 'Tiefe gemessen ca. ' + (v ? v.gemessen.toFixed(1).replace('.', ',') : '?') + ' m – die Planzahl lesen wir noch sicher aus, bis dahin gilt sie als ungeprüft.', '*'); return; }
+      if (t.art === 'abtretung' || t.art === 'frei') return;
+      if (t.rolle === 'strasse' && e.front) { const kx = Math.cos(e.front[0][1] * Math.PI / 180) * 111320, Lf = Math.hypot((e.front[1][0] - e.front[0][0]) * kx, (e.front[1][1] - e.front[0][1]) * 110574); sub('Straßenfront: ' + Lf.toFixed(1).replace('.', ',') + ' m', 'Länge der Grundstücksgrenze an der Straße (aus dem Kataster).', '-', [e.front]); }
+      if (t.strassenbreite) { const b = t.strassenbreite; sub('Straßenbreite: ' + (b.plan ? b.plan.toFixed(2).replace('.', ',') + ' m' : 'ca. ' + b.gemessen.toFixed(1).replace('.', ',') + ' m'), b.plan ? 'Zahl mit Pfeilen im Plan, am Grundstück nachgemessen (' + b.gemessen.toFixed(2).replace('.', ',') + ' m). Breitere Straße = mehr Höhe möglich.' : 'Gemessen – Planzahl noch nicht gelesen.', '-', b.box ? [b.box] : []); }
       if (p.widmung) sub('Widmung: ' + p.widmung, (PL_W[p.widmung] || p.widmung) + ' – sagt, was hier gebaut werden darf.', 'widmung');
       if (p.bauklasse) { const bk = PL_BK[p.bauklasse]; sub('Bauklasse: ' + p.bauklasse, bk ? 'Gebäudehöhe normal ' + String(bk[0]).replace('.', ',') + ' bis ' + bk[1] + ' m.' : p.bauklasse === 'VI' ? 'Gebäudehöhe über 26 m.' : '', 'bauklasse'); }
       if (p.hoehe) { const bk = PL_BK[p.bauklasse], h = parseFloat(p.hoehe.replace(',', '.')); sub('Höhe: höchstens ' + p.hoehe, 'Im Plan begrenzt' + (bk && h < bk[1] ? ' – statt der ' + bk[1] + ' m, die die Bauklasse sonst erlaubt.' : '.') + ' Die Zahl im Plan geht vor.', 'hoehe'); }

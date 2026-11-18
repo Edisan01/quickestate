@@ -443,3 +443,7 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-card.zk-x{border-left:5px solid #888}
 .g-card.sub{margin-left:18px;padding-top:9px;padding-bottom:9px}
 .g-card.sub h4,.g-card.sub .t{font-size:.95em}
+.zf.zv{fill:rgba(64,160,84,.22);stroke:#1E6B35}
+.zf.zn{fill:rgba(64,160,84,.2);stroke:#1E6B35;stroke-dasharray:4 3}
+.g-leg .sw.zv{background:repeating-linear-gradient(-45deg,rgba(30,107,53,.7) 0 1.4px,transparent 1.4px 5px),rgba(64,160,84,.22);border-color:#1E6B35}
+.g-leg .sw.zn{background:rgba(64,160,84,.2);border:1.2px dashed #1E6B35}
