@@ -1,0 +1,244 @@
+{
+ "Ybbsstraße 7, 1020": {
+  "stand": "2026-11-18",
+  "prozent": 35,
+  "voll_gruen": false,
+  "gruen": {
+   "gs.flaeche_grundbuch": 596,
+   "front.abtretung": false,
+   "gs.front_m": 18.6,
+   "tf0.strassentrakt.widmung": "W",
+   "tf0.strassentrakt.bauklasse": "IV",
+   "tf0.strassentrakt.hoehe_m": 18.5,
+   "tf0.strassentrakt.bauweise": "g",
+   "tf0.strassentrakt.tiefe_m": 12.0,
+   "tf1.hof.widmung": "G"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01657 1496/78",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "flaeche_grundbuch": {
+    "wert": 596,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 596 + Geometrie 597.14"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ },
+ "Leitermayergasse 50, 1180": {
+  "stand": "2026-11-18",
+  "prozent": 18,
+  "voll_gruen": false,
+  "gruen": {
+   "front.abtretung": false,
+   "gs.front_m": 16.16,
+   "tf0.strassentrakt.widmung": "W",
+   "tf0.strassentrakt.bauklasse": "III",
+   "tf0.strassentrakt.bauweise": "g",
+   "tf2.hof.widmung": "G"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01514 300/22",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "flaeche_grundbuch": {
+    "wert": 364,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 364 + Geometrie 363.97"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ },
+ "Zentagasse 6, 1050": {
+  "stand": "2026-11-18",
+  "prozent": 37,
+  "voll_gruen": false,
+  "gruen": {
+   "gs.front_m": 22.31,
+   "tf0.strassentrakt.widmung": "W",
+   "tf0.strassentrakt.bauklasse": "IV",
+   "tf0.strassentrakt.bauweise": "g",
+   "tf0.strassentrakt.tiefe_m": 12.0,
+   "tf0.strassentrakt.flaeche_m2": 268.7,
+   "tf1.hof.widmung": "G"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01008 929/7",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ },
+ "Nordmanngasse 20, 1210": {
+  "stand": "2026-11-18",
+  "prozent": 23,
+  "voll_gruen": false,
+  "gruen": {
+   "gs.flaeche_grundbuch": 536,
+   "front.abtretung": false,
+   "gs.front_m": 17.65,
+   "tf0.strassentrakt.widmung": "W",
+   "tf0.strassentrakt.bauklasse": "III",
+   "tf0.strassentrakt.bauweise": "g",
+   "tf1.hof.widmung": "G"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01603 454",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "flaeche_grundbuch": {
+    "wert": 536,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 536 + Geometrie 544.15"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ },
+ "Theresiengasse 47, 1180": {
+  "stand": "2026-11-18",
+  "prozent": 21,
+  "voll_gruen": false,
+  "gruen": {
+   "front.strassenbreite_m": 15.17,
+   "front.abtretung": false,
+   "tf0.strassentrakt.widmung": "W",
+   "tf0.strassentrakt.bauweise": "g",
+   "tf1.hof.widmung": "WGV",
+   "tf1.hof.bauklasse": "I",
+   "tf1.hof.bauweise": "g"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01514 430/18",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "flaeche_grundbuch": {
+    "wert": 762,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 762 + Geometrie 749.01"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ },
+ "Tigergasse 21, 1080": {
+  "stand": "2026-11-18",
+  "prozent": 42,
+  "voll_gruen": false,
+  "gruen": {
+   "front.abtretung": false,
+   "tf0.strassentrakt.widmung": "GB",
+   "tf0.strassentrakt.bauklasse": "III",
+   "tf0.strassentrakt.bauweise": "g",
+   "tf1.hof.widmung": "G"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01005 1021",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "flaeche_grundbuch": {
+    "wert": 358,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 358 + Geometrie 358.47"
+   },
+   "mehrere_gnr": {
+    "wert": false,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ },
+ "Gartengasse 8, 1050": {
+  "stand": "2026-11-18",
+  "prozent": 50,
+  "voll_gruen": false,
+  "gruen": {
+   "gs.mehrere_gnr": true,
+   "front.abtretung": true,
+   "gs.front_m": 20.46,
+   "tf0.strassentrakt.widmung": "W",
+   "tf0.strassentrakt.bauklasse": "III",
+   "tf0.strassentrakt.bauweise": "g",
+   "tf1.hof.widmung": "G"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01008 174+175",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "flaeche_grundbuch": {
+    "wert": 814,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 814 + Geometrie 797.98"
+   },
+   "mehrere_gnr": {
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ },
+ "Gerstlgasse 18, 1210": {
+  "stand": "2026-11-18",
+  "prozent": 58,
+  "voll_gruen": false,
+  "gruen": {
+   "gs.mehrere_gnr": true,
+   "front.strassenbreite_m": 15.17,
+   "front.abtretung": false,
+   "tf0.strassentrakt.widmung": "GB",
+   "tf0.strassentrakt.bauklasse": "II",
+   "tf0.strassentrakt.bauweise": "g",
+   "tf1.hof.widmung": "G"
+  },
+  "grundstueck": {
+   "kg_gnr": {
+    "wert": "01609 674+675",
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   },
+   "flaeche_grundbuch": {
+    "wert": 588,
+    "zustand": "bestaetigt",
+    "quelle": "BEV-Verzeichnis 588 + Geometrie 599.01"
+   },
+   "mehrere_gnr": {
+    "wert": true,
+    "zustand": "bestaetigt",
+    "quelle": "kataster"
+   }
+  }
+ }
+}

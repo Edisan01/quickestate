@@ -183,4 +183,13 @@ if __name__ == '__main__':
     neu = [x for x in gruen if x not in alt]
     print(f'\nneu grün: {len(neu)}')
     if '--neu' in sys.argv: [print('  ', x) for x in neu]
-    if '--speichern' in sys.argv: json.dump({'gruen': gruen}, open(sp, 'w'), ensure_ascii=False, indent=0)
+    if '--speichern' in sys.argv:
+        json.dump({'gruen': gruen}, open(sp, 'w'), ensure_ascii=False, indent=0)
+        # Eduard 18.11.: jedes geprüfte (grüne) Feld je Grundstück speichern → nicht neu rechnen, Webseite liest planleser/geprueft.json
+        import datetime
+        gp = {}
+        for adr, F in zeilen.items():
+            g = {k: z[2] for k, z in F.items() if z[0] == 'gruen'}
+            gp[adr] = {'stand': str(datetime.date.today()), 'prozent': round(100 * len(g) / max(1, len(F))), 'voll_gruen': len(g) == len(F), 'gruen': g,
+                       'grundstueck': {k: v for k, v in detail.get(adr, {}).get('grundstueck', {}).items() if v.get('zustand') == 'bestaetigt'}}
+        json.dump(gp, open(os.path.join(R, 'planleser', 'geprueft.json'), 'w'), ensure_ascii=False, indent=1)
