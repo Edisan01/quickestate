@@ -198,6 +198,18 @@ def fall(m,im,wfs):
       # Trakttiefe: Maßzahl im Straßentrakt, senkrecht zur Front, Messung bestätigt
       kand=[z for z in MZ if z['ok'] and abs(np.dot((z['a']-z['b'])/max(1e-6,np.hypot(*(z['a']-z['b']))),nv))>0.9]
       inT=[z for z in kand if any(cv2.pointPolygonTest(np.array([[kat.px(m,*q)[0]-x0,kat.px(m,*q)[1]-y0] for q in r],np.float32),(float(z['t']['x']),float(z['t']['y'])),True)>=-12 for r in o['poly'])]
+      if not inT:   # Maßzahl steht beim Nachbarn derselben Zeile (Eduard 18.11., Enenkelstraße): gilt nur, wenn die eigene Messung an unserer Front dieselbe Tiefe ergibt (± 0,45 m) und die Zahl in derselben Widmungszone steht
+        dm=[]
+        for f_ in np.linspace(0.2,0.8,7):
+          r_=[x-8 for x in laeufe(lin,a_+(b_-a_)*f_-nv*8,nv,8+30/MPX)]
+          if len(r_)>=2 and abs(r_[0])<=1.5/MPX: dm.append((r_[1]-r_[0])*MPX)
+        dmed=float(np.median(dm)) if len(dm)>=4 else None
+        zon_=[zz for zz in S.stadtzonen(m,wfs,off) if zz['w']==o['stadt']['code']]
+        if dmed:
+          inT=sorted([z for z in kand if abs(z['v']-dmed)<=0.45 and abs(np.dot(np.array([z['t']['x'],z['t']['y']])-(a_+b_)/2,dv))<=60/MPX
+                      and any(cv2.pointPolygonTest(zz['P'].astype(np.float32),(float(z['t']['x']),float(z['t']['y'])),False)>=0 for zz in zon_)],
+                     key=lambda z:abs(np.dot(np.array([z['t']['x'],z['t']['y']])-(a_+b_)/2,dv)))
+          if inT: inT[0]=dict(inT[0],gem=round(dmed,2))
       if inT: z=inT[0]; o['tiefe']=dict(plan=z['v'],gemessen=z['gem'],ok=True,box=[ll(m,*(q+off)) for q in cv2.boxPoints(((z['t']['x'],z['t']['y']),(z['t']['w']+2,z['t']['h']+2),z['t']['ang']))])
       if DEBUG:
         for z in MZ:
