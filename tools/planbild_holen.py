@@ -7,8 +7,10 @@ os.makedirs(OUT, exist_ok=True)
 def kachel(lon, lat, z):
     n = 2 ** z; la = math.radians(lat); return (lon + 180) / 360 * n, (1 - math.log(math.tan(la) + 1 / math.cos(la)) / math.pi) / 2 * n
 def geo(adr):
-    u = 'https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?Address=' + urllib.parse.quote(adr) + '&crs=EPSG:4326'
-    return json.load(urllib.request.urlopen(u, timeout=20))['features'][0]['geometry']['coordinates'][:2]
+    # Adresspunkt aus ADRESSENOGD (Gebäudeadresse) – der Adress-Service lag bei Darwingasse 3 ~200 m daneben
+    u = ('https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:ADRESSENOGD&srsName=EPSG:4326&outputFormat=json&maxFeatures=5&cql_filter='
+         + urllib.parse.quote("NAME='" + adr + "'"))
+    return json.load(urllib.request.urlopen(u, timeout=30))['features'][0]['geometry']['coordinates'][:2]
 for name, kg, gnr, pt in F:
     key = f'{kg}_{gnr.replace("/", "-")}'
     if os.path.exists(f'{OUT}/{key}.png'): continue
