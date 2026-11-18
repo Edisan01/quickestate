@@ -505,7 +505,7 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-hl .hls.g .hlst{fill:#6CBF7E;stroke:#1E6B35}.g-hl .hls.g .hlsw{fill:#2F7D45;stroke:#1E6B35}
 .g-hl .hls.r .hlst{fill:#E0566B;stroke:#C8102E}.g-hl .hls.r .hlsw{fill:#A80D27;stroke:#8A0A20}
 .g-hl .hls.n .hlst{fill:#8FA3B8;stroke:#03203D}.g-hl .hls.n .hlsw{fill:#4A5F75;stroke:#03203D}
-.g-hl .hls .hlst{fill-opacity:.88}
+.g-hl .hls .hlst{fill-opacity:.6}
 .g-hl .hlu{fill:none;stroke:#C9A96E;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:qeKreis .35s .2s ease forwards;filter:drop-shadow(0 0 1.5px rgba(3,32,61,.6))}
 @media (prefers-reduced-motion:reduce){.g-hl .hld,.g-hl .hlu{animation:none;opacity:1;stroke-dashoffset:0}}
 .g-card.bau{border-color:#1F5FAE;background:rgba(38,104,190,.08)}
