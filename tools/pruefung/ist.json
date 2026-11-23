@@ -175,8 +175,9 @@
      "quelle": "plan"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 18.82,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -234,8 +235,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 18.77,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": 12.0,
@@ -784,8 +786,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 22.34,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": 12.0,
@@ -846,8 +849,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 22.11,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -1039,8 +1043,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 17.7,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -1097,8 +1102,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 17.71,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -1283,8 +1289,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 23.65,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": 13.5,
@@ -1344,8 +1351,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 23.34,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -1530,8 +1538,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 21.21,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -1589,8 +1598,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 20.99,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -1774,8 +1784,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 21.96,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": 15.0,
@@ -1894,8 +1905,9 @@
      "zustand": "offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 20.61,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -2082,8 +2094,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 16.42,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -2140,8 +2153,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 15.83,
+     "zustand": "bestaetigt",
+     "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
      "wert": null,

@@ -82,8 +82,9 @@ def adapter(e, adr):
             vg = t.get('vorgarten')
             if vg and vg.get('plan') is not None: pf['vorgarten_m'] = feld(vg['plan'], quelle='planzahl+messung')
         # Schritt 5b: Sprung → Abschnitte (Lot zur Front durch den Sprung); je Abschnitt eigene Breite/Fläche
-        ab = [x for x in tfn.get('abschnitte', []) if x['leser_teil'] == ti] if tfn.get('sprung_lote') else []
-        if len(ab) > 1:
+        ab = [x for x in tfn.get('abschnitte', []) if x['leser_teil'] == ti]
+        if len(ab) == 1 and not (tf.get('breite_m') or {}).get('wert'): tf['breite_m'] = feld(ab[0]['breite_m'], quelle='kataster (netz)')
+        if len(ab) > 1 and tfn.get('sprung_lote'):
             for x in ab:
                 c = dict(tf); c['breite_m'] = feld(x['breite_m'], quelle='kataster+sprung (lot)'); c['flaeche_m2'] = feld(x['m2'], 'offen', 'kataster+planlinien (abschnitt)')
                 ist['teilflaechen'].append(c)
@@ -103,6 +104,7 @@ def adapter(e, adr):
     return ist
 
 # ---------- Vergleich ----------
+BLATT = []  # gelbe Hinweise: Blattfläche ≠ echte Fläche, Grund gerundete Breite
 def vgl(art, soll, ist):
     if ist is None: return 'offen'
     if art == 'exakt': return 'gruen' if abs(num(ist) - soll) < 0.005 else 'rot'
@@ -174,6 +176,15 @@ def pruefen():
                     iw = t['tiefe_mittel_m']['wert']; a = 'exakt' if st['art'] == 'strassentrakt' else 'masz'
                     setz(key, vgl(a, v, iw), v, iw); continue
                 iw = (t.get(k) or {}).get('wert')
+                # Eduard 23.11. (B): Fläche gegen Katasterbreite × Plantiefe; Blatt rundet die Breite → nur Hinweis
+                ib = (t.get('breite_m') or {}).get('wert')
+                if k == 'flaeche_m2' and st['art'] == 'strassentrakt' and iw and ib and st.get('breite_m') and st.get('tiefe_m'):  # nur wo die Tiefe eine Planzahl ist (Hof-Tiefe = Rest)
+                    itf = iw / ib; ok_b = abs(ib - st['breite_m']) <= 0.6; ok_t = abs(itf - st['tiefe_m']) <= 0.6
+                    ref = ib * st['tiefe_m']; ok_f = abs(iw - ref) <= 0.02 * ref
+                    z = 'gruen' if ok_b and ok_t and ok_f else 'rot'
+                    if z == 'gruen' and vgl('flaeche', v, iw) != 'gruen':
+                        BLATT.append(f"{adr.split(',')[0]} {key}: Blatt {v} m², echt {iw} m² – Blatt rechnet mit Breite {st['breite_m']} statt {ib} m (Kataster)")
+                    setz(key, z, round(ref, 2), iw); continue
                 setz(key, vgl(TF_ART.get(k, 'text'), v, iw), v, iw)
         if 'summe_m2' in s: setz('summe_m2', 'offen', s['summe_m2'])
         for k, v in s.get('rechnungen', {}).items(): setz('rech.' + k, 'offen', v)
@@ -191,6 +202,7 @@ def bericht(zeilen):
     n = G_ + R_ + O_
     print(f"{'GESAMT':24} {G_:5} {R_:4} {O_:5} {100 * G_ / max(1, n):5.0f}")
     if '-v' in sys.argv:
+        print('\ngelb (Blatt gerundet):'); [print('  ', x) for x in BLATT]
         print('\nrot:')
         for adr, F in zeilen.items():
             for k, z in F.items():
@@ -223,4 +235,5 @@ if __name__ == '__main__':
         alle = [z for F in zeilen.values() for z in F.values()]
         rep = {'stand': str(datetime.date.today()), 'gesamt': {'gruen': sum(z[0] == 'gruen' for z in alle), 'rot': sum(z[0] == 'rot' for z in alle), 'offen': sum(z[0] == 'offen' for z in alle)},
                'adressen': {adr: [{'feld': k, 'z': z[0], 'soll': z[1], 'ist': z[2]} for k, z in F.items()] for adr, F in zeilen.items()}}
+        rep['hinweise_blatt'] = BLATT
         json.dump(rep, open(os.path.join(R, 'planleser', 'pruefstand.json'), 'w'), ensure_ascii=False, default=str)

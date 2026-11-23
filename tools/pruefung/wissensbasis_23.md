@@ -107,3 +107,4 @@ Befund: S7-HOE nur 1 Prüffeld → Höhen fehlen fast ganz in soll.json; darum b
 
 ## Schritt 5b Abschnitte am Sprung (23.11.)
 `tools/planleser_py/abschnitte.py`: Grenze Straßentrakt/Hof springt quer zur Front (±20°, ≥ 1 m) → Lot zur Front durch den Sprung teilt alle Teilflächen. Leitermayergasse: Sprung bei 7,48 m (Plan 7 m, ±0,6 ✓); mittlere Tiefen 11,93 / 14,88 / 10,33 / 7,37 = Plan 12 / 15 / 10 / 7 ✓. Flächen weichen ab, weil das Blatt mit gerundeten Breiten 7 + 9 = 16 m rechnet, Kataster 16,32 m. Prüfstand 98 grün / 13 rot (54 %).
+- **Entscheidung Eduard 23.11. (B):** Straßentrakt-Fläche gilt gegen Katasterbreite × Plantiefe (Breite ± 0,6, Tiefe ± 0,6, Fläche ± 2 %). Blätter runden die Breite → Abweichung zum Blatt nur gelber Hinweis (`pruefstand.json → hinweise_blatt`). Hof-Tiefe ist keine Planzahl (Rest) → Hof weiter gegen Blattfläche. Prüfstand 106 grün / 13 rot (59 %).

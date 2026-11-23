@@ -1,7 +1,7 @@
 {
  "Ybbsstraße 7, 1020": {
   "stand": "2026-11-23",
-  "prozent": 54,
+  "prozent": 62,
   "voll_gruen": false,
   "gruen": {
    "gs.flaeche_grundbuch": 596,
@@ -15,8 +15,10 @@
    "tf0.strassentrakt.bauklasse": "IV",
    "tf0.strassentrakt.hoehe_m": 18.5,
    "tf0.strassentrakt.bauweise": "g",
+   "tf0.strassentrakt.breite_m": 18.77,
    "tf0.strassentrakt.tiefe_m": 12.0,
    "tf1.hof.widmung": "G",
+   "tf1.hof.breite_m": 18.82,
    "tf1.hof.flaeche_m2": 377.23
   },
   "grundstueck": {
@@ -109,7 +111,7 @@
  },
  "Leitermayergasse 50, 1180": {
   "stand": "2026-11-23",
-  "prozent": 58,
+  "prozent": 64,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -123,10 +125,12 @@
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
    "tf0.strassentrakt.breite_m": 7.48,
+   "tf0.strassentrakt.flaeche_m2": 89.24,
    "tf1.strassentrakt.widmung": "W",
    "tf1.strassentrakt.bauklasse": "III",
    "tf1.strassentrakt.bauweise": "g",
    "tf1.strassentrakt.breite_m": 8.84,
+   "tf1.strassentrakt.flaeche_m2": 131.54,
    "tf2.hof.widmung": "G",
    "tf2.hof.breite_m": 7.5,
    "tf3.hof.widmung": "G",
@@ -209,7 +213,7 @@
  },
  "Zentagasse 6, 1050": {
   "stand": "2026-11-23",
-  "prozent": 58,
+  "prozent": 68,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -220,9 +224,11 @@
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauklasse": "IV",
    "tf0.strassentrakt.bauweise": "g",
+   "tf0.strassentrakt.breite_m": 22.34,
    "tf0.strassentrakt.tiefe_m": 12.0,
    "tf0.strassentrakt.flaeche_m2": 266.6,
-   "tf1.hof.widmung": "G"
+   "tf1.hof.widmung": "G",
+   "tf1.hof.breite_m": 22.11
   },
   "grundstueck": {
    "kg_gnr": {
@@ -295,7 +301,7 @@
  },
  "Nordmanngasse 20, 1210": {
   "stand": "2026-11-23",
-  "prozent": 35,
+  "prozent": 42,
   "voll_gruen": false,
   "gruen": {
    "gs.flaeche_grundbuch": 536,
@@ -308,7 +314,9 @@
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
-   "tf1.hof.widmung": "G"
+   "tf0.strassentrakt.breite_m": 17.71,
+   "tf1.hof.widmung": "G",
+   "tf1.hof.breite_m": 17.7
   },
   "grundstueck": {
    "kg_gnr": {
