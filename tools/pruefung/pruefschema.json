@@ -87,5 +87,45 @@
     "Prüfstand vor jedem Deploy"
   ],
   "zeichenerkennung": {"dezimaltrenner_hoehe_rel_max": 0.5, "dezimaltrenner_score_abstand_max": 0.03, "komma_aus_luecke_ergaenzen": false,
-    "_quelle": "ChatGPT-Stand 10360f8 (19.11.): Komma wurde als 1 gelesen, Nordmanngasse 15,17 zerfiel; große Lücke allein ist kein Komma"}
+    "_quelle": "ChatGPT-Stand 10360f8 (19.11.): Komma wurde als 1 gelesen, Nordmanngasse 15,17 zerfiel; große Lücke allein ist kein Komma"},
+  "pflichtpruefungen": {
+    "_hinweis": "Eduard 23.11. (Linzer Straße 22): Diese Prüfungen laufen IMMER bei jeder Adresse, egal wie selten der Fall ist. Kann eine nicht abgeschlossen werden, bleibt das Feld offen und die Adresse geht nicht als geprüft online.",
+    "pflicht": [
+      {
+        "id": "P1_hoehe_m_je_bereich",
+        "regel": "Jeden Planbereich nach einer Höhenangabe in Metern absuchen (Muster '<Widmung> <BK> <Zahl> m', z. B. 'GV I 4,5 m', 'W III 15 m'). Stadt-Daten liefern sie nie. Gefunden → Höhe = min(Plan-Höhe, BK-Höhe, §75(4)). Nicht gefunden → erst nach vollständigem Inventar 'keine Sonderhöhe', vorher offen. Nie die BK-Höhe allein als erlaubt anzeigen.",
+        "testfall": "Linzer Straße 22: Hof GB GV I 4,5 m; Hof hinten W III 15 m · Theresiengasse 47 Hof WGV I 4,5 m · Ybbsstraße 7 W IV 18,5 m · Sommerschuhgasse 3 W I 6,5 m"
+      },
+      {
+        "id": "P2_gleicher_code_mehrere_bereiche",
+        "regel": "Gleicher Stadt-Code heißt nicht ein Planbereich. Jede durch Planlinien getrennte Fläche ist ein eigener Bereich mit eigener Höhe, Bauweise und BB – auch bei identischem Code.",
+        "testfall": "Linzer Straße 22: Eckstück W III g und Hof hinten W III 15 m g, beide Stadt-Code W3"
+      },
+      {
+        "id": "P3_jeder_bereich_beschriftet",
+        "regel": "Vollständigkeit: Jeder Planbereich braucht eine zugeordnete Beschriftung (Widmung, BK, Höhe falls vorhanden, Bauweise, BB-Marke). Bereich ohne Beschriftung → offen, Adresse nicht freigeben. Beschriftung kann außerhalb des Grundstücks stehen (40-m-Rand).",
+        "testfall": "Linzer Straße 22: 4 Bereiche, 4 Beschriftungen"
+      },
+      {
+        "id": "P4_bauweise_je_bereich",
+        "regel": "Bauweise (g / o / gk / ogk / Arkade) je Bereich lesen; fehlt sie → offen.",
+        "testfall": "Linzer Straße 22: alle 4 Bereiche g"
+      },
+      {
+        "id": "P5_bb_marke_und_text",
+        "regel": "Steht 'BB' (mit oder ohne Nummer) in oder mit Pfeil zum Bereich → BB-Text aus dem Plandokument dieser Adresse holen und nur diesem Bereich zuordnen.",
+        "testfall": "Linzer Straße 22: Hof GB GV I 4,5 m g BB, PD 6848 · Gartengasse 8: G BB1"
+      },
+      {
+        "id": "P6_rolle_aus_lage",
+        "regel": "Rolle (Straßentrakt / Eckstück / Hof) aus der Lage zur Straße bestimmen, nicht aus der Stadt-Zone. Mehrere Straßenfronten = Eck. Jeder Häuserblock hat mindestens 4 Ecken (Eduard 23.11.) – Eck ist kein Sonderfall: immer alle Straßenkanten des Grundstücks prüfen, nie nur die Front am Adresspunkt.",
+        "testfall": "Linzer Straße 22: Straßentrakt vorne, Eckstück rechts, Hof hinten, Hof"
+      },
+      {
+        "id": "P7_mehrere_gnr",
+        "regel": "Mehrere GNR: alle zusammenlegen, Bauplatz-Frage sichtbar; interne GNR-Grenzen sind keine Planlinien.",
+        "testfall": "Linzer Straße 22: 347 + 343/1 + 338/1"
+      }
+    ]
+  }
 }

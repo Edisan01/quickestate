@@ -103,6 +103,18 @@
         { "art": "strassentrakt", "widmung": "GB", "bauklasse": "II", "bauweise": "g" },
         { "art": "hof", "widmung": "G", "bb": ["10 % bzw. mind. 25 m² unverbaut"] }
       ]
+    },
+    {
+      "adresse": "Linzer Straße 22, 1140",
+      "_quelle": "Eduard 23.11.2026 (Plan auf quickestate.at v410); Hof hinten 15 m von Eduard bestätigt",
+      "plandokument": "6848",
+      "grundstueck": { "mehrere_gnr": true },
+      "teilflaechen": [
+        { "art": "strassentrakt", "widmung": "GB", "bauklasse": "III", "bauweise": "g", "tiefe_m": 15.0 },
+        { "art": "strassentrakt", "_rolle": "Eckstück rechts", "widmung": "W", "bauklasse": "III", "bauweise": "g" },
+        { "art": "hof", "_rolle": "Hof hinten", "widmung": "W", "bauklasse": "III", "hoehe_m": 15.0, "bauweise": "g" },
+        { "art": "hof", "widmung": "GBGV", "bauklasse": "I", "hoehe_m": 4.5, "bauweise": "g", "bb": ["BB"] }
+      ]
     }
   ]
 }

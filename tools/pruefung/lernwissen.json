@@ -164,6 +164,13 @@
       "muster": "Stadt-Zonen über echten Flächenverschnitt, nicht 7×7-Stichproben; Randversatz < 5 m² bzw. < 1 % ausblenden",
       "beleg": "Theresiengasse 47: alte Stichproben nur W3, Verschnitt W3 317 m² + WGV1 432 m² (Shapely bestätigt); Gerstlgasse EPK 1,9 m² = Randversatz",
       "quelle": "ChatGPT-Stand 10360f8 (19.–23.11.), Eduards Zusammenfassung 23.11.; Belege Darwingasse 5/7/8"
+    },
+    {
+      "id": "pflichtpruefungen_linzer22",
+      "bereich": "Prüfstand",
+      "muster": "7 feste Pflichtprüfungen je Adresse (pruefschema.pflichtpruefungen P1–P7): Höhe in m je Bereich, gleicher Stadt-Code ≠ ein Bereich, jeder Bereich beschriftet, Bauweise, BB-Marke+Text, Rolle aus Lage (jeder Block ≥ 4 Ecken), mehrere GNR. Immer, egal wie selten.",
+      "beleg": "Linzer Straße 22: Seite zeigte BK I statt 4,5 m, W III statt 15 m, Hof hinten in Eckstück-Zeile versteckt",
+      "quelle": "Eduard 23.11.2026"
     }
   ]
 }
