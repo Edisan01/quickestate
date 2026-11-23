@@ -1,0 +1,162 @@
+{
+ "01005_1021": {
+  "name": "Tigergasse 21, 1080",
+  "strassenbreite": [],
+  "trakttiefe": [],
+  "andere": []
+ },
+ "01008_174+175": {
+  "name": "Gartengasse 8, 1050",
+  "strassenbreite": [],
+  "trakttiefe": [
+   {
+    "v": 15.0,
+    "gem": 14.92,
+    "arten": [
+     "strich",
+     "voll"
+    ],
+    "mitte": [
+     872.0,
+     870.0
+    ]
+   }
+  ],
+  "andere": [
+   {
+    "v": 12.0,
+    "gem": 11.72,
+    "arten": [
+     "strich",
+     "voll"
+    ],
+    "mitte": [
+     961.5,
+     631.5
+    ],
+    "grund": "quer=False Front-Lage=35.1/20.6 m im_Grundstück=False"
+   }
+  ]
+ },
+ "01008_929-7": {
+  "name": "Zentagasse 6, 1050",
+  "strassenbreite": [],
+  "trakttiefe": [
+   {
+    "v": 12.0,
+    "gem": 11.92,
+    "arten": [
+     "strich",
+     "voll"
+    ],
+    "mitte": [
+     822.0,
+     1039.5
+    ]
+   }
+  ],
+  "andere": [
+   {
+    "v": 12.0,
+    "gem": 11.84,
+    "arten": [
+     "strich",
+     "voll"
+    ],
+    "mitte": [
+     696.5,
+     1240.5
+    ],
+    "grund": "quer=False Front-Lage=31.8/22.3 m im_Grundstück=False"
+   }
+  ]
+ },
+ "01514_300-22": {
+  "name": "Leitermayergasse 50, 1180",
+  "strassenbreite": [
+   {
+    "v": 11.38,
+    "gem": 11.31,
+    "arten": [
+     "voll",
+     "voll"
+    ],
+    "mitte": [
+     765.5,
+     870.0
+    ],
+    "gem_hier": 11.36,
+    "uebertragen": true
+   }
+  ],
+  "trakttiefe": [],
+  "andere": []
+ },
+ "01514_430-18": {
+  "name": "Theresiengasse 47, 1180",
+  "strassenbreite": [
+   {
+    "v": 15.17,
+    "gem": 15.25,
+    "arten": [
+     "voll",
+     "voll"
+    ],
+    "mitte": [
+     1139.0,
+     835.0
+    ],
+    "gem_hier": 15.31,
+    "uebertragen": true
+   }
+  ],
+  "trakttiefe": [
+   {
+    "v": 13.5,
+    "gem": 13.4,
+    "arten": [
+     "strich",
+     "voll"
+    ],
+    "mitte": [
+     1052.5,
+     857.0
+    ]
+   }
+  ],
+  "andere": []
+ },
+ "01603_454": {
+  "name": "Nordmanngasse 20, 1210",
+  "strassenbreite": [],
+  "trakttiefe": [],
+  "andere": []
+ },
+ "01609_674+675": {
+  "name": "Gerstlgasse 18, 1210",
+  "strassenbreite": [],
+  "trakttiefe": [],
+  "andere": []
+ },
+ "01657_1496-78": {
+  "name": "Ybbsstraße 7, 1020",
+  "strassenbreite": [],
+  "trakttiefe": [
+   {
+    "v": 12.0,
+    "gem": 11.96,
+    "arten": [
+     "strich",
+     "voll"
+    ],
+    "mitte": [
+     1158.5,
+     890.5
+    ],
+    "gem_hier": 11.96,
+    "uebertragen": true
+   }
+  ],
+  "andere": []
+ }
+}

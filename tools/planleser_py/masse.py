@@ -56,3 +56,47 @@ def masszahlen(inv, rmax=70):
         if 'gem' in r and not r['ok']: r['grund'] = f"Messung {r['gem']} ≠ Planzahl {v} (± {TOL})"
         out.append(r)
     return out
+
+# ---------- Weg 2: vom Pfeilpaar zur Zahl (Zahl wird zwischen den Pfeilen gelesen, Messung muss passen) ----------
+# Zwei Pfeile auf einer Achse, zeigen voneinander weg, Spitzen an zwei Linien → Maßlinie. Die Zahl steht dazwischen, quer zur Achse geschrieben.
+# Lesen: Ausschnitt drehen, Ziffern-Schrifterkennung (nur 0-9 , .) in beiden Leserichtungen; gilt nur, wenn |Zahl − Messung| ≤ 0,6 m.
+import cv2, subprocess, tempfile, os
+def _ocr_ziffern(img):
+    f = tempfile.mktemp(suffix='.png'); cv2.imwrite(f, img)
+    r = subprocess.run(['tesseract', f, '-', '--psm', '7', '-l', 'eng', '-c', 'tessedit_char_whitelist=0123456789,.'], capture_output=True, text=True).stdout.strip()
+    os.remove(f); return r.replace(' ', '')
+def paare(inv, crop, maxm=40):
+    from leser2 import rot_mask
+    P = inv['pfeile']; out = []
+    im_ = crop.astype(np.float32)
+    BILDER = [np.clip((im_[..., 0] - np.maximum(im_[..., 1], im_[..., 2]) - 30) * 2.2, 0, 255).astype(np.uint8),   # Rot-Stärke: dünne Ziffern bleiben ganz
+              rot_mask(crop) * 255]                                                                               # harte Maske: hilft bei Ziffern nahe an Linien
+    for i in range(len(P)):
+        for j in range(i + 1, len(P)):
+            a, b = P[i], P[j]; da = np.array([math.cos(math.radians(a['richtung'])), math.sin(math.radians(a['richtung']))]); db = np.array([math.cos(math.radians(b['richtung'])), math.sin(math.radians(b['richtung']))])
+            if da @ db > -0.94: continue
+            v = np.array([b['x'] - a['x'], b['y'] - a['y']], float); L = np.hypot(*v)
+            if L < 2 / MPX or L > maxm / MPX: continue
+            u = v / L
+            if abs(u @ da) < 0.94 or da @ -u < 0.9: continue          # a zeigt von b weg, beide auf der Achse
+            mid = (np.array([a['x'], a['y']], float) + np.array([b['x'], b['y']], float)) / 2
+            la, lb = inv['linien'][a['linie']], inv['linien'][b['linie']]
+            s1, s2 = _schnitt(mid, u, la, True), _schnitt(mid, u, lb, True)
+            if s1 is None or s2 is None: continue
+            gem = abs(s1 - s2) * MPX
+            # Ausschnitt um die Mitte, so gedreht, dass die Schrift (quer zur Achse) waagrecht liegt
+            ang = math.degrees(math.atan2(u[1], u[0])) + 90; w, h = int(L * 0.9) + 40, 26
+            res = None
+            for m, zus in [(m, z) for m in BILDER for z in (0, 180)]:
+                M_ = cv2.getRotationMatrix2D((float(mid[0]), float(mid[1])), ang + zus, 1.0); M_[0, 2] += w / 2 - mid[0]; M_[1, 2] += h / 2 - mid[1]
+                c = cv2.warpAffine(m, M_, (w, h)); c = 255 - cv2.resize(c, None, fx=6, fy=6, interpolation=cv2.INTER_CUBIC)
+                c = cv2.copyMakeBorder(c, 30, 30, 30, 30, cv2.BORDER_CONSTANT, value=255)
+                if os.environ.get('MASSE_DEBUG'): cv2.imwrite(f"/tmp/md_{i}_{j}_{zus}.png", c)
+                t = _ocr_ziffern(c); mm = re.search(r'(\d{1,2})[.,](\d\d)', t)
+                if mm:
+                    vv = float(mm.group(1) + '.' + mm.group(2))
+                    if abs(vv - gem) <= TOL: res = vv; break
+            out.append(dict(v=res, gem=round(gem, 2), ok=res is not None, pfeile=[i, j], linien=[a['linie'], b['linie']], arten=sorted([la['art'], lb['art']]),
+                            mitte=mid.round(1).tolist(), a=(mid + u * s1).round(1).tolist(), b=(mid + u * s2).round(1).tolist(), quelle='pfeilpaar',
+                            grund=None if res is not None else 'keine passende Zahl zwischen den Pfeilen'))
+    return out

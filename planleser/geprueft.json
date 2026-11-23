@@ -1,6 +1,6 @@
 {
  "Ybbsstraße 7, 1020": {
-  "stand": "2026-11-18",
+  "stand": "2026-11-23",
   "prozent": 50,
   "voll_gruen": false,
   "gruen": {
@@ -107,14 +107,15 @@
   }
  },
  "Leitermayergasse 50, 1180": {
-  "stand": "2026-11-18",
-  "prozent": 30,
+  "stand": "2026-11-23",
+  "prozent": 33,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
    "gs.wohnzone": false,
    "gs.plandokument_nr": "7318",
    "allg.0": null,
+   "front.strassenbreite_m": 11.38,
    "front.abtretung": false,
    "gs.front_m": 16.16,
    "tf0.strassentrakt.widmung": "W",
@@ -198,7 +199,7 @@
   }
  },
  "Zentagasse 6, 1050": {
-  "stand": "2026-11-18",
+  "stand": "2026-11-23",
   "prozent": 58,
   "voll_gruen": false,
   "gruen": {
@@ -284,7 +285,7 @@
   }
  },
  "Nordmanngasse 20, 1210": {
-  "stand": "2026-11-18",
+  "stand": "2026-11-23",
   "prozent": 35,
   "voll_gruen": false,
   "gruen": {
@@ -385,8 +386,8 @@
   }
  },
  "Theresiengasse 47, 1180": {
-  "stand": "2026-11-18",
-  "prozent": 30,
+  "stand": "2026-11-23",
+  "prozent": 33,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -396,6 +397,7 @@
    "front.abtretung": false,
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauweise": "g",
+   "tf0.strassentrakt.tiefe_m": 13.5,
    "tf1.hof.widmung": "WGV",
    "tf1.hof.bauklasse": "I",
    "tf1.hof.bauweise": "g"
@@ -478,7 +480,7 @@
   }
  },
  "Tigergasse 21, 1080": {
-  "stand": "2026-11-18",
+  "stand": "2026-11-23",
   "prozent": 83,
   "voll_gruen": false,
   "gruen": {
@@ -572,7 +574,7 @@
   }
  },
  "Gartengasse 8, 1050": {
-  "stand": "2026-11-18",
+  "stand": "2026-11-23",
   "prozent": 79,
   "voll_gruen": false,
   "gruen": {
@@ -664,7 +666,7 @@
   }
  },
  "Gerstlgasse 18, 1210": {
-  "stand": "2026-11-18",
+  "stand": "2026-11-23",
   "prozent": 92,
   "voll_gruen": false,
   "gruen": {

@@ -115,6 +115,10 @@ def inventar(crop, T):
         if best is None: continue
         w = duenn[max(0, p['y'] - 9):p['y'] + 10, max(0, p['x'] - 9):p['x'] + 10]
         if w.sum() > 40: continue
+        # Richtung genau: Normale der Linie, zeigt zur Linie (Schenkel liegen auf der anderen Seite) – V-Schätzung allein streut ± 30°
+        l = L[best[0]]; ux, uy = math.cos(math.radians(l['winkel'])), math.sin(math.radians(l['winkel'])); nx, ny = -uy, ux
+        sg = 1 if math.cos(th) * nx + math.sin(th) * ny > 0 else -1   # Vorzeichen aus der V-Schätzung (Fehler < 90°), Winkel aus der Linie
+        p = dict(p, richtung=round(math.degrees(math.atan2(sg * ny, sg * nx)) % 360, 1))
         if all(math.hypot(p['x'] - o['x'], p['y'] - o['y']) > 6 for o in P): P.append(dict(p, linie=best[0]))   # erst prüfen, dann Doppelte weg
     return dict(linien=L, pfeile=P, texte=[dict(t=t['t'], x=t['x'], y=t['y'], ang=t['ang'], w=t['w'], h=t['h']) for t in T])
 

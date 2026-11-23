@@ -7,6 +7,7 @@ H = os.path.dirname(os.path.abspath(__file__)); R = os.path.abspath(os.path.join
 SCHEMA = json.load(open(os.path.join(H, 'pruefschema.json'))); SOLL = json.load(open(os.path.join(H, 'soll.json')))
 TOL_M = SCHEMA['toleranzen']['planzahl_gegen_messung_m']; TOL_P = SCHEMA['toleranzen']['summe_gegen_grundbuch_prozent']
 import grundstueck as G
+_mf = os.path.join(R, 'planleser', 'masse.json'); MASSE = json.load(open(_mf)) if os.path.exists(_mf) else {}
 import stadt as ST
 
 def num(s):
@@ -74,6 +75,16 @@ def adapter(e, adr):
             vg = t.get('vorgarten')
             if vg and vg.get('plan') is not None: pf['vorgarten_m'] = feld(vg['plan'], quelle='planzahl+messung')
         ist['teilflaechen'].append(tf)
+    # Phase 4: Maßzahlen über Pfeilpaare (planleser/masse.json) – nur wo der bisherige Leser nichts hat
+    mz = MASSE.get(f"{e['kg']}_{e['gnr'].replace('/', '-')}", {})
+    sbw = sorted({x['v'] for x in mz.get('strassenbreite', [])})
+    if pf['strassenbreite_m']['wert'] is None and len(sbw) == 1: pf['strassenbreite_m'] = feld(sbw[0], quelle='planzahl+messung (pfeilpaar)')
+    ttw = sorted({x['v'] for x in mz.get('trakttiefe', [])})
+    st = [t for t in ist['teilflaechen'] if t['art']['wert'] == 'strassentrakt']
+    if len(ttw) == 1 and st and st[0]['tiefe_mittel_m']['wert'] is None:
+        for k in ('tiefe_links_m', 'tiefe_rechts_m', 'tiefe_mittel_m'): st[0][k] = feld(ttw[0], quelle='planzahl+messung (pfeilpaar)')
+        pf['trakttiefe_m'] = feld(ttw[0], quelle='planzahl+messung (pfeilpaar)')
+    elif len(ttw) > 1: pf['trakttiefe_m'] = feld(ttw, 'offen', 'pfeilpaar', 'mehrere Trakttiefen → Abschnitte (Phase 5)')
     abt = [t for t in e['teile'] if t['art'] == 'abtretung']
     pf['abtretung'] = feld(bool(abt), quelle='leser') if e['teile'] else feld()
     return ist
