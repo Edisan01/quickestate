@@ -3,6 +3,32 @@ import cv2,numpy as np,math,sys
 from PIL import Image,ImageDraw,ImageFont
 CH='WIVGBELSKOFAPMNTHRCDgm0123456789,.[]()/o-'
 N=20
+def schriftdateien():
+  # Gleiche Sans-Schriften auf Linux, macOS und Windows finden.
+  # Explizite Pfade erlauben identische Vorlagen in Prüfstand und Betrieb.
+  konfig=os.environ.get('QE_PLAN_FONTS')
+  if konfig:
+    dateien=konfig.split(os.pathsep)
+    fehlt=[p for p in dateien if not os.path.isfile(p)]
+    if fehlt: raise RuntimeError('QE_PLAN_FONTS: Schrift fehlt: '+', '.join(fehlt))
+    return dateien
+  dateien=[
+    '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+    '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+    '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+    '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+    '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
+    '/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
+    '/System/Library/Fonts/Supplemental/Arial.ttf',
+    '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
+  ]
+  if os.name=='nt':
+    basis=os.path.join(os.environ.get('WINDIR',r'C:\Windows'),'Fonts')
+    dateien += [os.path.join(basis,n) for n in ('arial.ttf','arialbd.ttf')]
+  dateien=[p for p in dateien if os.path.isfile(p)]
+  if not dateien:
+    raise RuntimeError('Keine Planleser-Schriften gefunden. Liberation Sans/DejaVu Sans installieren oder QE_PLAN_FONTS setzen.')
+  return dateien
 def norm(b):
   ys,xs=np.nonzero(b)
   if len(xs)==0: return None
@@ -14,9 +40,8 @@ def norm(b):
   return out/n if n else None
 def vorlagen():
   T=[]
-  for fn in ['/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf','/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf','/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf','/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf']:
+  for fn in schriftdateien():
     for px in (14,22,40):
-      if not os.path.exists(fn): break
       f=ImageFont.truetype(fn,px)
       for c in CH:
         im=Image.new('L',(px*2,px*2),0); ImageDraw.Draw(im).text((px//2,px//4),c,font=f,fill=255)

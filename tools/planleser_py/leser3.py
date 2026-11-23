@@ -1,7 +1,9 @@
-import cv2,numpy as np,math,sys,re
+import cv2,numpy as np,math,sys,re,json
+from pathlib import Path
 sys.path.insert(0,'/home/claude/pbtools')
 import glyph as G
 from leser2 import rot_mask,glyphen,winkel
+ZEICHENREGELN=json.loads((Path(__file__).resolve().parents[1]/'pruefung'/'pruefschema.json').read_text())['zeichenerkennung']
 def drehen(gl,ang,sk=1.0):
   H,W=gl.shape; M=cv2.getRotationMatrix2D((W/2,H/2),ang,sk); cs,sn=abs(M[0,0]),abs(M[0,1])
   nW,nH=int(H*sn+W*cs),int(H*cs+W*sn); M[0,2]+=nW/2-W/2; M[1,2]+=nH/2-H/2
@@ -37,6 +39,12 @@ def zeichen(g):
     Z.append(dict(c=c,s=d[c],d=d,x=int(x),y=int(y),w=int(w),h=int(h)))
   return Z
 DESC=set('g')
+def dezimaltrenner(z,H):
+  # Komma und schmale „1“ können ähnlich aussehen. Nur ein im Verhältnis
+  # zur Zeile kleines Zeichen mit passender Punkt-/Kommaform ist Trenner.
+  if z['h']>=ZEICHENREGELN['dezimaltrenner_hoehe_rel_max']*H: return False
+  d=z['d']; punkt=max(d.get(',',-9),d.get('.',-9))
+  return punkt>=max(d.values())-ZEICHENREGELN['dezimaltrenner_score_abstand_max']
 def woerter(Z):
   # Grundlinie: Unterkante (ohne Unterlänge); Zeilenhöhe ~ Höhe der großen Zeichen
   for z in Z:
@@ -54,10 +62,13 @@ def woerter(Z):
         gap=q['x']-(last['x']+last['w'])
         H=max(last['h'] if last['c'] not in DESC else last['h']*0.7, 6)
         if gap< -2 or gap>0.9*H+3: continue
-        if abs(q['base']-last['base'])>0.35*H+2 and not (q['c'] in ',.' and abs(q['base']-last['base'])<0.5*H+3): continue
+        trenner=q['c'] in ',.' or dezimaltrenner(q,H)
+        if abs(q['base']-last['base'])>0.35*H+2 and not (trenner and abs(q['base']-last['base'])<0.5*H+3): continue
         if cand is None or q['x']<Z[cand]['x']: cand=j
       if cand is None: break
-      wd.append(cand); used.add(cand); last=Z[cand] if Z[cand]['c'] not in ',.' else dict(Z[cand],h=last['h'],base=last['base'],c=last['c'])
+      wd.append(cand); used.add(cand)
+      q=Z[cand]
+      last=q if not (q['c'] in ',.' or dezimaltrenner(q,max(last['h'],6))) else dict(q,h=last['h'],base=last['base'],c=last['c'])
     W.append([Z[k] for k in wd])
   return W
 NUM='0123456789,.'
@@ -77,8 +88,9 @@ def text(wd):
   ns=''.join(c for _,c,_ in dig); nsc=[sc for _,_,sc in dig]
   if 3<=len(dig)<=5:
     k=len(dig)-3; i0,i1=dig[k][0],dig[k+1][0]
-    gaps=[wd[dig[j+1][0]]['x']-(wd[dig[j][0]]['x']+wd[dig[j][0]]['w']) for j in range(len(dig)-1)]
-    if i1-i0>1 or (gaps[k]==max(gaps) and gaps[k]>=(sorted(gaps)[-2] if len(gaps)>1 else 0)+3): ns=ns[:k+1]+','+ns[k+1:]
+    # Ein Trenner muss als eigenes Zeichen vorhanden sein. Größere Abstände
+    # zwischen Ziffern sind kein Beleg für ein fehlendes Komma.
+    if i1-i0>1: ns=ns[:k+1]+','+ns[k+1:]
   n=[(None,s_) for s_ in nsc] or [(None,0)]
   l=[bester(z,LAB,H) for z in wd]; ls=''.join(c for c,_ in l)
   if re.fullmatch(r'\d{1,3},\d{2}',ns) and np.mean([s for _,s in n])>=np.mean([s for _,s in l])-0.08:

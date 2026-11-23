@@ -85,5 +85,7 @@
     "Texte → Teilflächen + Abgleich Stadt", "Bedingte Pflichtfelder", "Pflichtmaße pro Teilfläche",
     "Färben + Flächensumme", "Vollständigkeits-Kontrolle", "Rechnungen", "Freigabe + Bericht",
     "Prüfstand vor jedem Deploy"
-  ]
+  ],
+  "zeichenerkennung": {"dezimaltrenner_hoehe_rel_max": 0.5, "dezimaltrenner_score_abstand_max": 0.03, "komma_aus_luecke_ergaenzen": false,
+    "_quelle": "ChatGPT-Stand 10360f8 (19.11.): Komma wurde als 1 gelesen, Nordmanngasse 15,17 zerfiel; große Lücke allein ist kein Komma"}
 }

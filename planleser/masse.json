@@ -11,7 +11,7 @@
   "trakttiefe": [
    {
     "v": 15.0,
-    "gem": 14.92,
+    "gem": 14.96,
     "arten": [
      "strich",
      "voll"
@@ -25,7 +25,7 @@
   "andere": [
    {
     "v": 12.0,
-    "gem": 11.72,
+    "gem": 11.74,
     "arten": [
      "strich",
      "voll"
@@ -76,7 +76,21 @@
   "strassenbreite": [
    {
     "v": 11.38,
-    "gem": 11.31,
+    "gem": 11.77,
+    "arten": [
+     "voll",
+     "voll"
+    ],
+    "mitte": [
+     771.0,
+     866.5
+    ],
+    "gem_hier": 11.64,
+    "uebertragen": true
+   },
+   {
+    "v": 11.38,
+    "gem": 11.62,
     "arten": [
      "voll",
      "voll"
@@ -85,7 +99,7 @@
      765.5,
      870.0
     ],
-    "gem_hier": 11.36,
+    "gem_hier": 11.47,
     "uebertragen": true
    }
   ],
@@ -97,7 +111,7 @@
   "strassenbreite": [
    {
     "v": 15.17,
-    "gem": 15.25,
+    "gem": 15.18,
     "arten": [
      "voll",
      "voll"
@@ -106,7 +120,7 @@
      1139.0,
      835.0
     ],
-    "gem_hier": 15.31,
+    "gem_hier": 15.2,
     "uebertragen": true
    }
   ],

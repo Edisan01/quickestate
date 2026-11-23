@@ -156,9 +156,13 @@ def parzelle_zonen(crop,rings,A=None):
   return Z,T,lin
 def g_suche(crop,gl,winkel,hoehen=(14,17,20,24),schwelle=0.62):
   from PIL import Image,ImageDraw,ImageFont
+  import glyph
   im=crop.astype(np.float32); r=np.clip((im[...,0]-np.maximum(im[...,1],im[...,2])-40)*255/140,0,255).astype(np.float32)
   out=[]
-  for fn in ['/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf','/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf']:
+  schriften=glyph.schriftdateien()
+  # Vorhandene Linux-Vorlagen beibehalten; sonst verfügbare Systemschriften.
+  bevorzugt=[p for p in schriften if p in ['/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf','/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf']]
+  for fn in bevorzugt or schriften:
     for hh in hoehen:
       f=ImageFont.truetype(fn,int(hh*1.38)); t=Image.new('L',(hh*3,hh*3),0); ImageDraw.Draw(t).text((hh//2,0),'G',font=f,fill=255)
       a=np.array(t); ys,xs=np.nonzero(a>100); a=a[ys.min()-3:ys.max()+4,xs.min()-3:xs.max()+4].astype(np.float32)
