@@ -6,6 +6,7 @@ from inventar import MPX
 MASS = re.compile(r'^(\d{1,2})[,.](\d\d)$')
 TOL = 0.6
 
+RAND_PX = 6   # endlicher Linienkontakt: Schnitt darf höchstens 6 px (~1,2 m) über das Liniensegment hinaus liegen (ChatGPT-Befund 20.11.)
 def _schnitt(p, d, l, frei=False):
     # Strahl p + s·d mit Gerade durch l['a'], l['b'] → s (px) oder None
     ax, ay = l['a']; bx, by = l['b']; ex, ey = bx - ax, by - ay
@@ -13,7 +14,8 @@ def _schnitt(p, d, l, frei=False):
     if abs(den) < 1e-6: return None
     s = ((ax - p[0]) * ey - (ay - p[1]) * ex) / den
     u = ((ax - p[0]) * d[1] - (ay - p[1]) * d[0]) / den
-    return s if frei or -0.05 <= u <= 1.05 else None   # frei: Pfeil sitzt nachweislich auf dieser Linie
+    L = math.hypot(ex, ey); r = RAND_PX / max(L, 1e-6)
+    return s if frei or -r <= u <= 1 + r else None   # frei: unbegrenzt (nur noch für Altpfad masszahlen)
 def masszahlen(inv, rmax=70):
     out = []
     for t in inv['texte']:
@@ -81,8 +83,10 @@ def paare(inv, crop, maxm=40):
             if abs(u @ da) < 0.94 or da @ -u < 0.9: continue          # a zeigt von b weg, beide auf der Achse
             mid = (np.array([a['x'], a['y']], float) + np.array([b['x'], b['y']], float)) / 2
             la, lb = inv['linien'][a['linie']], inv['linien'][b['linie']]
-            s1, s2 = _schnitt(mid, u, la, True), _schnitt(mid, u, lb, True)
+            s1, s2 = _schnitt(mid, u, la), _schnitt(mid, u, lb)   # endlich: Maßachse muss die gezeichneten Liniensegmente treffen
             if s1 is None or s2 is None: continue
+            # Pfeilspitzen müssen auf der gemeinsamen Maßachse an den Schnittpunkten sitzen (seitlich versetzte Pfeile ergeben sonst Scheinmaße)
+            if max(np.hypot(*(mid + u * s1 - [a['x'], a['y']])), np.hypot(*(mid + u * s2 - [b['x'], b['y']]))) > 5: continue
             gem = abs(s1 - s2) * MPX
             # Ausschnitt um die Mitte, so gedreht, dass die Schrift (quer zur Achse) waagrecht liegt
             ang = math.degrees(math.atan2(u[1], u[0])) + 90; w, h = int(L * 0.9) + 40, 26

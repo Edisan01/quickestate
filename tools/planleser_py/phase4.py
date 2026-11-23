@@ -34,9 +34,13 @@ def lauf(pb, ov=None):
                 # durchlaufen und dort gemessen dieselbe Zahl ergeben (± 0,6 m) – sonst verworfen (Tigergasse: Baulinie springt vor)
                 hier = None
                 if quer and not (an_front and (im_gs or p['arten'] == ['voll', 'voll'])):
-                    fm = (a + b) / 2; la, lb = inv['linien'][p['linien'][0]], inv['linien'][p['linien'][1]]
-                    sa, sb = M._schnitt(fm, ax, la), M._schnitt(fm, ax, lb)
-                    if sa is not None and sb is not None and abs(abs(sa - sb) * I.MPX - p['v']) <= M.TOL: hier = round(abs(sa - sb) * I.MPX, 2)
+                    # Querschnitte bei 5/25/50/75/95 % der eigenen Front: jeder muss dieselben endlichen Linien treffen und die Zahl ergeben (± 0,6 m)
+                    la, lb = inv['linien'][p['linien'][0]], inv['linien'][p['linien'][1]]; werte = []
+                    for f_ in (0.05, 0.25, 0.5, 0.75, 0.95):
+                        fm = a + (b - a) * f_; sa, sb = M._schnitt(fm, ax, la), M._schnitt(fm, ax, lb)
+                        werte.append(None if sa is None or sb is None else abs(sa - sb) * I.MPX)
+                    if all(w is not None and abs(w - p['v']) <= M.TOL for w in werte): hier = round(sum(werte) / len(werte), 2)
+                    else: eintrag['querschnitte'] = [None if w is None else round(w, 2) for w in werte]
                 if hier is not None: eintrag.update(gem_hier=hier, uebertragen=True)
                 if quer and (an_front or hier is not None) and p['arten'] == ['voll', 'voll'] and not gs.contains(Point(*mid)): res['strassenbreite'].append(eintrag)
                 elif quer and (im_gs or hier is not None) and p['arten'] == ['strich', 'voll']: res['trakttiefe'].append(eintrag)
