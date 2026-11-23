@@ -53,6 +53,8 @@
 "Nordmanngasse 20, 1210|tf0.strassentrakt.bauklasse",
 "Nordmanngasse 20, 1210|tf0.strassentrakt.bauweise",
 "Nordmanngasse 20, 1210|tf0.strassentrakt.breite_m",
+"Nordmanngasse 20, 1210|tf0.strassentrakt.flaeche_m2",
+"Nordmanngasse 20, 1210|tf0.strassentrakt.tiefe_m",
 "Nordmanngasse 20, 1210|tf0.strassentrakt.widmung",
 "Nordmanngasse 20, 1210|tf1.hof.breite_m",
 "Nordmanngasse 20, 1210|tf1.hof.widmung",

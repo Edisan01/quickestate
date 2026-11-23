@@ -301,7 +301,7 @@
  },
  "Nordmanngasse 20, 1210": {
   "stand": "2026-11-23",
-  "prozent": 42,
+  "prozent": 47,
   "voll_gruen": false,
   "gruen": {
    "gs.flaeche_grundbuch": 536,
@@ -315,6 +315,8 @@
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
    "tf0.strassentrakt.breite_m": 17.71,
+   "tf0.strassentrakt.tiefe_m": 10.46,
+   "tf0.strassentrakt.flaeche_m2": 185.2,
    "tf1.hof.widmung": "G",
    "tf1.hof.breite_m": 17.7
   },
@@ -414,7 +416,7 @@
    "front.abtretung": false,
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauweise": "g",
-   "tf0.strassentrakt.tiefe_m": 13.5,
+   "tf0.strassentrakt.tiefe_m": 13.43,
    "tf1.hof.widmung": "WGV",
    "tf1.hof.bauklasse": "I",
    "tf1.hof.bauweise": "g"

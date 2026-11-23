@@ -1107,16 +1107,19 @@
      "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 10.46,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_rechts_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 10.46,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_mittel_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 10.46,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "flaeche_m2": {
      "wert": 185.2,
@@ -1233,9 +1236,8 @@
     "quelle": "planzahl+messung"
    },
    "trakttiefe_m": {
-    "wert": 13.5,
-    "zustand": "bestaetigt",
-    "quelle": "planzahl+messung (pfeilpaar)"
+    "wert": null,
+    "zustand": "offen"
    },
    "vorgarten_m": {
     "wert": null,
@@ -1294,19 +1296,19 @@
      "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
-     "wert": 13.5,
-     "zustand": "bestaetigt",
-     "quelle": "planzahl+messung (pfeilpaar)"
+     "wert": 13.43,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_rechts_m": {
-     "wert": 13.5,
-     "zustand": "bestaetigt",
-     "quelle": "planzahl+messung (pfeilpaar)"
+     "wert": 13.43,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_mittel_m": {
-     "wert": 13.5,
-     "zustand": "bestaetigt",
-     "quelle": "planzahl+messung (pfeilpaar)"
+     "wert": 13.43,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "flaeche_m2": {
      "wert": 317.87,
@@ -1543,16 +1545,19 @@
      "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 13.91,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_rechts_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 13.91,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_mittel_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 13.91,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "flaeche_m2": {
      "wert": 294.93,
@@ -1728,9 +1733,8 @@
     "grund": "keine Planzahl, gemessen 13.23"
    },
    "trakttiefe_m": {
-    "wert": 15.0,
-    "zustand": "bestaetigt",
-    "quelle": "planzahl+messung (pfeilpaar)"
+    "wert": null,
+    "zustand": "offen"
    },
    "vorgarten_m": {
     "wert": null,
@@ -1789,19 +1793,19 @@
      "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
-     "wert": 15.0,
-     "zustand": "bestaetigt",
-     "quelle": "planzahl+messung (pfeilpaar)"
+     "wert": 13.83,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_rechts_m": {
-     "wert": 15.0,
-     "zustand": "bestaetigt",
-     "quelle": "planzahl+messung (pfeilpaar)"
+     "wert": 13.83,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_mittel_m": {
-     "wert": 15.0,
-     "zustand": "bestaetigt",
-     "quelle": "planzahl+messung (pfeilpaar)"
+     "wert": 13.83,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "flaeche_m2": {
      "wert": 303.77,
@@ -2158,16 +2162,19 @@
      "quelle": "kataster (netz)"
     },
     "tiefe_links_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 14.65,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_rechts_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 14.65,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "tiefe_mittel_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 14.65,
+     "zustand": "offen",
+     "quelle": "gemessen – im Plan keine Maßzahl"
     },
     "flaeche_m2": {
      "wert": 231.88,

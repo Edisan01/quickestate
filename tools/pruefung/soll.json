@@ -50,7 +50,7 @@
       "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
       "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 18.0, "tiefe_m": 11.0, "flaeche_m2": 198.0, "hoehe_summe_m": 20.5, "geschosse": 7 },
+        { "art": "strassentrakt", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 18.0, "tiefe_m": 10.38, "_tiefe_m": "Eduard 23.11.: im Plan keine Maßzahl, Kurs 11 m gerundet → Messung Baufluchtlinie gilt", "flaeche_m2": 198.0, "hoehe_summe_m": 20.5, "geschosse": 7 },
         { "art": "hof", "widmung": "G", "bb": ["10 % von G unverbaut"], "breite_m": 18.0, "tiefe_m": 18.8, "flaeche_m2": 338.4, "bb_flaeche_m2": 33.84, "hoehe_summe_m": 3.5 }
       ],
       "summe_m2": 536.4,

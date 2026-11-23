@@ -84,6 +84,10 @@ def adapter(e, adr):
         # Schritt 5b: Sprung → Abschnitte (Lot zur Front durch den Sprung); je Abschnitt eigene Breite/Fläche
         ab = [x for x in tfn.get('abschnitte', []) if x['leser_teil'] == ti]
         if len(ab) == 1 and not (tf.get('breite_m') or {}).get('wert'): tf['breite_m'] = feld(ab[0]['breite_m'], quelle='kataster (netz)')
+        # Eduard 23.11. (Nordmanngasse): keine Maßzahl im Plan → gemessene Lage der Baufluchtlinie zählt (gekennzeichnet, ± 0,6 m)
+        if art == 'strassentrakt' and len(ab) == 1 and not (tf.get('tiefe_mittel_m') or {}).get('wert') and not (t.get('tiefe') or {}).get('plan'):
+            tm = round(ab[0]['m2'] / ab[0]['breite_m'], 2)
+            for kk in ('tiefe_links_m', 'tiefe_rechts_m', 'tiefe_mittel_m'): tf[kk] = feld(tm, 'offen', 'gemessen – im Plan keine Maßzahl')
         if len(ab) > 1 and tfn.get('sprung_lote'):
             for x in ab:
                 c = dict(tf); c['breite_m'] = feld(x['breite_m'], quelle='kataster+sprung (lot)'); c['flaeche_m2'] = feld(x['m2'], 'offen', 'kataster+planlinien (abschnitt)')
@@ -173,7 +177,7 @@ def pruefen():
                 if t is None: setz(key, 'offen', v); continue
                 if k == 'bb': setz(key, vgl_bb(v, t['bb']['wert'] if t['bb']['zustand'] == 'bestaetigt' or t['bb']['wert'] else None), v, t['bb']['wert']); continue
                 if k == 'tiefe_m':
-                    iw = t['tiefe_mittel_m']['wert']; a = 'exakt' if st['art'] == 'strassentrakt' else 'masz'
+                    iw = t['tiefe_mittel_m']['wert']; a = 'exakt' if st['art'] == 'strassentrakt' and 'gemessen' not in t['tiefe_mittel_m'].get('quelle', '') else 'masz'
                     setz(key, vgl(a, v, iw), v, iw); continue
                 iw = (t.get(k) or {}).get('wert')
                 # Eduard 23.11. (B): Fläche gegen Katasterbreite × Plantiefe; Blatt rundet die Breite → nur Hinweis
