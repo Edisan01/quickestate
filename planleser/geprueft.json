@@ -1,7 +1,7 @@
 {
  "Ybbsstraße 7, 1020": {
   "stand": "2026-11-23",
-  "prozent": 50,
+  "prozent": 54,
   "voll_gruen": false,
   "gruen": {
    "gs.flaeche_grundbuch": 596,
@@ -16,7 +16,8 @@
    "tf0.strassentrakt.hoehe_m": 18.5,
    "tf0.strassentrakt.bauweise": "g",
    "tf0.strassentrakt.tiefe_m": 12.0,
-   "tf1.hof.widmung": "G"
+   "tf1.hof.widmung": "G",
+   "tf1.hof.flaeche_m2": 377.23
   },
   "grundstueck": {
    "kg_gnr": {
@@ -212,7 +213,7 @@
    "tf0.strassentrakt.bauklasse": "IV",
    "tf0.strassentrakt.bauweise": "g",
    "tf0.strassentrakt.tiefe_m": 12.0,
-   "tf0.strassentrakt.flaeche_m2": 268.7,
+   "tf0.strassentrakt.flaeche_m2": 266.6,
    "tf1.hof.widmung": "G"
   },
   "grundstueck": {
@@ -760,5 +761,12 @@
     "quelle": "Plandokument 7294"
    }
   }
+ },
+ "Linzer Straße 22, 1140": {
+  "stand": "2026-11-23",
+  "prozent": 0,
+  "voll_gruen": false,
+  "gruen": {},
+  "grundstueck": {}
  }
 }

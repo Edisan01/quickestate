@@ -191,9 +191,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 384.4,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 377.23,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    },
    {
@@ -253,9 +253,9 @@
      "quelle": "planzahl"
     },
     "flaeche_m2": {
-     "wert": 223.2,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 219.9,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    }
   ]
@@ -436,9 +436,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 224.6,
+     "wert": 220.81,
      "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "quelle": "kataster+planlinien (netz) · 2. Verfahren liefert andere Teilezahl"
     }
    },
    {
@@ -495,9 +495,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 145.7,
+     "wert": 143.13,
      "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "quelle": "kataster+planlinien (netz) · 2. Verfahren liefert andere Teilezahl"
     }
    }
   ]
@@ -682,9 +682,9 @@
      "quelle": "planzahl"
     },
     "flaeche_m2": {
-     "wert": 268.7,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 266.6,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    },
    {
@@ -741,9 +741,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 224.1,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 220.17,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    }
   ]
@@ -934,9 +934,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 362.7,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 358.95,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    },
    {
@@ -992,9 +992,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 187.8,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 185.2,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    }
   ]
@@ -1181,9 +1181,9 @@
      "quelle": "planzahl+messung (pfeilpaar)"
     },
     "flaeche_m2": {
-     "wert": 327.7,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 317.87,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    },
    {
@@ -1239,9 +1239,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 434.0,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 429.88,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    }
   ]
@@ -1425,9 +1425,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 304.1,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 294.93,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    },
    {
@@ -1484,9 +1484,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 63.9,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 63.01,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    }
   ]
@@ -1672,9 +1672,9 @@
      "quelle": "planzahl+messung (pfeilpaar)"
     },
     "flaeche_m2": {
-     "wert": 304.1,
+     "wert": 303.77,
      "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "quelle": "kataster+planlinien (netz) · 2. Verfahren liefert andere Teilezahl"
     }
    },
    {
@@ -1732,9 +1732,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 461.3,
+     "wert": 456.58,
      "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "quelle": "kataster+planlinien (netz) · 2. Verfahren liefert andere Teilezahl"
     }
    },
    {
@@ -1789,9 +1789,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 41.5,
+     "wert": 37.55,
      "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "quelle": "kataster+planlinien (netz) · 2. Verfahren liefert andere Teilezahl"
     }
    }
   ]
@@ -1977,9 +1977,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 373.2,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 366.58,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    },
    {
@@ -2035,9 +2035,9 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 239.0,
-     "zustand": "offen",
-     "quelle": "planfläche (gemessen)"
+     "wert": 231.88,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+planlinien (netz)"
     }
    }
   ]

@@ -127,5 +127,7 @@
         "testfall": "Linzer Straße 22: 347 + 343/1 + 338/1"
       }
     ]
-  }
+  },
+  "kataster_detail_versuch": {"zustand": "offen", "zoom": 19, "rand_m": 40, "min_rot_gruen": 65, "min_rot_blau": 45, "min_rot": 135, "hough_min_laenge_px": 30, "hough_max_luecke_px": 8, "linien_abstand_px": 3.5, "linien_winkel_grad": 2, "min_belegung": 0.6, "max_profilluecke_px": 12, "min_teilflaeche_m2": 2, "max_anschluss_px": 2, "grundsatz": "Keine Flächenzahl vorgeben. Keine Kataster-Innenkante als Plantrennung übernehmen. Keine automatische Widmungs- oder BB-Freigabe.", "_quelle": "ChatGPT-Stand 10360f8"},
+  "planbereiche_anzeige": {"nummerierung": {"start": "Frontteil an der Katasterkante beim Adresspunkt", "richtung": "Uhrzeigersinn", "ohne_front": "offen, Reihenfolge vorläufig"}, "ansichten": ["Was zeigt der Plan?", "Was darf ich bauen?"], "geometrie_bestaetigung_ist_keine_baurechtliche_freigabe": true, "stadtdaten_auswahl": "positiver geometrischer Verschnitt, keine Rastertreffer-Mindestzahl", "detailangaben_ohne_beleg": "offen", "quelle_plan_und_stadt_getrennt": true}
 }

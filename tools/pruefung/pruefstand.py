@@ -8,6 +8,7 @@ SCHEMA = json.load(open(os.path.join(H, 'pruefschema.json'))); SOLL = json.load(
 TOL_M = SCHEMA['toleranzen']['planzahl_gegen_messung_m']; TOL_P = SCHEMA['toleranzen']['summe_gegen_grundbuch_prozent']
 import grundstueck as G
 _mf = os.path.join(R, 'planleser', 'masse.json'); MASSE = json.load(open(_mf)) if os.path.exists(_mf) else {}
+_tf = os.path.join(R, 'planleser', 'teilflaechen.json'); TEILE = json.load(open(_tf)) if os.path.exists(_tf) else {}
 import stadt as ST
 
 def num(s):
@@ -42,7 +43,8 @@ def adapter(e, adr):
     G.ergaenzen(gs, e, adr)
     ST.ergaenzen(gs, e, adr)
     pf = ist['pro_front']
-    for t in e['teile']:
+    tfn = TEILE.get(f"{e['kg']}_{e['gnr'].replace('/', '-')}", {})
+    for ti, t in enumerate(e['teile']):
         p = t['plan']; art = ART.get(t['rolle'], 'hof')
         tf = {f['id']: feld() for f in SCHEMA['teilflaeche']}
         tf['art'] = feld(art, quelle='leser')
@@ -64,6 +66,11 @@ def adapter(e, adr):
         elif t['art'] != 'abtretung':
             tf['bb'] = feld([], 'offen', 'plan', 'keine BB gelesen – Abgleich PD offen')
         tf['flaeche_m2'] = feld(t.get('m2_plan'), 'offen', 'planfläche (gemessen)')
+        # Phase 5: Fläche aus Kataster + Planlinien-Netz (Summe der Netzteile dieses Leser-Teils); 2. Beleg = gleiche Teilezahl im Kataster-Detail-Verfahren
+        nz = [x for x in tfn.get('netz', []) if x['leser_teil'] == ti]
+        if nz:
+            zwei = len(tfn.get('netz', [])) == len(tfn.get('teile', []))
+            tf['flaeche_m2'] = feld(round(sum(x['m2'] for x in nz), 2), 'bestaetigt' if zwei else 'offen', 'kataster+planlinien (netz)' + ('' if zwei else ' · 2. Verfahren liefert andere Teilezahl'))
         if art == 'strassentrakt':
             ti = t.get('tiefe') or {}
             if ti.get('plan') is not None:
