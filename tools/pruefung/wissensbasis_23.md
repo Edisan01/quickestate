@@ -82,3 +82,19 @@ Neues Wissen = Schema-Feld + Testfall in `soll.json` + Wissensbasis + `lernwisse
 - **v409 live:** Adressen ohne Planleser: Hof grau + Hinweis, Ampel gelb „Plan noch nicht geprüft“.
 - **Offen bei Eduard:** Theresiengasse Kursstand (672/21 m/W IV/5,5 m/keine Erker vs. heute 762/23,66/W III/4,5 m/Erker ≤ 0,6 m); §75(4) BK IV: +4 m immer oder nur bei Straße > 15 m (v204: sonst +3); Leitermayergasse §75(4) Einschränkung bestätigen.
 - Allgemeine Bestimmungen = alle PD-Treffer ohne BB-Bezug (Annahme, weil v204 den Kopf in -layout-Texten nicht erkennt) → können Punkte enthalten, die nur für bestimmte Flächen gelten (z. B. 7208 Pkt. 3.3 GV-Dächer). Zuordnung zu Flächen in Phase 6.
+
+## Pflichtprüfungen P1–P7 (Eduard 23.11., immer, jede Adresse)
+Anlass Linzer Straße 22: Seite zeigte Hof „Bauklasse I“ (wäre 9 m) statt **4,5 m**, Hof hinten W III 15 m g war in der Eckstück-Zeile versteckt (beide Stadt-Code W3). Festgelegt in `pruefschema.json → pflichtpruefungen`, Testfall in `soll.json`:
+- **P1** Höhe in m je Planbereich suchen (Stadt liefert sie nie); Höhe = min(Plan, BK, §75(4)); nie BK-Höhe allein als erlaubt zeigen.
+- **P2** Gleicher Stadt-Code ≠ ein Planbereich.
+- **P3** Jeder Planbereich braucht eine Beschriftung (auch außerhalb, 40-m-Rand); sonst offen, keine Freigabe.
+- **P4** Bauweise je Bereich.
+- **P5** BB-Marke → Text aus dem PD dieser Adresse, nur diesem Bereich.
+- **P6** Rolle aus der Lage zur Straße; jeder Häuserblock hat ≥ 4 Ecken → immer alle Straßenkanten prüfen.
+- **P7** Mehrere GNR zusammenlegen, Bauplatz-Frage, GNR-Grenzen sind keine Planlinien.
+
+## Stand 23.11.
+- ChatGPT-Stand 10360f8 gesichtet (Team-Liste 1–16). Übernommen: Pfeilpaar endlich + 5 Querschnitte, Dezimalkomma, Mac-Schriften, Stadt-Zonen-Flächenverschnitt (v410 live, online geprüft Darwingasse 8), 11 Lernmuster. Nicht: Vektormodell, Kontrast, Figurenschluss, Testbilder.
+- Prüfstand 89 grün / 12 rot / 80 offen (49 %); Linzer Straße 22 als 9. Prüfadresse (noch 0 %).
+- Gültige Sicherung (ChatGPT-Stand): Downloads `Quickestate_Leser_Gesichert_2026-11-20_21-44-33` (+ .zip, c5eb815, veraltet); neue Sicherung 10360f8 läuft über `qe_pruefung/sicherung_erstellen.sh`.
+- Nächste Schritte: v411 (Höhen-Hinweis je Zeile, zusammengefasste Zonen), Schritt 5 Teilflächen (Kataster + Detailplan), Phase 6 beginnt mit P1 Höhe in m.
