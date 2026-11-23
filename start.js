@@ -391,7 +391,8 @@ function start() {
   const gClose = document.createElement('button'); gClose.type = 'button'; gClose.className = 'g-close'; gClose.setAttribute('aria-label', 'Eingabe schließen'); gClose.textContent = '×'; gateEl.append(gClose);
   function gateOeffnen(text) {
     gateFix = true; gateEl.classList.add('fix'); gateEl.setAttribute('role', 'dialog'); gateEl.setAttribute('aria-modal', 'true'); lenis.stop();
-    const i = $('gateAddr'); if (text != null) { i.value = text; i.dispatchEvent(new Event('input', { bubbles: true })); }
+    const i = $('gateAddr'); if (text != null && !$('gateRes').hidden) $('resBack').click();   // neue Eingabe statt altem Ergebnis
+    if (text != null) { i.value = text; i.dispatchEvent(new Event('input', { bubbles: true })); }
     setTimeout(() => { i.focus({ preventScroll: true }); const n = i.value.length; try { i.setSelectionRange(n, n); } catch (e) {} }, 30);
   }
   function gateSchliessen() {
@@ -403,7 +404,7 @@ function start() {
     if (e.key === 'Escape' && gateFix) { gateSchliessen(); return; }
     // Tippen auf der Seite (ohne aktives Feld) öffnet das Fenster und übernimmt den Buchstaben
     const a = document.activeElement, feld = a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable);
-    if (!gateFix && !feld && !e.metaKey && !e.ctrlKey && !e.altKey && e.key.length === 1 && /[\p{L}\p{N}]/u.test(e.key) && !gateEl.querySelector('.has-res, .g-res:not([hidden])')) { e.preventDefault(); gateOeffnen(e.key); }
+    if (!gateFix && !feld && !e.metaKey && !e.ctrlKey && !e.altKey && e.key.length === 1 && /[\p{L}\p{N}]/u.test(e.key)) { e.preventDefault(); gateOeffnen(e.key); }
   });
   $('gateAddr').addEventListener('pointerdown', () => { if (!gateFix && !gateEl.classList.contains('open')) gateOeffnen(); });
   // Riesenrad: Rad dreht (eine Runde ≈ 60 s), Waggons bleiben senkrecht hängen; „Prüfen“ gibt kurz Schwung
