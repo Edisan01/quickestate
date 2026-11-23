@@ -1,0 +1,14 @@
+{
+ "_hinweis": "Eduard 23.11.: Jeder rote/offene Prüfstandsfeld und jeder Befund bei Straßenbegehungen bekommt genau einen Code. Code = Schritt (Wissensbasis 23) + Werkzeug, das zu ändern ist + Gesetz. Gesetzestext steht nur in Wissensbasis 01, hier nur Verweis. Test 23.11.: Feld-Zuordnung eindeutig (91/91); Freitext per Stichwort nur 4/10 → entfernt, Befunde ordnet Claude zu.",
+ "codes": [
+  {"code": "S1-GS",  "schritt": 1,  "was": "Grundstück: Fläche, Front, Grenzkataster, Adresse", "felder": "^(gs\\.|adresse$)", "werkzeug": "tools/pruefung/grundstueck.py", "gesetz": "Grundbuch/Kataster (VermG)"},
+  {"code": "S2-PD",  "schritt": 2,  "was": "Stadt-Daten + Plandokument-Text: allgemeine Bestimmungen, Hinweise, SZ/WZ/Bausperre", "felder": "^(allg\\.|hinweis\\.)", "werkzeug": "tools/pruefung/stadt.py + v204/bb.mjs", "gesetz": "BO §5 (Bebauungsplan), §7 (Schutzzone), §7a (Wohnzone), §8 (Bausperre)"},
+  {"code": "S5-MASS","schritt": 5,  "was": "Planzahlen an Maßlinien: Straßenbreite, Trakttiefe, Arkade, Abtretung", "felder": "^(front\\.|tf\\d+\\.strassentrakt\\.tiefe_m$)", "werkzeug": "tools/planleser_py/phase4.py + masse.py", "gesetz": "BO §5 (Fluchtlinien), §75 Abs 4 (Straßenbreite)"},
+  {"code": "S6-TF",  "schritt": 6,  "was": "Teilflächen: Teilung, Breite, Tiefe, Fläche, Sprung", "felder": "^(summe_m2|tf\\d+\\.[a-z_]+\\.(breite_m|(?<!strassentrakt\\.)tiefe_m|tiefe_links_m|tiefe_rechts_m|tiefe_mittel_m|flaeche_m2|bb_flaeche_m2))$", "werkzeug": "tools/planleser_py/netz.py + phase5.py", "gesetz": "BO §5 (Baufluchtlinie, Grenzlinien)"},
+  {"code": "S7-WID", "schritt": 7,  "was": "Widmung + Bauklasse je Teilfläche", "felder": "^tf\\d+\\.[a-z_]+\\.(widmung|bauklasse)$", "werkzeug": "tools/planleser_py/leser3.py + stadt_widmungen.mjs", "gesetz": "BO §4 (Widmungen), §75 (Bauklassen)"},
+  {"code": "S7-HOE", "schritt": 7,  "was": "Höhe in m je Teilfläche (P1)", "felder": "^tf\\d+\\.[a-z_]+\\.hoehe_m$", "werkzeug": "tools/planleser_py/leser3.py (Muster '<Widmung> <BK> <Zahl> m')", "gesetz": "BO §5 Abs 4, §75 Abs 2/4, §81"},
+  {"code": "S7-BW",  "schritt": 7,  "was": "Bauweise je Teilfläche (P4)", "felder": "^tf\\d+\\.[a-z_]+\\.bauweise$", "werkzeug": "tools/planleser_py/leser3.py", "gesetz": "BO §76 (Bauweisen)"},
+  {"code": "S7-BB",  "schritt": 7,  "was": "Besondere Bestimmungen je Teilfläche (P5)", "felder": "^tf\\d+\\.[a-z_]+\\.bb$", "werkzeug": "tools/planleser_py/v204/bb.mjs + Zuordnung leser3.py", "gesetz": "BO §5 Abs 4"},
+  {"code": "S12-RE", "schritt": 12, "was": "Rechnungen: Gebäudehöhe, Geschosse, §75(4)", "felder": "^(rech\\.|tf\\d+\\.[a-z_]+\\.(hoehe_summe_m|geschosse)$)", "werkzeug": "tools/pruefung/pruefstand.py rechnungen + start.js", "gesetz": "BO §75 Abs 4, §81"}
+ ]
+}

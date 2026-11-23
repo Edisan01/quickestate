@@ -98,3 +98,9 @@ Anlass Linzer Straße 22: Seite zeigte Hof „Bauklasse I“ (wäre 9 m) statt *
 - Prüfstand 89 grün / 12 rot / 80 offen (49 %); Linzer Straße 22 als 9. Prüfadresse (noch 0 %).
 - Gültige Sicherung (ChatGPT-Stand): Downloads `Quickestate_Leser_Gesichert_2026-11-20_21-44-33` (+ .zip, c5eb815, veraltet); neue Sicherung 10360f8 läuft über `qe_pruefung/sicherung_erstellen.sh`.
 - Nächste Schritte: v411 (Höhen-Hinweis je Zeile, zusammengefasste Zonen), Schritt 5 Teilflächen (Kataster + Detailplan), Phase 6 beginnt mit P1 Höhe in m.
+
+## Fehlercodes (23.11., getestet)
+Jedes rote/offene Feld → genau 1 Code = Schritt + Werkzeug + Gesetzesverweis (Text nur in WB 01). Datei `tools/pruefung/fehlercodes.json`, Zählung `python3 tools/pruefung/fehlercodes.py`.
+Codes: S1-GS, S2-PD, S5-MASS, S6-TF, S7-WID, S7-HOE, S7-BW, S7-BB, S12-RE.
+Test: Feld-Zuordnung 91/91 eindeutig → bleibt. Freitext-Stichwort-Zuordnung 4/10 → entfernt; Befunde bei Straßenbegehung ordnet Claude zu.
+Befund: S7-HOE nur 1 Prüffeld → Höhen fehlen fast ganz in soll.json; darum blieb Linzer 22 (4,5 m / 15 m) unbemerkt.
