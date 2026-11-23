@@ -1,0 +1,734 @@
+{
+ "_hinweis": "BB-Texte je Plandokument. Quelle 1: ChatGPT Auftrag A (23.11., wortgetreu aus PD-PDF, Seite+Punkt). Quelle 2: eigener Scan-Text plandokumente/text. abgleich = Anteil 40-Zeichen-Fenster gleich (nach Ausgleich typischer Scan-Fehler BB l→BB1, BBS→BB5). ≥ 0,8 = bestätigt (2 Belege).",
+ "dokumente": {
+  "6848": {
+   "festsetzung": "18.12.1997 (Gemeinderatsbeschluss; Kundmachung 08.01.1998)",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=6848&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB1",
+     "text": "Innerhalb der mit BB1 bezeichneten Grundflächen sind die zur Errichtung gelangenden Gebäude ab einer Größe von 5 m² mit Flachdächern von max. 3 % Neigung auszugestalten. Diese Flachdächer sind als begrünte Flachdächer entsprechend dem Stand der technischen Wissenschaften auszubilden. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "seite": 3,
+     "punkt": "3.2.1",
+     "abgleich": 0.86
+    },
+    {
+     "nr": "BB2",
+     "text": "Innerhalb der mit G/BB2 bezeichneten Flächen ist die Errichtung von unterirdischen Gebäuden untersagt.",
+     "seite": 3,
+     "punkt": "3.2.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB3",
+     "text": "In dem mit BB3 bezeichneten Bereich werden übereinanderliegende Räume derart ausgewiesen, daß jeweils der Bereich bis zur Brückenkonstruktionsunterkante als öffentliche Verkehrsfläche, der darüberliegende Bereich als Verkehrsband festgesetzt wird.",
+     "seite": 3,
+     "punkt": "4.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB4",
+     "text": "Die mit BB4 bezeichneten Bereiche werden als übereinanderliegende Räume derart ausgewiesen, daß jeweils der Bereich bis zur Brückenkonstruktionsunterkante als Verkehrsband, der darüberliegende Bereich als öffentliche Verkehrsfläche festgesetzt wird.",
+     "seite": 3,
+     "punkt": "4.2",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "An den Gebäudefronten, die an einer öffentlichen Verkehrsfläche liegen, wird die Errichtung von Erkern, Balkonen und vorragenden Loggien untersagt. Vorstehende Bauelemente die der Gliederung oder der architektonischen Gestaltung dienen, sind bei Straßenbreiten von 16,0 m und weniger bis zu einer Ausladung von 0,6 m zulässig, bei Straßenbreiten von über 16 m bis zu einer Ausladung von 0,8 m zulässig.",
+     "punkt": "3.1.1",
+     "seite": 2,
+     "abgleich": 0.88
+    },
+    {
+     "text": "Im Bereich des gesamten Plangebietes darf der höchste Punkt des Daches der zur Errichtung gelangenden Gebäude max. 4,5 m über der tatsächlich ausgeführten Gebäudehöhe liegen.",
+     "punkt": "3.1.2",
+     "seite": 2,
+     "abgleich": 0.33
+    },
+    {
+     "text": "Die bebaubaren, von Bebauung freibleibenden Grundflächen sind gärtnerisch auszugestalten. Rangier- und Zufahrtsflächen sind nur im unbedingt erforderlichen Ausmaß zulässig.",
+     "punkt": "3.1.3",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Einfriedungen an seitlichen und hinteren Grundgrenzen der Liegenschaften im Bauland, für die die gärtnerische Ausgestaltung angeordnet ist, dürfen 2,0 m nicht überragen und ab einer Höhe von 0,5 m den freien Durchblick nicht hindern.",
+     "punkt": "3.1.4",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Auf den Flächen, für die eine gärtnerische Ausgestaltung vorgeschrieben ist, sind bei unterirdischen Baulichkeiten Vorkehrungen zu treffen, daß für das Pflanzen von Bäumen ausreichende Erdkerne vorhanden bleiben.",
+     "punkt": "3.1.5",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Pro Bauplatz darf nur ein Nebengebäude bis zu einer bebauten Fläche von max. 5 m² errichtet werden.",
+     "punkt": "3.1.6",
+     "seite": 2,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "Bauplätze an der Linzer Straße",
+     "text": "Bei den auf Bauplätzen an der Linzer Straße zur Errichtung gelangenden Gebäuden dürfen die Fenster der Aufenthaltsräume von Wohnungen im Erdgeschoß nicht zur Verkehrsfläche gerichtet sein.",
+     "seite": 3,
+     "punkt": "3.2.3"
+    }
+   ]
+  },
+  "7208": {
+   "festsetzung": "17.03.2000",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=7208&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB1",
+     "text": "Die mit BB 1 bezeichneten Grundflächen sind in einem Ausmaß von mindestens 30% des Bauplatzes von jeder oberirdischen Bebauung frei zu halten.",
+     "seite": 3,
+     "punkt": "4.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB2",
+     "text": "Auf den mit BB 2 bezeichneten Grundflächen dürfen weder unterirdische Bauten noch Nebengebäude errichtet werden.",
+     "seite": 3,
+     "punkt": "4.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB3",
+     "text": "Innerhalb der mit BB 3 bezeichneten und als Bauland, gemischtes Baugebiet, Bauklasse III bzw. IV, geschlossene Bauweise gewidmeten Grundfläche ist im Niveau der anschließenden Verkehrsflächen ein Raum für einen öffentlichen Durchgang mit einer lichten Höhe von 3,5 m freizuhalten und zu dulden.",
+     "seite": 3,
+     "punkt": "4.3",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "An den zu den öffentlichen Verkehrsflächen zugewandten Fronten dürfen die Baumassen der Gebäude an den Baulinien nicht gestaffelt werden. Vorstehende Bauelemente, die der Gliederung oder der architektonischen Ausgestaltung der Schauseiten dienen sowie Erker, Balkone und vorragende Loggien dürfen an Straßen bis 16 m Breite höchstens 0,6 m und an Straßen von mehr als 16 m Breite höchstens 0,8 m über die Baulinie ragen.",
+     "punkt": "3.1",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Bei den innerhalb des Baulandes zur Errichtung gelangenden Gebäuden darf der höchste Punkt des Daches nicht höher als 4,5 m über der ausgeführten Gebäudehöhe liegen.",
+     "punkt": "3.2",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Nicht bebaute, jedoch bebaubare Baulandflächen sind gärtnerisch auszugestalten.",
+     "punkt": "3.4",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "An den zu den Verkehrsflächen der Gentzgasse, der Kreuzgasse und der Martinstraße gerichteten Gebäudefronten sind Hauptfenster von Wohnungen im Erdgeschoß nicht zulässig. An den zu den Verkehrsflächen des Währinger Gürtels gerichteten Gebäudefronten sind Hauptfenster von Wohnungen nur dann zulässig, wenn deren Fußbodenoberkante mindestens 6 m über dem Niveau der angrenzenden Verkehrsfläche liegt.",
+     "punkt": "3.5",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Die mit Nebengebäuden bebaute Grundfläche darf höchstens 30 m² je Bauplatz betragen. Die Dächer dieser Nebengebäude sind ab einer Größe von 5 m² entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden, sofern es sich nicht um Wintergärten mit Glasdachkonstruktion handelt. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "punkt": "3.6",
+     "seite": 2,
+     "abgleich": 0.71
+    },
+    {
+     "text": "Einfriedungen an seitlichen und hinteren Grundgrenzen von Liegenschaften im Bauland, für welche die gärtnerische Ausgestaltung unbebauter Grundflächen angeordnet ist, dürfen ab einer Höhe von 0,5 m den freien Durchblick nicht hindern.",
+     "punkt": "3.7",
+     "seite": 3,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "GV I 4,5 m bzw. 5,5 m g",
+     "text": "Die Dächer der auf den mit der Festsetzung GV I 4,5 m bzw. 5,5 m g bezeichneten Grundflächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden, sofern es sich nicht um Glasdachkonstruktionen handelt. Für alle übrigen Gebäude bis zu einer Gebäudehöhe von 7,5 m wird bestimmt, daß Flachdächer bis zu einer Dachneigung von 5 Grad entsprechend dem Stand der Technik zu begrünen sind. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "seite": 2,
+     "punkt": "3.3"
+    }
+   ]
+  },
+  "7462": {
+   "festsetzung": "19.05.2004",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=7462&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB1",
+     "text": "In den mit G/BB1 bezeichneten Bereichen ist die Errichtung von unterirdischen Gebäuden untersagt.",
+     "seite": 2,
+     "punkt": "3.2.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB2",
+     "text": "Die Dächer der auf den mit BB2 bezeichneten Flächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der technischen Wissenschaften als begrünte, begehbare Flachdächer auszubilden. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig. Bebaubare aber nicht bebaute Flächen sind mit Ausnahme von Manipulations- und Zufahrtsflächen gärtnerisch auszugestalten.",
+     "seite": 2,
+     "punkt": "3.2.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB3",
+     "text": "Entlang der mit BB3 bezeichneten Baulinien dürfen im Erdgeschoß keine Hauptfenster von Aufenthaltsräumen von Wohnungen zu den Verkehrsflächen hin orientiert werden.",
+     "seite": 2,
+     "punkt": "3.2.3",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "Im gesamten Plangebiet ist an allen öffentlichen Verkehrsflächen die Errichtung von Erkern, und vorragenden Loggien untersagt. Vorstehende Bauelemente, die der Gliederung oder architektonischen Ausgestaltung dienen, sind bei Straßenbreiten bis 16,0 m bis zu einer Ausladung von 0,6 m, bei Straßenbreiten ab 16,0 m bis zu einer Ausladung von 0,8 m zulässig.",
+     "punkt": "3.1.1",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Im gesamten Plangebiet darf bei den zur Errichtung gelangenden Gebäuden der höchste Punkt des Daches maximal 4,5 m über der tatsächlich errichteten Gebäudehöhe liegen.",
+     "punkt": "3.1.2",
+     "seite": 2,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "Wohnzone",
+     "text": "In den als Wohnzone gemäß § 7a (1) der BO für Wien ausgewiesenen Bereichen ist die Errichtung von Büro- und Geschäftshäusern unzulässig.",
+     "seite": 2,
+     "punkt": "3.1.3"
+    },
+    {
+     "planzeichen": "öDg",
+     "text": "Die mit öDg bezeichneten Grundflächen sind zur Errichtung und Duldung von öffentlichen Durchgängen freizuhalten. Überbauungen haben eine lichte Durchgangshöhe von 3,0 m einzuhalten.",
+     "seite": 2,
+     "punkt": "3.1.4"
+    }
+   ]
+  },
+  "6538": {
+   "festsetzung": "23.05.2003",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=6538&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB1",
+     "text": "Auf der mit BB1 bezeichneten und als Grünland/Erholungsgebiet/Sport- und Spielplatz gewidmeten Grundfläche dürfen keine Gebäude errichtet werden.",
+     "seite": 2,
+     "punkt": "4.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB2",
+     "text": "Auf den mit BB2 bezeichneten Grundflächen dürfen Gebäude bis zu einer maximalen Gebäudehöhe von 5,5 m errichtet werden; der höchste Punkt des Daches darf nicht mehr als 2,0 m über der tatsächlich ausgeführten Gebäudehöhe liegen.",
+     "seite": 2,
+     "punkt": "4.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB3",
+     "text": "Innerhalb der mit G BB 3 bezeichneten Grundflächen müssen 30 v.H. der Fläche des Bauplatzes von jeder ober- und unterirdischer Bebauung frei bleiben.",
+     "seite": 2,
+     "punkt": "4.3",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB4",
+     "text": "Auf der mit G BB4 bezeichneten Grundfläche ist die Errichtung von unterirdischen Bauten untersagt.",
+     "seite": 2,
+     "punkt": "4.4",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB5",
+     "text": "Die mit P BB5 bezeichnete und für Anlagen zum Einstellen von Kraftfahrzeugen vorbehaltene Grundfläche ist in einem Ausmaß von mindestens 30 v.H. dieser durch Fluchtlinien bestimmten Fläche gärtnerisch auszugestalten.",
+     "seite": 2,
+     "punkt": "4.5",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB6",
+     "text": "In den mit BB6 bezeichneten Bereichen ist eine maximale Gebäudehöhe von 5,5 m zulässig. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig. Der höchste Punkt der zur Ausführung gelangenden Dächer darf die tatsächlich ausgeführte Gebäudehöhe um höchstens 2,0 m überragen.",
+     "seite": 2,
+     "punkt": "4.6",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB7",
+     "text": "Auf den mit BB7 bezeichneten Flächen wird die Herstellung der Höhenlage der Grundfläche mit +6,5 m über Wiener Null angeordnet.",
+     "seite": 3,
+     "punkt": "4.7",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB8",
+     "text": "Die mit BB8 bezeichneten Flächen sind von jeder ober- und unterirdischen Bebauung freizuhalten.",
+     "seite": 3,
+     "punkt": "4.8",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB9",
+     "text": "Auf der mit BB9 bezeichneten Fläche im Gemischten Baugebiet, Bauklasse IV bzw. Bauklasse IV beschränkt auf 19 m werden Durchgänge bzw. durchgängige Arkaden mit einer lichten Höhe von 3,0 m angeordnet.",
+     "seite": 3,
+     "punkt": "4.9",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB10",
+     "text": "Auf den mit BB10 bezeichneten Flächen im Gemischten Baugebiet - Geschäftsviertel ist die Errichtung von Wohnungen erst ab einer Höhe der Fußbodenoberkante von 12 m über der anschließenden Verkehrsfläche zulässig.",
+     "seite": 3,
+     "punkt": "4.10",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB11",
+     "text": "Auf der mit BB11 bezeichneten Fläche wird eine Widmung für zwei übereinanderliegende Räume derart festgesetzt, dass der Raum bis zu einer Höhe von 3,5 m über Straßenniveau dem öffentlichen Gut, der darüberliegende Raum dem Bauland - Gemischtes Baugebiet, Bauklasse IV zugeordnet wird.",
+     "seite": 3,
+     "punkt": "5",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "An allen Baulinien ist die Errichtung von Erkern, Balkonen und vorragenden Loggien untersagt. Bauelemente, die der Gliederung oder der architektonischen Ausgestaltung der Schauseiten dienen, dürfen an Straßen bis 16,0 m Breite höchstens 0,6 m und an Straßen von mehr als 16,0 m Breite höchstens 0,8 m über die Baulinie ragen.",
+     "punkt": "3.1",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Der höchste Punkt der zur Ausführung gelangenden Dächer darf die tatsächlich ausgeführte Gebäudehöhe um höchstens 4,5 m überragen.",
+     "punkt": "3.2",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Für alle Flächen, für die die gärtnerische Ausgestaltung (G) vorgeschrieben ist, sind bei der Errichtung von unterirdischen Bauten Vorkehrungen zu treffen, dass für das Pflanzen von Bäumen ausreichende Erdkerne vorhanden bleiben.",
+     "punkt": "3.3",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Einfriedungen auf gärtnerisch auszugestaltenden Flächen dürfen ab einer Höhe von 0,5 m den freien Durchblick nicht hindern.",
+     "punkt": "3.4",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Die mit Nebengebäuden bebaute Grundfläche darf höchstens 30 m² je Bauplatz betragen. Die Dächer dieser Nebengebäude sind ab einer Größe von 5 m² entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden, sofern es sich nicht um Wintergärten mit Glasdachkonstruktion handelt. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "punkt": "3.5",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Nicht bebaute, jedoch bebaubare Baulandflächen sind mit Ausnahme der Geschäftsviertel gärtnerisch auszugestalten.",
+     "punkt": "3.7",
+     "seite": 2,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "WGV I 5,5 m g bzw. GBGV I 5,5 m g",
+     "text": "Die Dächer der auf den mit der Festsetzung WGV I 5,5 m g bzw. GBGV I 5,5 m g bezeichneten Grundflächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden, sofern es sich nicht um Glasdachkonstruktionen handelt. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "seite": 2,
+     "punkt": "3.6"
+    },
+    {
+     "planzeichen": "Wohnzone",
+     "text": "In den als Wohnzone gemäß § 7a Abs.1 der BO für Wien ausgewiesenen Bereichen ist mit Ausnahme der Bauplätze an der Ausstellungsstraße und der Lassallestraße sowie der mit der Bestimmung Geschäftsviertel ausgewiesenen Bereiche des Baulandes, nur die Errichtung von Wohngebäuden zulässig, in denen nicht weniger als 80 v.H. der Summe der Nutzflächen der Hauptgeschosse, jedoch unter Ausschluss des Erdgeschosses, Wohnzwecken vorbehalten sind.",
+     "seite": 3,
+     "punkt": "4.11"
+    }
+   ]
+  },
+  "7318": {
+   "festsetzung": "29.06.2000",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=7318&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB3",
+     "text": "Für die mit BB 3 bezeichnete Fläche werden gesonderte Widmungen für zwei übereinander liegende Räume derart getroffen, dass der Raum unterhalb von +36,90 m über Wiener Null ab der nördlichen Grenzlinie in einer Neigung von 4% ansteigend gegen die südliche Grenzlinie dem Bauland/Wohngebiet für eine Anlage zum Einstellen von Kraftfahrzeugen vorbehalten und der Raum darüber dem Grünland/Erholungsgebiet Parkanlage zugeordnet wird. Oberhalb der Garagendecke muß die Aufbringung eines Erdkörpers mit einer Mächtigkeit von mindestens 1,65 m gewährleistet sein.",
+     "seite": 2,
+     "punkt": "3.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB4",
+     "text": "Für die mit BB 4 bezeichnete Grundfläche werden gesonderte Widmungen für zwei übereinander liegende Räume derart getroffen, dass der Raum unter dem Niveau von +36,90 m über Wiener Null (Gebäudeoberkante) ab der nördlichen Grenzlinie in einer Neigung von 4% ansteigend gegen die südliche Grenzlinie dem Bauland/Wohngebiet für eine Anlage zum Einstellen von Kraftfahrzeugen vorbehalten und der Raum darüber der öffentlichen Verkehrsfläche zugeordnet wird.",
+     "seite": 2,
+     "punkt": "3.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB5",
+     "text": "Für die mit BB 5 bezeichnete Fläche werden gesonderte Widmungen für zwei übereinander liegende Räume derart getroffen, dass der Raum unterhalb von +36,55 m über Wiener Null ab der nördlichen Grenzlinie bzw. Straßenfluchtlinie in einer Neigung von 2,5% ansteigend gegen die südliche Grenzlinie dem Bauland/Wohngebiet für eine Anlage zum Einstellen von Kraftfahrzeugen vorbehalten und der Raum darüber dem Grünland/Erholungsgebiet Parkanlage zugeordnet wird. Oberhalb der Garagendecke muß, mit Ausnahme des Einfahrtbereiches, die Aufbringung eines Erdkörpers mit einer Mächtigkeit von mindestens 1,50 m gewährleistet sein.",
+     "seite": 2,
+     "punkt": "3.3",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB1",
+     "text": "In den mit BB 1 bezeichneten Teilen des Wohn- oder Gemischten Baugebietes darf die bebaute Fläche maximal 30% der Bauplatzgröße betragen.",
+     "seite": 3,
+     "punkt": "5.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB2",
+     "text": "Auf den mit G BB 2 bezeichneten Grundflächen dürfen weder unterirdische Bauten noch Nebengebäude errichtet werden.",
+     "seite": 3,
+     "punkt": "5.2",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "An den zu den öffentlichen Verkehrsflächen gerichteten Fronten dürfen die Baumassen der Gebäude an den Baulinien nicht gestaffelt werden. Vorstehende Bauelemente, die der Gliederung oder der architektonischen Ausgestaltung der Schauseiten dienen sowie Erker, Balkone und vorragende Loggien dürfen an Straßen bis 16 m Breite höchstens 0,6 m und an Straßen von mehr als 16 m Breite höchstens 0,8 m über die Baulinie ragen.",
+     "punkt": "4.1",
+     "seite": 2,
+     "abgleich": 0.88
+    },
+    {
+     "text": "Bei den innerhalb des Baulandes zur Errichtung gelangenden Gebäuden darf der höchste Punkt des Daches nicht höher als 4,5 m über der ausgeführten Gebäudehöhe liegen.",
+     "punkt": "4.2",
+     "seite": 3,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Nicht bebaute, jedoch bebaubare Baulandflächen sind gärtnerisch auszugestalten.",
+     "punkt": "4.4",
+     "seite": 3,
+     "abgleich": 1.0
+    },
+    {
+     "text": "An den zu den Verkehrsflächen der Gentzgasse, der Gymnasiumstraße, der Martinstraße und der Kreuzgasse gerichteten Gebäudefronten sind Hauptfenster von Wohnungen im Erdgeschoß nicht zulässig.",
+     "punkt": "4.5",
+     "seite": 3,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Die mit Nebengebäuden bebaute Grundfläche darf höchstens 30 m² je Bauplatz betragen. Die Dächer dieser Nebengebäude sind ab einer Größe von 5 m² entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden, sofern es sich nicht um Wintergärten mit Glasdachkonstruktion handelt. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "punkt": "4.6",
+     "seite": 3,
+     "abgleich": 0.71
+    },
+    {
+     "text": "Einfriedungen an seitlichen und hinteren Grundgrenzen von Liegenschaften im Bauland, für welche die gärtnerische Ausgestaltung unbebauter Grundflächen angeordnet ist, dürfen ab einer Höhe von 0,5 m den freien Durchblick nicht hindern.",
+     "punkt": "4.7",
+     "seite": 3,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "GV I 4,5m bzw. 5,5 m g",
+     "text": "Die Dächer der auf den mit der Festsetzung GV I 4,5m bzw. 5,5 m g bezeichneten Grundflächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden, sofern es sich nicht um Glasdachkonstruktionen handelt. Für alle übrigen Gebäude bis zu einer Gebäudehöhe von 7,5 m wird bestimmt, dass Flachdächer bis zu einer Dachneigung von 5 Grad entsprechend dem Stand der Technik zu begrünen sind. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "seite": 3,
+     "punkt": "4.3"
+    }
+   ]
+  },
+  "6999": {
+   "festsetzung": "29.09.1997",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=6999&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB1",
+     "text": "Auf den mit BB 1 bezeichneten Grundflächen ist die Unterbrechung der geschlossenen Bauweise zulässig.",
+     "seite": 2,
+     "punkt": "4.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB2",
+     "text": "Auf den mit G BB 2 bezeichneten Grundflächen dürfen weder unterirdische Bauten noch Nebengebäude errichtet werden.",
+     "seite": 2,
+     "punkt": "4.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB3",
+     "text": "Der mit BB 3 bezeichnete, als gemischtes Baugebiet ausgewiesene Raum ist gemäß § 5 Abs. 4 lit. t der BO für Wien der Errichtung von baulichen Anlagen zum Einstellen von Kraftfahrzeugen unter den in § 4 Abs. 3 des Wiener Garagengesetzes normierten Voraussetzungen vorbehalten.",
+     "seite": 2,
+     "punkt": "4.2 (Absatz 2)",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB3",
+     "text": "Auf der mit BB 3 bezeichneten Fläche beschränkt sich die Widmung Grünland/Erholungsgebiet Parkanlage auf das Niveau oberhalb +41,0 m über Wiener Null, darunter wird die Widmung Bauland, gemischtes Baugebiet festgesetzt.",
+     "seite": 2,
+     "punkt": "5",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB4",
+     "text": "Auf den mit BB 4 bezeichneten Flächen wird die höchstzulässige Anzahl der Hauptgeschoße für die Liegenschaften Strozzigasse ONr. 41 (EZ 770) und Strozzigasse ONr. 47 (EZ 774) mit drei, für die Liegenschaften Strozzigasse ONr. 39 (EZ 768), Strozzigasse ONr. 43 (EZ 772) und Strozzigasse ONr. 45 (EZ 773), mit zwei festgesetzt. Es ist die Errichtung nur eines Dachgeschoßes zulässig.",
+     "seite": 2,
+     "punkt": "4.3",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "An den öffentlichen Verkehrsflächen zugewandten Fronten dürfen die Baumassen der Gebäude nicht gestaffelt werden, die Dachneigung darf 30 Grad nicht unterschreiten.",
+     "punkt": "3.1",
+     "seite": 1,
+     "abgleich": 1.0
+    },
+    {
+     "text": "An allen Baulinien ist die Errichtung von Erkern, Balkonen und vorragenden Loggien untersagt. Bauelemente, die der Gliederung oder der architektonischen Ausgestaltung der Schauseiten dienen, dürfen an Straßen bis 16 m Breite höchstens 0,6 m und an Straßen von mehr als 16 m Breite höchstens 0,8 m über die Baulinie ragen.",
+     "punkt": "3.2",
+     "seite": 1,
+     "abgleich": 1.0
+    },
+    {
+     "text": "An den zu den Verkehrsflächen der Lerchenfelder Straße und der Josefstädter Straße gerichteten Fronten sind Hauptfenster von Wohnungen nur dann zulässig, wenn deren Fußbodenoberkante mindestens 3,5 m über dem Niveau der angrenzenden Verkehrsfläche liegt.",
+     "punkt": "3.3",
+     "seite": 1,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Bei innerhalb des Baulandes zur Errichtung gelangenden Gebäuden darf der höchste Punkt des Daches nicht höher als 4,5 m über der ausgeführten Gebäudehöhe liegen.",
+     "punkt": "3.4",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Die mit Nebengebäuden bebaute Grundfläche darf höchstens 30 m² je Bauplatz betragen. Die Dächer der zur Errichtung gelangenden Nebengebäude sind ab einer Größe von 5 m² entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "punkt": "3.6",
+     "seite": 2,
+     "abgleich": 0.83
+    },
+    {
+     "text": "Nicht bebaute, jedoch bebaubare Baulandflächen sind gärtnerisch auszugestalten.",
+     "punkt": "3.7",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Einfriedungen an seitlichen und hinteren Grundgrenzen der Liegenschaften im Bauland, für die die gärtnerische Ausgestaltung unbebauter Grundflächen angeordnet ist, dürfen den freien Durchblick nicht hindern.",
+     "punkt": "3.8",
+     "seite": 2,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "GV I 4,5 m bzw. 5,5 m",
+     "text": "Die Dächer der auf den mit der Festsetzung GV I 4,5 m bzw. 5,5 m bezeichneten Flächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der Technik als begrünte Flachdächer auszubilden. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "seite": 2,
+     "punkt": "3.5"
+    },
+    {
+     "planzeichen": "Wohnzone",
+     "text": "Innerhalb der als Wohnzone gemäß § 7a der BO für Wien gekennzeichneten Teile des Plangebietes ist mit Ausnahme der Bauplätze an der Albertgasse, Blindengasse, Josefstädter Straße, Lerchenfelder Straße und Strozzigasse nur die Errichtung von Wohngebäuden zulässig, in denen nicht weniger als 80 v.H. der Summe der Nutzflächen der Hauptgeschosse, jedoch unter Ausschluß des Erdgeschosses, Wohnzwecken vorbehalten sind.",
+     "seite": 2,
+     "punkt": "4.4"
+    }
+   ]
+  },
+  "7216": {
+   "festsetzung": "17.12.1999",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=7216&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB1",
+     "text": "Auf den mit BB1 gekennzeichneten Bereichen ist die Unterbrechung der geschlossenen Bauweise zulässig.",
+     "seite": 2,
+     "punkt": "4.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB2",
+     "text": "Die Dächer von Gebäuden mit einer Grundfläche von mehr als 100 m², die auf den mit BB2 bezeichneten Flächen errichtet werden, sind als begrünte Flachdächer mit einer Neigung von maximal 5° auszubilden. Technische oder der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig.",
+     "seite": 2,
+     "punkt": "4.2",
+     "abgleich": 0.83
+    },
+    {
+     "nr": "BB3",
+     "text": "Auf der mit Erholungsgebiet/Sport- und Spielplatz, Grundfläche für öffentliche Zwecke (Esp ÖZ) und mit BB3 bezeichneten Fläche ist die Errichtung von Gebäuden im Gesamtausmaß von 450 m² zulässig. Die Gebäudehöhe darf 4,0 m nicht überschreiten, die Dachneigung muß zwischen 20 und 30 Grad betragen.",
+     "seite": 2,
+     "punkt": "4.3",
+     "abgleich": 0.83
+    },
+    {
+     "nr": "BB4",
+     "text": "Auf den mit G BB4 bezeichneten Flächen ist die Herstellung von Anlagen für die Benutzung als Schulsport- und Spielplatz zulässig.",
+     "seite": 2,
+     "punkt": "4.4",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB5",
+     "text": "Die mit der besonderen Bestimmung BB5 versehenen gärtnerisch auszugestaltenden Flächen sind von jeder Bebauung freizuhalten.",
+     "seite": 2,
+     "punkt": "4.5",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB8",
+     "text": "In den als Grünland/Erholungsgebiet - Uferpromenade gewidmeten und mit BB8 bezeichneten Flächen ist die Errichtung von Gebäuden für gastronomische Zwecke oder für Zwecke der Bootsvermietung bzw. für Rudervereine zulässig. Dabei darf die maximal bebaute Fläche bis zu 30 % der Gesamtfläche je Trennstück (Nutzungseinheit) betragen. Die Gebäudehöhe darf 4,5 m nicht überschreiten, der höchste Punkt des Daches darf die tatsächlich ausgeführte Gebäudehöhe um nicht mehr als 3,0 m überragen.",
+     "seite": 3,
+     "punkt": "4.6",
+     "abgleich": 0.9
+    },
+    {
+     "nr": "BB9",
+     "text": "Auf den als Grünland/Erholungsgebiet - Badehütten ausgewiesenen und mit BB9 bezeichneten Flächen ist die Errichtung von Gebäuden mit einer bebauten Fläche von maximal 20 m² je Trennstück zulässig. Die Gebäudehöhe darf den tiefsten Punkt des anschließenden Geländes um nicht mehr als 3,0 m, der höchste Punkt des Daches darf den tiefsten Punkt des anschließenden Geländes um nicht mehr als 4,0 m überschreiten.",
+     "seite": 3,
+     "punkt": "4.7",
+     "abgleich": 0.88
+    },
+    {
+     "nr": "BB10",
+     "text": "Auf den als Grünland/Erholungsgebiet - Badehütten ausgewiesenen und mit BB10 bezeichneten Flächen darf die Gebäudehöhe den tiefsten Punkt des anschließenden Geländes um nicht mehr als 3,5 m, der höchste Punkt des Daches darf den tiefsten Punkt des anschließenden Geländes um nicht mehr als 5,0 m überschreiten.",
+     "seite": 3,
+     "punkt": "4.8",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB11",
+     "text": "Auf den mit BB11 bezeichneten Grundflächen sind die Einfriedungen an der nördlichen, der Verkehrsfläche nächstgelegenen, Grundgrenze so herzustellen, daß sie ab einer Höhe von 1,5 m den freien Durchblick nicht hindern.",
+     "seite": 3,
+     "punkt": "4.9",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB14",
+     "text": "In der als Grünland/Erholungsgebiet - Uferpromenade gewidmeten und mit BB14 bezeichneten Fläche ist die Errichtung von Gebäuden für gastronomische Zwecke oder für Zwecke der Bootsvermietung bzw. für Segelvereine zulässig. Dabei darf die maximal bebaute Fläche bis zu 60 % der Gesamtfläche je Trennstück (Nutzungseinheit) betragen. Die Gebäudehöhe darf 5,0 m nicht überschreiten, der höchste Punkt des Daches darf die tatsächlich ausgeführte Gebäudehöhe um nicht mehr als 3,0 m überragen.",
+     "seite": 3,
+     "punkt": "4.10",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB6",
+     "text": "Für die mit BB6 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zur Brückenkonstruktionsunterkante als öffentliche Verkehrsfläche und der Raum darüber als Verkehrsband ausgewiesen wird.",
+     "seite": 4,
+     "punkt": "5.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB7",
+     "text": "Für die mit BB7 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zu einer lichten Höhe von 7,0 m dem Bauland als öffentliche Verkehrsfläche mit einer Mindestbreite von 14,0 m zugeordnet wird und der Raum darüber als Bauland/Gemischtes Baugebiet ausgewiesen wird. Die Anordnung statisch unbedingt erforderlicher Stützen (zuzüglich 0,6 m Sicherheitsabstand) ist zulässig, sofern die freie Durchgängigkeit und Durchfahrt (mindestens 6,5 m) nicht behindert wird.",
+     "seite": 4,
+     "punkt": "5.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB12",
+     "text": "Für die mit BB12 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zur Brückenkonstruktionsunterkante als Erholungsgebiet/Freie Wasserfläche und der Raum darüber als Verkehrsband ausgewiesen wird.",
+     "seite": 4,
+     "punkt": "5.3",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB13",
+     "text": "Für die mit BB13 bezeichneten Bereiche werden gesonderte Widmungen für zwei übereinanderliegende Räume derart festgesetzt, daß der Raum bis zur Brückenkonstruktionsunterkante als Erholungsgebiet/Park und der Raum darüber als Verkehrsband ausgewiesen wird.",
+     "seite": 4,
+     "punkt": "5.4",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB15",
+     "text": "Für die mit Epk öz BB15 bezeichnete Fläche wird eine Widmung in zwei Räumen festgesetzt. Der Raum bis zur Garagendeckenoberkante, die das angrenzende Straßenniveau nicht überschreiten darf, wird dem Bauland/Wohngebiet zugeordnet, der der Errichtung einer Anlage zum Einstellen von Kraftfahrzeugen vorbehalten bleibt. Der Raum darüber wird dem Grünland/Erholungsgebiet - Parkanlage zugeordnet und als Grundfläche für öffentliche Zwecke ausgezeichnet. Bei der Errichtung der Tiefgarage sind technische Vorkehrungen für Baumpflanzungen (Erdkerne oder eine flächige Überschüttung) von mindestens 10 % der Grundfläche der Garage zu treffen, wobei die jeweiligen Einzelflächen mindestens 25 m² betragen müssen.",
+     "seite": 4,
+     "punkt": "5.5",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "Bei Errichtung von Tiefgaragen unter gärtnerisch auszugestaltenden Grundflächen sind technische Vorkehrungen für Baumpflanzungen (Erdkerne oder eine flächige Überschüttung von 150 cm) von mindestens 10 % der Grundfläche solcher Garagen(teile) zu treffen.",
+     "punkt": "3.1",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "In den als Geschäftsviertel ausgewiesenen Flächen ist die Errichtung von Wohnungen nicht zulässig.",
+     "punkt": "3.2",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Der höchste Punkt der Dächer darf die tatsächlich ausgeführte Gebäudehöhe um nicht mehr als 4,5 m überschreiten.",
+     "punkt": "3.3",
+     "seite": 2,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Nicht bebaute, jedoch bebaubare Flächen im Bauland sind, soweit sie nicht für Zugänge, Zufahrten, Rangierflächen oder für erforderliche Stellplätze benötigt werden, gärtnerisch auszugestalten.",
+     "punkt": "3.4",
+     "seite": 2,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "Punkte A-B sowie C-D-E-F",
+     "text": "In Verbindung der Punkte A und B, sowie in Verbindung der Punkte C, D, E und F sind Bereiche für die Errichtung von öffentliche Durchgängen mit einer lichten Breite und einer lichten Höhe von mindestens 3,0 m freizuhalten und deren Herstellung und Benutzung zu dulden.",
+     "seite": 3,
+     "punkt": "4.11"
+    },
+    {
+     "planzeichen": "Ak/öDg",
+     "text": "Auf den mit Ak/öDg bezeichneten Grundflächen sind Arkaden von mindestens 2,5 m lichter Durchgangshöhe zu errichten, in denen der öffentliche Durchgang zu dulden ist.",
+     "seite": 3,
+     "punkt": "4.12"
+    }
+   ]
+  },
+  "7486": {
+   "festsetzung": "28.04.2004",
+   "quelle_pdf": "https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=7486&planDpi=0&isPlan=false&appTitle=Flaechenwidmungsplan",
+   "bb": [
+    {
+     "nr": "BB1",
+     "text": "Auf den mit BB1 bezeichneten Grundflächen darf die bebaute Fläche nicht mehr als 50 % des jeweiligen Teiles des Bauplatzes betragen. Unbebaute Flächen sind gärtnerisch auszugestalten.",
+     "seite": 2,
+     "punkt": "3.2.1",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB2",
+     "text": "Entlang der mit BB2 bezeichneten Baulinien dürfen im Erdgeschoß keine Hauptfenster von Aufenthaltsräumen von Wohnungen zu den Verkehrsflächen hin orientiert werden.",
+     "seite": 2,
+     "punkt": "3.2.2",
+     "abgleich": 1.0
+    },
+    {
+     "nr": "BB3",
+     "text": "Die Dächer der auf den mit BB3 bezeichneten Flächen zur Errichtung gelangenden Gebäude sind entsprechend dem Stand der technischen Wissenschaften als begrünte, begehbare Flachdächer auszubilden. Technische bzw. der Belichtung dienende Aufbauten sind im erforderlichen Ausmaß zulässig. Bebaubare aber nicht bebaute Flächen sind mit Ausnahme von Manipulations- und Zufahrtsflächen gärtnerisch auszugestalten.",
+     "seite": 2,
+     "punkt": "3.2.3",
+     "abgleich": 1.0
+    }
+   ],
+   "allgemein": [
+    {
+     "text": "Im gesamten Plangebiet ist an allen öffentlichen Verkehrsflächen die Errichtung von Erkern und vorragenden Loggien untersagt. Vorstehende Bauelemente, die der Gliederung oder architektonischen Ausgestaltung dienen, sind bei Straßenbreiten bis 16,0 m bis zu einer Ausladung von 0,6 m, bei Straßenbreiten ab 16,0 m bis zu einer Ausladung von 0,8 m zulässig.",
+     "punkt": "3.1.1",
+     "seite": 1,
+     "abgleich": 1.0
+    },
+    {
+     "text": "Im gesamten Plangebiet darf bei den zur Errichtung gelangenden Gebäuden der höchste Punkt des Daches maximal 4,5 m über der tatsächlich errichteten Gebäudehöhe liegen.",
+     "punkt": "3.1.2",
+     "seite": 1,
+     "abgleich": 1.0
+    }
+   ],
+   "fuer_planzeichen": [
+    {
+     "planzeichen": "Wohnzone",
+     "text": "In den als Wohnzone gemäß § 7a (1) der BO für Wien ausgewiesenen Bereichen ist die Errichtung von Büro- und Geschäftshäusern unzulässig.",
+     "seite": 2,
+     "punkt": "3.1.3"
+    }
+   ]
+  }
+ }
+}

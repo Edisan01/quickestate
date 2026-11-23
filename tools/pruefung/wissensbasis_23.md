@@ -115,3 +115,9 @@ Befund: S7-HOE nur 1 Prüffeld → Höhen fehlen fast ganz in soll.json; darum b
 `tools/planleser_py/phase6_hoehe.py` → `planleser/hoehen.json`. Je Teilfläche: Beschriftung in der Fläche (+3 m); sonst entlang des Streifens (Tiefenband der Fläche, längs der Front ± 60 m, nächste Widmungs-Beschriftung + Texte ≤ 6 m). Ergebnis: Zahl · „keine“ (Beschriftung ohne m → BK-Höhe gilt) · „trifft nicht zu“ (G) · offen.
 Getestet und verworfen: Stadt-Zone als Planbereich (W3 umfasst ganzen Block samt G → falsche Höhen 4,5/5,5 m) und Liniennetz-Flächen im großen Ausschnitt (Linien schließen nicht).
 Ergebnis: Theresiengasse Hof WGV I 4.5m ✓ (Punkt statt Komma gelesen), Ybbs 18,5 ✓, 8 Straßentrakte „keine“ ✓ (soll.json neu „keine“ aus den Blättern: dort keine Höhe angegeben). Gerstlgasse Straßentrakt offen (keine Beschriftung im Streifen gefunden). Prüfstand 116 grün / 12 rot (61 %).
+
+## ChatGPT-Aufträge A/B/C (23.11., geprüft)
+- **A BB-Texte:** 8 PD, 49 BB + 40 allgemeine Bestimmungen → `plandokumente/bb_texte.json`. Gegen eigene Scan-Texte: 49/49 BB gleich (≥ 0,8) = bestätigt (2 Belege). Unterschiede waren Scan-Fehler bei uns („BB l“ statt BB1 in 7208/7318, „BBS“ statt BB5 in 7216) → BB-Nummern in Scan-Texten nie allein trauen.
+- **B Höhen-Testfälle:** 10 Fälle; Ybbs 18,5 und Theresiengasse 4,5 = unsere Lesung ✓. Neu für P1: Sommerschuhgasse 3 (W I 6,5 m o), Enenkelstraße 21 (Hof GBGV I 5 m g), Josefstädter Straße 93-97 (Hof WGV I 8 m g) → Planbilder über Mac-Auftrag.
+- **C Darwingasse 5/7/8:** Vorschläge, nicht bestätigt. Beleg C_5 plausibel (W IV g, Trakttiefe 14,00, G BB ohne Nummer, W I 6,5 m g hinten, 15,17). Wartet auf Eduard.
+- Mac-Auftrag um 7 Adressen erweitert (Linzer 22 = GNR 347 KG 01210 aus Kataster am Adresspunkt, mehrere GNR noch prüfen).
