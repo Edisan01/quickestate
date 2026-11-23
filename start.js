@@ -1,4 +1,5 @@
 import * as THREE from './lib/three.module.min.js';
+import { stadtWidmungen } from './stadt_widmungen.mjs?v=1';   // Stadt-Zonen über echten Flächenverschnitt (aus ChatGPT-Stand 10360f8)
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const testGL = () => { try { const c = document.createElement('canvas'); return !!c.getContext('webgl'); } catch (e) { return false; } };
@@ -601,8 +602,9 @@ function start() {
       if (wi.ok) { const an = p => wi.v.find(f => drin(f, p)); const f0 = an(p0) || wi.v.slice().sort((a, b) => Math.min(...fPolys(a.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9)))
           - Math.min(...fPolys(b.geometry).map(pg => pg[0].reduce((m, c, i, R) => Math.min(m, kSegAbst(p0, c, R[(i + 1) % R.length])), 1e9))))[0];
         const alle = [...new Set(P.map(an).filter(Boolean).map(f => f.properties.WIDMUNG))]; u.wid = f0 ? f0.properties : null; u.widAlle = alle; u.widRand = !an(p0); u.widGeo = f0 ? f0.geometry : null; u.widPts = f0 ? P.filter(p => an(p) === f0) : [];
-        const Z = new Map(); P.forEach(p => { const f = an(p); if (f) { if (!Z.has(f)) Z.set(f, []); Z.get(f).push(p); } });   // Widmungszonen im Bauplatz (Straßentrakt/Hof)
-        u.widZonen = [...Z].map(([f, pts]) => ({ w: f.properties, geo: f.geometry, pts }));
+        // Widmungszonen im Bauplatz: positiver Flächenverschnitt (≥ 1e-6 m², Löcher beachtet) statt 7×7-Stichproben – schmale Zonen gehen nicht mehr verloren
+        try { u.widZonen = stadtWidmungen(g.polys, wi.v, P); const sum = u.widZonen.reduce((s, z) => s + z.schnitt_m2, 0); u.widAlle = [...new Set(u.widZonen.filter(z => z.schnitt_m2 >= Math.max(5, 0.01 * sum)).map(z => z.w.WIDMUNG))]; }
+        catch (e) { const Z = new Map(); P.forEach(p => { const f = an(p); if (f) { if (!Z.has(f)) Z.set(f, []); Z.get(f).push(p); } }); u.widZonen = [...Z].map(([f, pts]) => ({ w: f.properties, geo: f.geometry, pts })); }   // Rückfall: alte Stichproben
         // Straßenfront (Eduard 18.11., Linzer Straße 22): Kante des Bauplatzes, hinter der 4 m außen keine Widmungszone liegt = Straße. Jede Zone an so einer Kante ist Straßentrakt – auch an der Ecke mit anderer Widmung.
         const kante = [];
         g.polys.forEach(pg => { const R = pg[0], n = R.length, cx = R.reduce((a, c) => a + c[0], 0) / n, cy = R.reduce((a, c) => a + c[1], 0) / n;
@@ -952,9 +954,9 @@ function start() {
       else if (!u.wid) { L.append(karte('meta', 'Keine Widmung gefunden', 'Wahrscheinlich Straße oder Verkehrsfläche – bitte im Plan prüfen.')); gelb.push('Keine Widmung gefunden – bitte im Plan prüfen.'); }
       else {
         // Mehrere Widmungen: Zone, die der Adresse (Eingang) am nächsten liegt = Straßentrakt, die übrigen = Hof (Stadt-Daten, Theresiengasse 47)
-        let Z = (u.widZonen && u.widZonen.length ? u.widZonen : [{ w: u.wid, geo: u.widGeo, pts: u.widPts }]).filter(z => z.pts.length >= 2 || (u.widZonen || []).length === 1);
+        let Z = (u.widZonen && u.widZonen.length ? u.widZonen : [{ w: u.wid, geo: u.widGeo, pts: u.widPts }]).filter(z => z.schnitt_m2 != null ? z.schnitt_m2 >= Math.max(5, 0.01 * (u.widZonen || []).reduce((s, x) => s + (x.schnitt_m2 || 0), 0)) : (z.pts.length >= 2 || (u.widZonen || []).length === 1));   // Verschnitt < 5 m² bzw. < 1 % = Randversatz der Datensätze (Gerstlgasse 18: EPK 1,9 m²)
         if (!Z.length) Z = [{ w: u.wid, geo: u.widGeo, pts: u.widPts }];
-        const ref = M.pt, dmin = z => ref ? Math.min(...z.pts.map(p => Math.hypot((p[0] - ref[0]) * 74000, (p[1] - ref[1]) * 111200))) : 0;
+        const ref = M.pt, dmin = z => !ref ? 0 : z.pts.length ? Math.min(...z.pts.map(p => Math.hypot((p[0] - ref[0]) * 74000, (p[1] - ref[1]) * 111200))) : Math.min(...fPolys(z.geo).flatMap(pg => pg[0].map((p, i, r) => kSegAbst(ref, p, r[(i + 1) % r.length]))));
         if (Z.length > 1) Z.sort((a, b) => LESER_TEST ? (!!b.front - !!a.front) || dmin(a) - dmin(b) : dmin(a) - dmin(b));
         const nFront = LESER_TEST ? Z.filter(z => z.front).length : 0;
         const plE = PL && (g.teile || [g]).map(t => PL[t.kg + '_' + t.gnr]).find(Boolean);   // Planleser vorhanden → Widmung steht im Steckbrief, nicht doppelt
