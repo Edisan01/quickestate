@@ -109,7 +109,7 @@
  },
  "Leitermayergasse 50, 1180": {
   "stand": "2026-11-23",
-  "prozent": 33,
+  "prozent": 58,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -122,7 +122,15 @@
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
-   "tf2.hof.widmung": "G"
+   "tf0.strassentrakt.breite_m": 7.48,
+   "tf1.strassentrakt.widmung": "W",
+   "tf1.strassentrakt.bauklasse": "III",
+   "tf1.strassentrakt.bauweise": "g",
+   "tf1.strassentrakt.breite_m": 8.84,
+   "tf2.hof.widmung": "G",
+   "tf2.hof.breite_m": 7.5,
+   "tf3.hof.widmung": "G",
+   "tf3.hof.breite_m": 8.91
   },
   "grundstueck": {
    "kg_gnr": {

@@ -420,8 +420,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 8.84,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+sprung (lot)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -436,9 +437,68 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 220.81,
+     "wert": 131.54,
      "zustand": "offen",
-     "quelle": "kataster+planlinien (netz) · 2. Verfahren liefert andere Teilezahl"
+     "quelle": "kataster+planlinien (abschnitt)"
+    }
+   },
+   {
+    "art": {
+     "wert": "strassentrakt",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "blau",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "W",
+     "zustand": "offen",
+     "quelle": "stadt"
+    },
+    "bauklasse": {
+     "wert": "III",
+     "zustand": "bestaetigt",
+     "quelle": "stadt+plan"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "bauweise": {
+     "wert": "g",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": 7.48,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+sprung (lot)"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 89.24,
+     "zustand": "offen",
+     "quelle": "kataster+planlinien (abschnitt)"
     }
    },
    {
@@ -479,8 +539,9 @@
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
     "breite_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 8.91,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+sprung (lot)"
     },
     "tiefe_links_m": {
      "wert": null,
@@ -495,9 +556,69 @@
      "zustand": "offen"
     },
     "flaeche_m2": {
-     "wert": 143.13,
+     "wert": 65.63,
      "zustand": "offen",
-     "quelle": "kataster+planlinien (netz) · 2. Verfahren liefert andere Teilezahl"
+     "quelle": "kataster+planlinien (abschnitt)"
+    }
+   },
+   {
+    "art": {
+     "wert": "hof",
+     "zustand": "bestaetigt",
+     "quelle": "leser"
+    },
+    "farbe": {
+     "wert": "gruen",
+     "zustand": "bestaetigt",
+     "quelle": "regel"
+    },
+    "widmung": {
+     "wert": "G",
+     "zustand": "bestaetigt",
+     "quelle": "plan"
+    },
+    "bauklasse": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "hoehe_m": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bauweise": {
+     "wert": null,
+     "zustand": "trifft_nicht_zu",
+     "grund": "G nicht bebaubar"
+    },
+    "bb": {
+     "wert": [],
+     "zustand": "offen",
+     "quelle": "plan",
+     "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "breite_m": {
+     "wert": 7.5,
+     "zustand": "bestaetigt",
+     "quelle": "kataster+sprung (lot)"
+    },
+    "tiefe_links_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_rechts_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "tiefe_mittel_m": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "flaeche_m2": {
+     "wert": 77.5,
+     "zustand": "offen",
+     "quelle": "kataster+planlinien (abschnitt)"
     }
    }
   ]

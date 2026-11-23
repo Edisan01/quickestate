@@ -104,3 +104,6 @@ Jedes rote/offene Feld → genau 1 Code = Schritt + Werkzeug + Gesetzesverweis (
 Codes: S1-GS, S2-PD, S5-MASS, S6-TF, S7-WID, S7-HOE, S7-BW, S7-BB, S12-RE.
 Test: Feld-Zuordnung 91/91 eindeutig → bleibt. Freitext-Stichwort-Zuordnung 4/10 → entfernt; Befunde bei Straßenbegehung ordnet Claude zu.
 Befund: S7-HOE nur 1 Prüffeld → Höhen fehlen fast ganz in soll.json; darum blieb Linzer 22 (4,5 m / 15 m) unbemerkt.
+
+## Schritt 5b Abschnitte am Sprung (23.11.)
+`tools/planleser_py/abschnitte.py`: Grenze Straßentrakt/Hof springt quer zur Front (±20°, ≥ 1 m) → Lot zur Front durch den Sprung teilt alle Teilflächen. Leitermayergasse: Sprung bei 7,48 m (Plan 7 m, ±0,6 ✓); mittlere Tiefen 11,93 / 14,88 / 10,33 / 7,37 = Plan 12 / 15 / 10 / 7 ✓. Flächen weichen ab, weil das Blatt mit gerundeten Breiten 7 + 9 = 16 m rechnet, Kataster 16,32 m. Prüfstand 98 grün / 13 rot (54 %).

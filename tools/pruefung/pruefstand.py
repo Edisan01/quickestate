@@ -72,16 +72,22 @@ def adapter(e, adr):
             zwei = len(tfn.get('netz', [])) == len(tfn.get('teile', []))
             tf['flaeche_m2'] = feld(round(sum(x['m2'] for x in nz), 2), 'bestaetigt' if zwei else 'offen', 'kataster+planlinien (netz)' + ('' if zwei else ' · 2. Verfahren liefert andere Teilezahl'))
         if art == 'strassentrakt':
-            ti = t.get('tiefe') or {}
-            if ti.get('plan') is not None:
-                v = ti['plan']; tf['tiefe_links_m'] = feld(v, quelle='planzahl'); tf['tiefe_rechts_m'] = feld(v, quelle='planzahl'); tf['tiefe_mittel_m'] = feld(v, quelle='planzahl')
-                pf['trakttiefe_m'] = feld(v, 'bestaetigt' if ti.get('ok') else 'offen', 'planzahl+messung' if ti.get('ok') else 'planzahl')
+            tt = t.get('tiefe') or {}
+            if tt.get('plan') is not None:
+                v = tt['plan']; tf['tiefe_links_m'] = feld(v, quelle='planzahl'); tf['tiefe_rechts_m'] = feld(v, quelle='planzahl'); tf['tiefe_mittel_m'] = feld(v, quelle='planzahl')
+                pf['trakttiefe_m'] = feld(v, 'bestaetigt' if tt.get('ok') else 'offen', 'planzahl+messung' if tt.get('ok') else 'planzahl')
             sb = t.get('strassenbreite') or {}
             if sb.get('plan') is not None: pf['strassenbreite_m'] = feld(sb['plan'], 'bestaetigt' if sb.get('ok') else 'offen', 'planzahl+messung')
             elif sb.get('gemessen') is not None: pf['strassenbreite_m'] = feld(None, 'offen', grund=f"keine Planzahl, gemessen {sb['gemessen']}")
             vg = t.get('vorgarten')
             if vg and vg.get('plan') is not None: pf['vorgarten_m'] = feld(vg['plan'], quelle='planzahl+messung')
-        ist['teilflaechen'].append(tf)
+        # Schritt 5b: Sprung → Abschnitte (Lot zur Front durch den Sprung); je Abschnitt eigene Breite/Fläche
+        ab = [x for x in tfn.get('abschnitte', []) if x['leser_teil'] == ti] if tfn.get('sprung_lote') else []
+        if len(ab) > 1:
+            for x in ab:
+                c = dict(tf); c['breite_m'] = feld(x['breite_m'], quelle='kataster+sprung (lot)'); c['flaeche_m2'] = feld(x['m2'], 'offen', 'kataster+planlinien (abschnitt)')
+                ist['teilflaechen'].append(c)
+        else: ist['teilflaechen'].append(tf)
     # Phase 4: Maßzahlen über Pfeilpaare (planleser/masse.json) – nur wo der bisherige Leser nichts hat
     mz = MASSE.get(f"{e['kg']}_{e['gnr'].replace('/', '-')}", {})
     sbw = sorted({x['v'] for x in mz.get('strassenbreite', [])})
@@ -155,6 +161,8 @@ def pruefen():
         frei = list(ist['teilflaechen'])
         for i, st in enumerate(s.get('teilflaechen', [])):
             kand = [t for t in frei if t['art']['wert'] == st['art']]
+            if len(kand) > 1 and st.get('breite_m') and all((t.get('breite_m') or {}).get('wert') for t in kand):
+                kand.sort(key=lambda t: abs(t['breite_m']['wert'] - st['breite_m']))  # Abschnitte: nach Breite zuordnen
             t = kand[0] if kand else None
             if t: frei.remove(t)
             for k, v in st.items():
