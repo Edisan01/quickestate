@@ -8,6 +8,7 @@ SCHEMA = json.load(open(os.path.join(H, 'pruefschema.json'))); SOLL = json.load(
 TOL_M = SCHEMA['toleranzen']['planzahl_gegen_messung_m']; TOL_P = SCHEMA['toleranzen']['summe_gegen_grundbuch_prozent']
 import grundstueck as G
 _mf = os.path.join(R, 'planleser', 'masse.json'); MASSE = json.load(open(_mf)) if os.path.exists(_mf) else {}
+_hf = os.path.join(R, 'planleser', 'hoehen.json'); HOEHEN = json.load(open(_hf)) if os.path.exists(_hf) else {}
 _tf = os.path.join(R, 'planleser', 'teilflaechen.json'); TEILE = json.load(open(_tf)) if os.path.exists(_tf) else {}
 import stadt as ST
 
@@ -82,6 +83,10 @@ def adapter(e, adr):
             vg = t.get('vorgarten')
             if vg and vg.get('plan') is not None: pf['vorgarten_m'] = feld(vg['plan'], quelle='planzahl+messung')
         # Schritt 5b: Sprung → Abschnitte (Lot zur Front durch den Sprung); je Abschnitt eigene Breite/Fläche
+        # Phase 6 / P1: Höhe in m je Planbereich (planleser/hoehen.json); 'keine' = Beschriftung ohne m-Angabe → BK-Höhe gilt
+        hh = [x['hoehe'] for x in HOEHEN.get(f"{e['kg']}_{e['gnr'].replace('/', '-')}", []) if x['leser_teil'] == ti]
+        if hh and not (tf.get('hoehe_m') or {}).get('wert') and all(x == hh[0] for x in hh) and hh[0] is not None:
+            tf['hoehe_m'] = feld(hh[0], 'offen' if hh[0] == 'keine' else 'bestaetigt', 'plan (P1, Planbereich)')
         ab = [x for x in tfn.get('abschnitte', []) if x['leser_teil'] == ti]
         if len(ab) == 1 and not (tf.get('breite_m') or {}).get('wert'): tf['breite_m'] = feld(ab[0]['breite_m'], quelle='kataster (netz)')
         # Eduard 23.11. (Nordmanngasse): keine Maßzahl im Plan → gemessene Lage der Baufluchtlinie zählt (gekennzeichnet, ± 0,6 m)
@@ -189,7 +194,7 @@ def pruefen():
                     if z == 'gruen' and vgl('flaeche', v, iw) != 'gruen':
                         BLATT.append(f"{adr.split(',')[0]} {key}: Blatt {v} m², echt {iw} m² – Blatt rechnet mit Breite {st['breite_m']} statt {ib} m (Kataster)")
                     setz(key, z, round(ref, 2), iw); continue
-                setz(key, vgl(TF_ART.get(k, 'text'), v, iw), v, iw)
+                setz(key, vgl('text' if k == 'hoehe_m' and not isinstance(v, (int, float)) else TF_ART.get(k, 'text'), v, iw), v, iw)
         if 'summe_m2' in s: setz('summe_m2', 'offen', s['summe_m2'])
         for k, v in s.get('rechnungen', {}).items(): setz('rech.' + k, 'offen', v)
         for i, h in enumerate(s.get('hinweise', [])): setz(f'hinweis.{i}', 'offen', h)

@@ -158,9 +158,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,
@@ -407,8 +407,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": "keine",
+     "zustand": "offen",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -466,8 +467,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": "keine",
+     "zustand": "offen",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -525,9 +527,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,
@@ -585,9 +587,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,
@@ -771,8 +773,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": "keine",
+     "zustand": "offen",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -833,9 +836,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,
@@ -1027,9 +1030,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,
@@ -1087,8 +1090,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": "keine",
+     "zustand": "offen",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -1276,8 +1280,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": "keine",
+     "zustand": "offen",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -1338,8 +1343,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": 4.5,
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -1525,8 +1531,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": "keine",
+     "zustand": "offen",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -1587,9 +1594,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,
@@ -1773,8 +1780,9 @@
      "quelle": "stadt+plan"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "offen"
+     "wert": "keine",
+     "zustand": "offen",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": "g",
@@ -1835,9 +1843,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,
@@ -2082,9 +2090,9 @@
      "grund": "G nicht bebaubar"
     },
     "hoehe_m": {
-     "wert": null,
-     "zustand": "trifft_nicht_zu",
-     "grund": "G nicht bebaubar"
+     "wert": "trifft nicht zu",
+     "zustand": "bestaetigt",
+     "quelle": "plan (P1, Planbereich)"
     },
     "bauweise": {
      "wert": null,

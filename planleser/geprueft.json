@@ -111,7 +111,7 @@
  },
  "Leitermayergasse 50, 1180": {
   "stand": "2026-11-23",
-  "prozent": 64,
+  "prozent": 66,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -121,11 +121,13 @@
    "front.strassenbreite_m": 11.38,
    "front.abtretung": false,
    "gs.front_m": 16.16,
+   "tf0.strassentrakt.hoehe_m": "keine",
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
    "tf0.strassentrakt.breite_m": 7.48,
    "tf0.strassentrakt.flaeche_m2": 89.24,
+   "tf1.strassentrakt.hoehe_m": "keine",
    "tf1.strassentrakt.widmung": "W",
    "tf1.strassentrakt.bauklasse": "III",
    "tf1.strassentrakt.bauweise": "g",
@@ -213,7 +215,7 @@
  },
  "Zentagasse 6, 1050": {
   "stand": "2026-11-23",
-  "prozent": 68,
+  "prozent": 70,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -221,6 +223,7 @@
    "allg.0": null,
    "allg.1": null,
    "gs.front_m": 22.31,
+   "tf0.strassentrakt.hoehe_m": "keine",
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauklasse": "IV",
    "tf0.strassentrakt.bauweise": "g",
@@ -301,7 +304,7 @@
  },
  "Nordmanngasse 20, 1210": {
   "stand": "2026-11-23",
-  "prozent": 47,
+  "prozent": 48,
   "voll_gruen": false,
   "gruen": {
    "gs.flaeche_grundbuch": 536,
@@ -311,6 +314,7 @@
    "allg.0": null,
    "front.abtretung": false,
    "gs.front_m": 17.65,
+   "tf0.strassentrakt.hoehe_m": "keine",
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
@@ -406,7 +410,7 @@
  },
  "Theresiengasse 47, 1180": {
   "stand": "2026-11-23",
-  "prozent": 33,
+  "prozent": 38,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -414,11 +418,13 @@
    "gs.plandokument_nr": "7208",
    "front.strassenbreite_m": 15.17,
    "front.abtretung": false,
+   "tf0.strassentrakt.hoehe_m": "keine",
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauweise": "g",
    "tf0.strassentrakt.tiefe_m": 13.43,
    "tf1.hof.widmung": "WGV",
    "tf1.hof.bauklasse": "I",
+   "tf1.hof.hoehe_m": 4.5,
    "tf1.hof.bauweise": "g"
   },
   "grundstueck": {
@@ -500,7 +506,7 @@
  },
  "Tigergasse 21, 1080": {
   "stand": "2026-11-23",
-  "prozent": 83,
+  "prozent": 85,
   "voll_gruen": false,
   "gruen": {
    "gs.schutzzone": false,
@@ -509,6 +515,7 @@
    "allg.0": null,
    "allg.1": null,
    "front.abtretung": false,
+   "tf0.strassentrakt.hoehe_m": "keine",
    "tf0.strassentrakt.widmung": "GB",
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
@@ -594,7 +601,7 @@
  },
  "Gartengasse 8, 1050": {
   "stand": "2026-11-23",
-  "prozent": 79,
+  "prozent": 80,
   "voll_gruen": false,
   "gruen": {
    "gs.mehrere_gnr": true,
@@ -604,6 +611,7 @@
    "allg.1": null,
    "front.abtretung": true,
    "gs.front_m": 20.46,
+   "tf0.strassentrakt.hoehe_m": "keine",
    "tf0.strassentrakt.widmung": "W",
    "tf0.strassentrakt.bauklasse": "III",
    "tf0.strassentrakt.bauweise": "g",
@@ -686,7 +694,7 @@
  },
  "Gerstlgasse 18, 1210": {
   "stand": "2026-11-23",
-  "prozent": 92,
+  "prozent": 85,
   "voll_gruen": false,
   "gruen": {
    "gs.mehrere_gnr": true,

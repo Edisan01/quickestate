@@ -24,8 +24,8 @@
       "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
       "pro_front": { "strassenbreite_m": 11.38, "abtretung": false },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 7.0, "tiefe_m": 12.0, "flaeche_m2": 84.0 },
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 9.0, "tiefe_m": 15.0, "flaeche_m2": 135.0 },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 7.0, "tiefe_m": 12.0, "flaeche_m2": 84.0 },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 9.0, "tiefe_m": 15.0, "flaeche_m2": 135.0 },
         { "art": "hof", "widmung": "G", "bb": [], "breite_m": 7.0, "tiefe_m": 10.0, "flaeche_m2": 70.0 },
         { "art": "hof", "widmung": "G", "bb": [], "breite_m": 9.0, "tiefe_m": 7.0, "flaeche_m2": 63.0 }
       ],
@@ -37,7 +37,7 @@
       "grundstueck": { "schutzzone": false, "wohnzone": false },
       "allgemeine_bestimmungen": ["4,5 m First ü. Traufe", "keine straßenseitigen Erker"],
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "IV", "bauweise": "g", "breite_m": 22.0, "tiefe_m": 12.0, "flaeche_m2": 264.0 },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "IV", "bauweise": "g", "breite_m": 22.0, "tiefe_m": 12.0, "flaeche_m2": 264.0 },
         { "art": "hof", "widmung": "G", "breite_m": 22.0, "tiefe_links_m": 9.0, "tiefe_rechts_m": 12.0, "tiefe_mittel_m": 10.5, "flaeche_m2": 231.0 }
       ],
       "summe_m2": 495.0,
@@ -50,7 +50,7 @@
       "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
       "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 18.0, "tiefe_m": 10.38, "_tiefe_m": "Eduard 23.11.: im Plan keine Maßzahl, Kurs 11 m gerundet → Messung Baufluchtlinie gilt", "flaeche_m2": 198.0, "hoehe_summe_m": 20.5, "geschosse": 7 },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 18.0, "tiefe_m": 10.38, "_tiefe_m": "Eduard 23.11.: im Plan keine Maßzahl, Kurs 11 m gerundet → Messung Baufluchtlinie gilt", "flaeche_m2": 198.0, "hoehe_summe_m": 20.5, "geschosse": 7 },
         { "art": "hof", "widmung": "G", "bb": ["10 % von G unverbaut"], "breite_m": 18.0, "tiefe_m": 18.8, "flaeche_m2": 338.4, "bb_flaeche_m2": 33.84, "hoehe_summe_m": 3.5 }
       ],
       "summe_m2": 536.4,
@@ -64,7 +64,7 @@
       "allgemeine_bestimmungen": ["5,5 m First ü. Traufe", "straßenseitig keine Erker, Balkone, Loggien"],
       "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "IV", "bauweise": "g", "breite_m": 21.0, "tiefe_m": 13.5, "flaeche_m2": 283.5, "hoehe_summe_m": 24.67, "geschosse": 8 },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "IV", "bauweise": "g", "breite_m": 21.0, "tiefe_m": 13.5, "flaeche_m2": 283.5, "hoehe_summe_m": 24.67, "geschosse": 8 },
         { "art": "hof", "widmung": "W GV", "bauklasse": "I", "hoehe_m": 4.5, "bauweise": "g", "bb": ["BB1: 50 % bebaubar", "Flachdach"], "breite_m": 21.0, "tiefe_m": 18.5, "flaeche_m2": 388.5, "hoehe_summe_m": 3.5 }
       ],
       "summe_m2": 672.0,
@@ -78,7 +78,7 @@
       "allgemeine_bestimmungen": ["4,5 m First ü. Traufe", "keine Erker/Loggien/Balkone straßenseitig"],
       "pro_front": { "abtretung": false, "arkade_m": 2.0, "_strassenbreite": "Soll unbekannt: Planzahl 11,38 gilt bei Nr. 19, an Nr. 21 ca. 9–10 m" },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "GB", "bauklasse": "III", "bauweise": "g" },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "GB", "bauklasse": "III", "bauweise": "g" },
         { "art": "hof", "widmung": "G", "bb": [] }
       ]
     },
@@ -89,7 +89,7 @@
       "allgemeine_bestimmungen": ["4,5 m First ü. Traufe", "keine Loggien straßenseitig"],
       "pro_front": { "strassenbreite_m": 13.27, "abtretung": true, "abtretung_masse": "2 × 20,5 m" },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "III", "bauweise": "g" },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g" },
         { "art": "hof", "widmung": "G", "bb": ["BB1 (zur Hälfte): keine unterirdischen Bauten"] }
       ]
     },
@@ -100,7 +100,7 @@
       "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
       "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "GB", "bauklasse": "II", "bauweise": "g" },
+        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "GB", "bauklasse": "II", "bauweise": "g" },
         { "art": "hof", "widmung": "G", "bb": ["10 % bzw. mind. 25 m² unverbaut"] }
       ]
     },
