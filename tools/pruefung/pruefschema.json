@@ -126,6 +126,11 @@
         "id": "P7_mehrere_gnr",
         "regel": "Mehrere GNR: alle zusammenlegen, Bauplatz-Frage sichtbar; interne GNR-Grenzen sind keine Planlinien.",
         "testfall": "Linzer Straße 22: 347 + 343/1 + 338/1"
+      },
+      {
+        "id": "P8_stadt_vs_pd",
+        "regel": "Stadtkarten-Text (flwbplmzk-Planbild) und PD-Text (verwendetes Plandokument) an derselben Stelle vergleichen. Widerspruch → PD dort veraltet → Feld bleibt offen, richtiges PD suchen. Nie veraltetes PD verwenden. (Eduard 24.11.)",
+        "testfall": "Theresiengasse 47 Hof: Stadtkarte 'WGV I 4,5 m g' + PD 7208 'WGV I 4,5 m' → PD gilt. Tokens 0/1/3/8/11 am Blattrand: Stadtkarte zeigt andere Festsetzung als PD 7208 → PD 7208 dort veraltet."
       }
     ]
   },

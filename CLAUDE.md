@@ -17,6 +17,10 @@ Nach jeder Aufgabe `tools/pruefung/wissensbasis_23.md` ergänzen (Befund, Entsch
 - **Nichts live schalten ohne Eduards OK.** Keine Passwörter, keine Konten, keine Tracking-Cookies, keine Geheimnisse im Repo, **Kurs-PDFs nicht ins Repo**.
 - Kein Kachel-Holen für ganz Wien. Planbilder nur für die Adressen, die gerade getestet werden.
 - Plankarten der Stadt (isPlan=true, flwbplmzk-Kacheln) nach `~/qe_planbilder/`, **nie ins Repo**. Max. 1 Abruf/s, User-Agent setzen (siehe „Daten der Stadt Wien").
+- Leser-Code (`tools/planleser_py/`, `tools/pruefung/`) enthält **NIE** adressbezogene Werte (Pixel, Koordinaten, PD-Nummern, Anker). Solche Werte nur in Testdateien/JSON unter `planleser/` oder `~/qe_planbilder/`, klar als Test/Handwert markiert.
+- Jeder neue Schritt muss für jede Wiener Adresse laufen. Was (noch) Handarbeit ist, in WB 23 unter „Noch nicht automatisch" auflisten.
+- **Plan vs. Kursblatt (Eduard 24.11.):** Kursblätter sind Lernmaterial. Soll = heute gültiger Plan, **aber nur** wenn der Plan-Wert mit 2 Belegen bestätigt ist (z. B. PD-Text + Stadtkarte). Ohne 2 Belege bleibt der Kurswert im Soll, Feld = „Abweichung ungeklärt". Nie pauschal umschreiben. Jede `soll.json`-Änderung einzeln in WB 23 „soll.json-Änderungen" (Adresse, Feld, alt → neu, Belege).
+- **Stadtkarten-Text ≠ PD-Text an derselben Stelle** → PD dort veraltet → Feld offen + richtiges PD suchen. Nie veraltetes PD verwenden.
 - Neues Wissen = Schema-Feld (`tools/pruefung/pruefschema.json`) + Testfall (`tools/pruefung/soll.json`) + Wissensbasis 23 (`tools/pruefung/wissensbasis_23.md`) + Lernwissen (`tools/pruefung/lernwissen.json`). Gemeinsamkeiten finden, nicht annehmen.
 - Neue Teile nur einbauen, wenn ein Test zeigt, dass sie helfen; sonst wieder raus (in WB 23 als „verworfen“ vermerken).
 - Lange Arbeitsblöcke, nur bei echten Entscheidungen fragen. Kein Browser/Screenshot ohne Eduards Wunsch.

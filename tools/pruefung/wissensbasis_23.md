@@ -81,7 +81,7 @@ Neues Wissen = Schema-Feld + Testfall in `soll.json` + Wissensbasis + `lernwisse
 - **Phase 4 (Teil):** `planleser_py/masse.py` – Ybbs Trakttiefe 12,00 ✓, Gartengasse 15,00/12,00 ✓, Enenkelstraße 14,00 ✓. Hauptlücke: Maßzahlen werden noch zu selten gelesen (Leitermayergasse, Nordmanngasse: 0; Straßenbreiten 18,96/11,38/15,17 fehlen) → nächster Schritt Zahlenleser für schräge/kleine Zahlen.
 - **v409 live:** Adressen ohne Planleser: Hof grau + Hinweis, Ampel gelb „Plan noch nicht geprüft“.
 - **Offen bei Eduard:** Theresiengasse Kursstand (672/21 m/W IV/5,5 m/keine Erker vs. heute 762/23,66/W III/4,5 m/Erker ≤ 0,6 m); §75(4) BK IV: +4 m immer oder nur bei Straße > 15 m (v204: sonst +3); Leitermayergasse §75(4) Einschränkung bestätigen.
-  - **24.11. Nachtrag Theresiengasse 47 tf1.hof BB1:** Hand-Anker-Overlay auf PD 7208 (`planleser/georef_7208.json`, Toleranz 2 m, freigegeben) zeigt „G BB 2" im Nachbarhof links von tf1 (Richtung Nr. 43/45), **nicht in tf1**, kein Pfeil → heute **keine BB in tf1**. Kursblatt-Angabe „BB1: 50 % bebaubar" vermutlich aus altem Plan. `soll.json` noch **nicht** geändert, wartet auf Eduards Entscheidung.
+  - **24.11. Theresiengasse 47 tf1.hof BB1 – ERLEDIGT:** PD 7208 gilt für Theresiengasse 47 (Stadtkarte zeigt „WGV I 4,5 m g" im Hof = Festsetzung PD 7208, Hand-Anker-Overlay bestätigt). „G BB" nur im Nachbarhof (Richtung Nr. 43/45), kein Pfeil → **keine BB in tf1**, 2 Belege (PD 7208 + Stadtkarte 01514_430-18.png). `soll.json` Theresiengasse 47 tf1 geändert: `bb: ["BB1: 50 % bebaubar"]` → `bb: []`, Kurswert als `kurs_hinweis` aufbewahrt.
 - Allgemeine Bestimmungen = alle PD-Treffer ohne BB-Bezug (Annahme, weil v204 den Kopf in -layout-Texten nicht erkennt) → können Punkte enthalten, die nur für bestimmte Flächen gelten (z. B. 7208 Pkt. 3.3 GV-Dächer). Zuordnung zu Flächen in Phase 6.
 
 ## Pflichtprüfungen P1–P7 (Eduard 23.11., immer, jede Adresse)
@@ -147,3 +147,21 @@ Ergebnis: Theresiengasse Hof WGV I 4.5m ✓ (Punkt statt Komma gelesen), Ybbs 18
 `planleser/georef_7208.json`. 4 Anker (Zellen D11, N11, J19, E5 im 200-Px-Raster-Overlay) gegen Welt-Knoten aus `STRASSENKNOTENOGD` (WFS data.wien.gv.at, EPSG:31256). 4-Pt-LSQ Welt→PDF: Skala 3,9261 PDF-Px/m (Soll 1:2000@200dpi = 3,937, Δ 0,3 %), Winkel +90,49° (Nordpfeil rechts). Restfehler D11 1,63 / N11 0,64 / J19 1,05 / E5 1,22 m.
 **Toleranz 2 m** akzeptiert. **Grund:** `STRASSENKNOTENOGD` liefert Straßenachsen (Mittellinie), der Plan zeigt Fluchtlinien (Straßenrand) → systembedingt 1–2 m Offset. Nutzbar für BB-Marke → Teilfläche-Zuordnung (Teilflächen 15–30 m). **Nicht** nutzbar für Maßprüfung ±0,6 m.
 flwbplmzk-Pixel → EPSG:31256 exakt über Slippy-Map z=19 Mercator-Umkehr (x0,y0 aus `~/qe_planbilder/<kg_gnr>.json`), pyproj EPSG:4326→31256. Mitte des 1792×1792-Mosaiks ≠ Adresspunkt (Theresiengasse 47: Punkt bei mosaic-Px (992, 880), nicht (896, 896)).
+- **BB-Suche im ganzen PD-Blatt per Template** (Rot-Maske, Normschrift-Vorlage aus C10, Rotation 0–350° in 10°-Schritten, Hälften-IoU + Ziffer-Rotpixel-Zweitprüfung): Von 28 NMS-Kandidaten 14 echt / 10 falsch (GBGV×4, Maßzahlen 11,38 / 18,96, GB III, BEZIRKSGRENZE/PLANGEBIETS×3) / 1 echter BB abgelehnt (24.11.). Scores und IoU-Werte überlappen → Schwelle allein trennt nicht. Nächster Weg: Position aus flwbplmzk-Inventar, nur Nummer per Fenster-Match aus PD (über georef_7208.json).
+
+## Noch nicht automatisch (Stand 24.11., pro Adresse Handarbeit)
+- **Adresse → PD-Nummer (größte Lücke für „jede Adresse")**: Aktuell nur Hand-Zuordnung in `tools/planleser_py/plandokumente.json → zuordnung` (`KG_GNR → {pd, bebaubar, G, …}`). Es gibt keinen OGD-Layer mehr, der die PD-Nummer pro Punkt liefert (SCHNITTMUSTEROGD verschwunden; GENFLWIDMUNGOGD hat nur `BEFRISTUNG_PD`; INSPIRE `plu:SpatialPlan`/`ZoningElement` referenziert nur den Wiener Gesamtplan 2023). Ohne diesen Schritt kann keine neue Adresse automatisch geprüft werden. Nächste Suche: Fachportal-Rest-API oder BauplatzWebservice-Endpunkt.
+- **PD-Georef** pro Adresse: Hand-Anker (3–4 Straßenkreuzungen im Rasterblatt) + `STRASSENKNOTENOGD`, Toleranz 2 m. Einziger Fall heute: `planleser/georef_7208.json` (Theresiengasse 47). Automatik verworfen (siehe „Verworfen (mit Grund)": ORB, matchTemplate, Rot-Hough).
+- **BB-Texte** nur für 8 PDs vorhanden: `plandokumente/bb_texte.json` (ChatGPT-Auftrag A, 24.11.: 6538, 6848, 6999, 7208, 7216, 7318, 7462, 7486). Neue Adresse ohne PD-Text: Vorschlag „BB-Text offen", bis Texte ergänzt.
+- **Scan vs. Vektor-PD**: Alle 8 Prüfadressen-PDs = Scan (1 JPEG, 0 Text, 0 Vektor). Neuere PDs (z. B. 8485) = Vektor + Text (1 136 Blöcke, 20 719 Zeichen-Ops). Für Vektor-PDs sind Georef + BB-Text-Extraktion vereinfachbar – später.
+
+## Feste Regeln (Eduard 24.11.)
+- **Plan vs. Kursblatt:** Kursblätter sind Lernmaterial. Soll = heute gültiger Plan – **aber nur**, wenn der Plan-Wert mit 2 Belegen bestätigt ist (z. B. PD-Text + Stadtkarte, oder PD-Text + Scan-Plan). Ohne 2 Belege bleibt der Kurswert im Soll und das Feld wird als „Abweichung ungeklärt" markiert. Nie pauschal alle Sollwerte auf heute umschreiben.
+- **Stadtkarten-Text ≠ PD-Text an derselben Stelle** → PD dort veraltet → Feld offen + richtiges PD suchen. Nie veraltetes PD verwenden. (Pflichtschritt, siehe `pruefschema.json → pflichtpruefungen.P8_stadt_vs_pd`.)
+- **Jede soll.json-Änderung einzeln dokumentieren** (Adresse, Feld, alt → neu, Belege) – siehe Abschnitt „soll.json-Änderungen" unten.
+
+## soll.json-Änderungen (Protokoll)
+- **24.11. Theresiengasse 47 tf1.hof.bb:** `["BB1: 50 % bebaubar"]` → `[]`. Belege: (1) PD 7208 Hand-Anker-Overlay zeigt „G BB 2" nur im Nachbarhof, nicht in tf1; (2) Stadtkarte 01514_430-18.png zeigt im Hof „WGV I 4,5 m g" (PD 7208) ohne BB-Marke. Kurswert „BB1: 50 % bebaubar" als `kurs_hinweis` aufbewahrt. Entscheidung Eduard.
+
+## Offener Punkt „Theresiengasse Kursstand" (24.11., erledigt)
+- 762 m²/23,66 m/W III/4,5 m/Erker ≤ 0,6 m sind heutige Werte aus PD 7208 + BEV/Stadt; Kurs 672/21/W IV/5,5/keine Erker ist veraltet. Siehe Protokoll oben.

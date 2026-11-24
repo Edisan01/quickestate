@@ -177,7 +177,7 @@ def pruefen():
             t = kand[0] if kand else None
             if t: frei.remove(t)
             for k, v in st.items():
-                if k == 'art': continue
+                if k == 'art' or k.startswith('_'): continue
                 key = f'tf{i}.{st["art"]}.{k}'
                 if t is None: setz(key, 'offen', v); continue
                 if k == 'bb': setz(key, vgl_bb(v, t['bb']['wert'] if t['bb']['zustand'] == 'bestaetigt' or t['bb']['wert'] else None), v, t['bb']['wert']); continue
