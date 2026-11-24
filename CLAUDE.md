@@ -2,6 +2,12 @@
 
 Eduard Beches baut einen Rechner: Was darf ich auf diesem Wiener Grundstück bauen? Kern ist der **Planleser**. Er liest den Flächenwidmungs- und Bebauungsplan (Planbild der Stadt Wien) je Teilfläche aus.
 
+## STARTPFLICHT
+Vor jeder Aufgabe lesen: `tools/pruefung/wissensbasis_23.md` (insb. Abschnitt „Verworfen (mit Grund)") und `tools/pruefung/lernwissen.json`. Nichts vorschlagen, was dort als verworfen steht.
+
+## ABSCHLUSSPFLICHT
+Nach jeder Aufgabe `tools/pruefung/wissensbasis_23.md` ergänzen (Befund, Entscheidung, Prüfstand-Zahl). Commit + Push erst nach Eduards OK.
+
 ## Arbeitsregeln (Eduard, verbindlich)
 - Antworten auf Deutsch, kurz, ohne Füllwörter. Ergebnisse als kurze Tabelle.
 - Nur betroffene Zeilen ändern (Edit/sed), nie ganze Dateien neu schreiben.

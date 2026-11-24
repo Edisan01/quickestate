@@ -127,3 +127,11 @@ Ergebnis: Theresiengasse Hof WGV I 4.5m ✓ (Punkt statt Komma gelesen), Ybbs 18
 
 ## P5-Zwischenstand (24.11.)
 `export.py`: Text-Quelle für BB auf `plandokumente/bb_texte.json` (ChatGPT-A, 24.11.) umgestellt, `plandokumente.json.dokumente` als Fallback. Hand-Zuordnung pro Testadresse bewusst **nicht** ergänzt – der Leser muss die Marke selbst lesen (2 Belege). Schema neu: `teilflaeche.allg` (plandokument_text, pflicht=false); Theresiengasse 47 tf1.hof soll getrennt: `bb:["BB1: 50 % bebaubar"]` + `allg:["Flachdach"]`. `pruefstand.py` setzt `tf.allg` bis `bb_marke.py` als offen. Prüfstand 116 grün / 12 rot / 63 offen (+1 offen, keine Regression). Widerspruch bb_texte 7208 BB1 „mindestens 30 % frei" vs. soll „50 % bebaubar" – an Eduard.
+
+## Verworfen (mit Grund)
+- **Tesseract als OCR**: unterschiedliche Schriften/Versionen zwischen Mac und Linux → nicht reproduzierbar; eigene Glyph-Vorlagen aus `tools/planleser_py/fonts/` (Liberation+DejaVu, MD5 fix) gewinnen (24.11.).
+- **Kachel-Holen für ganz Wien**: Netzlast gegen Stadtdienst zu hoch, ohne Nutzen. Nur Adressen, die gerade getestet werden (Arbeitsregel).
+- **Stadt-Zone als Planbereich**: W3 umfasst ganzen Block samt G → falsche Höhen 4,5/5,5 m. Planbereich kommt aus Plan-Netz (23.11., Phase 6).
+- **Liniennetz-Flächen im großen Ausschnitt**: Linien schließen nicht. Netz nur im geschnittenen Kataster-Polygon (23.11.).
+- **Freitext-Stichwort-Zuordnung von BB-Texten**: BB-Marke zur Teilfläche nur über Plan-Koordinaten (Pfeil/Enthaltensein), nie über Textähnlichkeit. Nummer ohne Position ist kein Beleg.
+- **Rahmen-Vektorkoordinaten aus PD-PDF**: PD-PDF ist ein reines Rasterbild mit eingebettetem JPEG, keine Vektorebene (geprüft 24.11. an PD 7208: 0 Zeichen-Befehle, 0 Textwörter). Georef für `bb_marke.py` geht über a3 (Bildabgleich gegen flwbplmzk), nicht a1/a2 (OCR von Randzahlen/Ankern).
