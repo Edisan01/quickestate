@@ -121,3 +121,6 @@ Ergebnis: Theresiengasse Hof WGV I 4.5m ✓ (Punkt statt Komma gelesen), Ybbs 18
 - **B Höhen-Testfälle:** 10 Fälle; Ybbs 18,5 und Theresiengasse 4,5 = unsere Lesung ✓. Neu für P1: Sommerschuhgasse 3 (W I 6,5 m o), Enenkelstraße 21 (Hof GBGV I 5 m g), Josefstädter Straße 93-97 (Hof WGV I 8 m g) → Planbilder über Mac-Auftrag.
 - **C Darwingasse 5/7/8:** Vorschläge, nicht bestätigt. Beleg C_5 plausibel (W IV g, Trakttiefe 14,00, G BB ohne Nummer, W I 6,5 m g hinten, 15,17). Wartet auf Eduard.
 - Mac-Auftrag um 7 Adressen erweitert (Linzer 22 = GNR 347 KG 01210 aus Kataster am Adresspunkt, mehrere GNR noch prüfen).
+
+## Planleser-Schriften im Repo (24.11.)
+`tools/planleser_py/fonts/` enthält LiberationSans Regular/Bold + DejaVuSans Regular/Bold (OFL/Bitstream-Vera, Lizenzen dabei) – gleiche Dateien wie unter Linux (MD5 bestätigt). `glyph.py:schriftdateien()` nutzt nur noch diese Dateien, `QE_PLAN_FONTS` als Override bleibt. Mac und Linux lesen bitgleiche Templates. `zonen.py:110` Höhe: erstes Muster `re.fullmatch(r'(\d{1,2})(?:[,.](\d))?m',…)`, zweites Muster Vorsilbe `(?:GBGV|WGV|GB|W)`. „4W5m" (OCR-Rest) fällt durch → offen statt falsch 5 m. Prüfstand 116 grün / 12 rot unverändert; Theresiengasse Hof 4,5 m stabil.

@@ -107,7 +107,7 @@ def attrs(toks):
     if m and 'widmung' not in a and t['h']>=15: a['widmung']=m.group(1); s=s[m.end():]
     r=re.search(r'(VI|IV|V|III|II|I)(?![IV])',s)
     if r and 'bauklasse' not in a and (r.start()==0 or 'widmung' in a): a['bauklasse']=r.group(1)
-    h=re.search(r'(\d{1,2})[,.]?(\d)?m',t['t']) or re.search(r'^(?:W|GB|WGV)(?:VI|IV|V|III|II|I)(\d{1,2})[,.](\d)',t['t'])
+    h=re.fullmatch(r'(\d{1,2})(?:[,.](\d))?m',t['t']) or re.search(r'^(?:GBGV|WGV|GB|W)(?:VI|IV|V|III|II|I)(\d{1,2})[,.](\d)',t['t'])
     if h and 'hoehe' not in a: a['hoehe']=h.group(1)+(','+h.group(2) if h.group(2) else '')+' m'
     if s in ('9','g') and 'bauweise' not in a: a['bauweise']='g'; continue
     if re.match(r'^(W|GB|WGV)',t['t']) and re.search(r'(gk|g|o)(?=BB\d*$)',t['t']) and 'bauweise' not in a: a['bauweise']=re.search(r'(gk|g|o)(?=BB\d*$)',t['t']).group(1)

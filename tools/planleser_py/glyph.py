@@ -4,30 +4,17 @@ from PIL import Image,ImageDraw,ImageFont
 CH='WIVGBELSKOFAPMNTHRCDgm0123456789,.[]()/o-'
 N=20
 def schriftdateien():
-  # Gleiche Sans-Schriften auf Linux, macOS und Windows finden.
-  # Explizite Pfade erlauben identische Vorlagen in Prüfstand und Betrieb.
+  # Schriften liegen im Repo (tools/planleser_py/fonts/). Jeder Rechner lädt bitgleiche Vorlagen.
   konfig=os.environ.get('QE_PLAN_FONTS')
   if konfig:
     dateien=konfig.split(os.pathsep)
     fehlt=[p for p in dateien if not os.path.isfile(p)]
     if fehlt: raise RuntimeError('QE_PLAN_FONTS: Schrift fehlt: '+', '.join(fehlt))
     return dateien
-  dateien=[
-    '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
-    '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-    '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
-    '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
-    '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
-    '/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
-    '/System/Library/Fonts/Supplemental/Arial.ttf',
-    '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
-  ]
-  if os.name=='nt':
-    basis=os.path.join(os.environ.get('WINDIR',r'C:\Windows'),'Fonts')
-    dateien += [os.path.join(basis,n) for n in ('arial.ttf','arialbd.ttf')]
-  dateien=[p for p in dateien if os.path.isfile(p)]
-  if not dateien:
-    raise RuntimeError('Keine Planleser-Schriften gefunden. Liberation Sans/DejaVu Sans installieren oder QE_PLAN_FONTS setzen.')
+  basis=os.path.join(os.path.dirname(__file__),'fonts')
+  dateien=[os.path.join(basis,n) for n in ('LiberationSans-Regular.ttf','DejaVuSans.ttf','LiberationSans-Bold.ttf','DejaVuSans-Bold.ttf')]
+  fehlt=[p for p in dateien if not os.path.isfile(p)]
+  if fehlt: raise RuntimeError('Repo-Schriften fehlen: '+', '.join(fehlt))
   return dateien
 def norm(b):
   ys,xs=np.nonzero(b)
