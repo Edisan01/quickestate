@@ -1,0 +1,207 @@
+{
+  "pd": "7208",
+  "kg_gnr": "01514_430-18",
+  "adresse": "Theresiengasse 47, 1180",
+  "projection_pixel": "PDF-Px bei 200 dpi (A2 Rasterung mit PyMuPDF)",
+  "projection_welt": "EPSG:31256 (MGI / Austria GK M34)",
+  "anker": [
+    {
+      "zelle": "D11",
+      "name": "Theresiengasse × Kreuzgasse",
+      "welt_epsg31256": [
+        780.25,
+        342637.81
+      ],
+      "pdf_pixel": [
+        751,
+        2183
+      ],
+      "rest_m": 1.635
+    },
+    {
+      "zelle": "N11",
+      "name": "Martinstr. × Währinger Str.",
+      "welt_epsg31256": [
+        752.02,
+        343135.44
+      ],
+      "pdf_pixel": [
+        2705,
+        2082
+      ],
+      "rest_m": 0.637
+    },
+    {
+      "zelle": "J19",
+      "name": "Semperstr. × Schulgasse",
+      "welt_epsg31256": [
+        1175.24,
+        342922.0
+      ],
+      "pdf_pixel": [
+        1854,
+        3732
+      ],
+      "rest_m": 1.048
+    },
+    {
+      "zelle": "E5",
+      "name": "Antonigasse × Hildebrandgasse",
+      "welt_epsg31256": [
+        427.6,
+        342653.6
+      ],
+      "pdf_pixel": [
+        826,
+        787
+      ],
+      "rest_m": 1.224
+    }
+  ],
+  "affine_welt_zu_pdf": {
+    "matrix_2x3": [
+      [
+        -0.03355858644982407,
+        3.923861461726346,
+        -1343685.4233094444
+      ],
+      [
+        3.928192290834527,
+        0.027706006076129087,
+        -10381.478625877715
+      ]
+    ],
+    "skala_pdf_px_pro_m": 3.9261,
+    "winkel_grad": 90.489
+  },
+  "toleranz_m": 2.0,
+  "nutzbar_fuer": [
+    "BB-Zuordnung zur Teilfläche",
+    "grobe Ortsmarkierung"
+  ],
+  "nicht_nutzbar_fuer": [
+    "Maßprüfung ±0,6 m"
+  ],
+  "quelle_welt_anker": "STRASSENKNOTENOGD (Wien WFS, EPSG:31256). Kreuzungsknoten = Straßenachse; Plan zeigt Fluchtlinien → systembedingt 1–2 m Abweichung.",
+  "quelle_pixel_anker": "Hand-Anker (Eduard 24.11., 4 Zellen im Raster-Overlay + Zoom)",
+  "quelle_flwbplmzk_zu_welt": {
+    "beschreibung": "Mosaic-Pixel → Lon/Lat über Slippy-Map Mercator-Umkehr bei z=19 (x0, y0 aus ~/qe_planbilder/<kg_gnr>.json), dann pyproj EPSG:4326 → EPSG:31256",
+    "tile_z": 19,
+    "tile_x0": 285940,
+    "tile_y0": 181763,
+    "formel": "fx = x0 + mx/256; fy = y0 + my/256; lon = fx/2^z*360-180; lat = atan(sinh(π*(1-2*fy/2^z)))",
+    "konvention_quelle": "tools/planleser_py/kat.py:kach"
+  },
+  "teilflaechen_pdf_pixel": [
+    {
+      "i": 0,
+      "nummer": 1,
+      "flaeche_m2": 320.19,
+      "ring_pdf_pixel": [
+        [
+          537,
+          2008
+        ],
+        [
+          536,
+          2010
+        ],
+        [
+          535,
+          2012
+        ],
+        [
+          516,
+          2057
+        ],
+        [
+          602,
+          2092
+        ],
+        [
+          619,
+          2049
+        ],
+        [
+          621,
+          2045
+        ],
+        [
+          621,
+          2043
+        ],
+        [
+          622,
+          2042
+        ],
+        [
+          537,
+          2008
+        ]
+      ]
+    },
+    {
+      "i": 1,
+      "nummer": 2,
+      "flaeche_m2": 428.82,
+      "ring_pdf_pixel": [
+        [
+          566,
+          1938
+        ],
+        [
+          542,
+          1994
+        ],
+        [
+          540,
+          2000
+        ],
+        [
+          537,
+          2008
+        ],
+        [
+          622,
+          2042
+        ],
+        [
+          623,
+          2037
+        ],
+        [
+          627,
+          2029
+        ],
+        [
+          630,
+          2020
+        ],
+        [
+          638,
+          2000
+        ],
+        [
+          647,
+          1976
+        ],
+        [
+          629,
+          1968
+        ],
+        [
+          607,
+          1957
+        ],
+        [
+          589,
+          1949
+        ],
+        [
+          566,
+          1938
+        ]
+      ]
+    }
+  ]
+}

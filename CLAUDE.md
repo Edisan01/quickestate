@@ -51,7 +51,7 @@ BB-Texte 8 PD bestätigt (2 Quellen): `plandokumente/bb_texte.json`.
 
 ## Daten der Stadt Wien (jetzt direkt vom Mac)
 - WFS `https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.0.0&typeName=ogdwien:<LAYER>&srsName=EPSG:4326&outputFormat=json&bbox=…` – Layer GENFLWIDMUNGOGD, SCHUTZZONEOGD, GRPZONENOGD, BAUSPERRE82OGD, BAUSPERRE86OGD.
-- PD-Nummer: WMS GetFeatureInfo Layer SCHNITTMUSTEROGD. Adresse → Punkt: `https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?Address=…&crs=EPSG:4326`.
+- PD-Nummer: `SCHNITTMUSTEROGD` 24.11. in WMS/WFS Wien **nicht mehr auffindbar** (siehe WB 23 „Verworfen/verschoben"); PD derzeit manuell. Adresse → Punkt: `https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo?Address=…&crs=EPSG:4326`.
 - Planbild-Kacheln: `https://maps.wien.gv.at/wmts/flwbplmzk/rot/google3857/19/{y}/{x}.jpeg` (z19 ist Maximum; BB-Nummern stehen dort NICHT, nur „G BB“).
 - PD-Text: `https://www.wien.gv.at/BauplatzWebservice/public/GetPlanDok.aspx?pnr=<nr>&planDpi=0&isPlan=false`; Plankarte mit BB-Nummern: `isPlan=true` (noch nicht ausgewertet).
 - Bisheriger Umweg (Container ohne Netz): `~/Downloads/qe_pruefung/holen.py` + `tools/pruefung/mac_import.py`. Mit Claude Code auf dem Mac nicht mehr nötig.
