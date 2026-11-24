@@ -124,3 +124,6 @@ Ergebnis: Theresiengasse Hof WGV I 4.5m ✓ (Punkt statt Komma gelesen), Ybbs 18
 
 ## Planleser-Schriften im Repo (24.11.)
 `tools/planleser_py/fonts/` enthält LiberationSans Regular/Bold + DejaVuSans Regular/Bold (OFL/Bitstream-Vera, Lizenzen dabei) – gleiche Dateien wie unter Linux (MD5 bestätigt). `glyph.py:schriftdateien()` nutzt nur noch diese Dateien, `QE_PLAN_FONTS` als Override bleibt. Mac und Linux lesen bitgleiche Templates. `zonen.py:110` Höhe: erstes Muster `re.fullmatch(r'(\d{1,2})(?:[,.](\d))?m',…)`, zweites Muster Vorsilbe `(?:GBGV|WGV|GB|W)`. „4W5m" (OCR-Rest) fällt durch → offen statt falsch 5 m. Prüfstand 116 grün / 12 rot unverändert; Theresiengasse Hof 4,5 m stabil.
+
+## P5-Zwischenstand (24.11.)
+`export.py`: Text-Quelle für BB auf `plandokumente/bb_texte.json` (ChatGPT-A, 24.11.) umgestellt, `plandokumente.json.dokumente` als Fallback. Hand-Zuordnung pro Testadresse bewusst **nicht** ergänzt – der Leser muss die Marke selbst lesen (2 Belege). Schema neu: `teilflaeche.allg` (plandokument_text, pflicht=false); Theresiengasse 47 tf1.hof soll getrennt: `bb:["BB1: 50 % bebaubar"]` + `allg:["Flachdach"]`. `pruefstand.py` setzt `tf.allg` bis `bb_marke.py` als offen. Prüfstand 116 grün / 12 rot / 63 offen (+1 offen, keine Regression). Widerspruch bb_texte 7208 BB1 „mindestens 30 % frei" vs. soll „50 % bebaubar" – an Eduard.

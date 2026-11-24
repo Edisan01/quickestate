@@ -181,6 +181,7 @@ def pruefen():
                 key = f'tf{i}.{st["art"]}.{k}'
                 if t is None: setz(key, 'offen', v); continue
                 if k == 'bb': setz(key, vgl_bb(v, t['bb']['wert'] if t['bb']['zustand'] == 'bestaetigt' or t['bb']['wert'] else None), v, t['bb']['wert']); continue
+                if k == 'allg': setz(key, 'offen', v, None); continue
                 if k == 'tiefe_m':
                     iw = t['tiefe_mittel_m']['wert']; a = 'exakt' if st['art'] == 'strassentrakt' and 'gemessen' not in t['tiefe_mittel_m'].get('quelle', '') else 'masz'
                     setz(key, vgl(a, v, iw), v, iw); continue

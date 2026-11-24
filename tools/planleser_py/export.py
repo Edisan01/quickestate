@@ -279,10 +279,12 @@ if __name__=='__main__':
     key=m['kg']+'_'+m['gnr']
     res[key]=dict(name=m['name'],kg=m['kg'],gnr=m['gnr'],stand=str(datetime.date.today()),version='planleser-py-2',front=fk,teile=out)
     pdz=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'plandokumente.json')))
+    bbt=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','plandokumente','bb_texte.json'))).get('dokumente',{})
     if key in pdz.get('zuordnung',{}):
-      z_=pdz['zuordnung'][key]; pdo=pdz['dokumente'][z_['pd']]; res[key]['plandokument']=dict(pdo,nr=z_['pd'])
+      z_=pdz['zuordnung'][key]; pd=z_['pd']; pdo=pdz['dokumente'][pd]; res[key]['plandokument']=dict(pdo,nr=pd)
+      bb_t={e['nr']:e['text'] for e in bbt.get(pd,{}).get('bb',[])}
       for t in out:
         b_=z_.get(t['art'] if t['art']!='bebaubar' else 'bebaubar')
-        if b_ and t['plan'].get('bb'): t['plan']['bb']=b_; t['plan']['bb_text']=pdo['bb'][b_]
+        if b_ and t['plan'].get('bb'): t['plan']['bb']=b_; t['plan']['bb_text']=bb_t.get(b_, pdo.get('bb',{}).get(b_,''))
     print(m['name'],'Maßzahlen:',dbg); [print('  ',o['rolle'],o['art'],o['stadt']['code'],o['plan'],o['stadt_plan_gleich'],o['m2_plan'],[l['t'] for l in o['labels']],o.get('tiefe'),o.get('vorgarten')) for o in out]
   json.dump(res,open(sys.argv[1],'w'),ensure_ascii=False)

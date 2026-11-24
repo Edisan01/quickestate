@@ -65,7 +65,7 @@
       "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
       "teilflaechen": [
         { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "IV", "bauweise": "g", "breite_m": 21.0, "tiefe_m": 13.5, "flaeche_m2": 283.5, "hoehe_summe_m": 24.67, "geschosse": 8 },
-        { "art": "hof", "widmung": "W GV", "bauklasse": "I", "hoehe_m": 4.5, "bauweise": "g", "bb": ["BB1: 50 % bebaubar", "Flachdach"], "breite_m": 21.0, "tiefe_m": 18.5, "flaeche_m2": 388.5, "hoehe_summe_m": 3.5 }
+        { "art": "hof", "widmung": "W GV", "bauklasse": "I", "hoehe_m": 4.5, "bauweise": "g", "bb": ["BB1: 50 % bebaubar"], "allg": ["Flachdach"], "breite_m": 21.0, "tiefe_m": 18.5, "flaeche_m2": 388.5, "hoehe_summe_m": 3.5 }
       ],
       "summe_m2": 672.0,
       "rechnungen": { "p76_10a_zehntel": 17.2, "p76_10a_beruecksichtigen": true, "p75_4_max_gh": 19.17, "p75_4_einschraenkung": true },

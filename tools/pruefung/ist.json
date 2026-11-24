@@ -174,6 +174,10 @@
      "zustand": "offen",
      "quelle": "plan"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 18.82,
      "zustand": "bestaetigt",
@@ -233,6 +237,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 18.77,
@@ -422,6 +430,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 8.84,
      "zustand": "bestaetigt",
@@ -481,6 +493,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 7.48,
@@ -542,6 +558,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 8.91,
      "zustand": "bestaetigt",
@@ -601,6 +621,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 7.5,
@@ -788,6 +812,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 22.34,
      "zustand": "bestaetigt",
@@ -850,6 +878,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 22.11,
@@ -1045,6 +1077,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 17.7,
      "zustand": "bestaetigt",
@@ -1104,6 +1140,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 17.71,
@@ -1295,6 +1335,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 23.65,
      "zustand": "bestaetigt",
@@ -1357,6 +1401,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 23.34,
@@ -1546,6 +1594,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 21.21,
      "zustand": "bestaetigt",
@@ -1608,6 +1660,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 20.99,
@@ -1795,6 +1851,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 21.96,
      "zustand": "bestaetigt",
@@ -1859,6 +1919,10 @@
      "zustand": "offen",
      "quelle": "plan"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": null,
      "zustand": "offen"
@@ -1913,6 +1977,10 @@
      "grund": "Grundabtretung"
     },
     "bb": {
+     "wert": null,
+     "zustand": "offen"
+    },
+    "allg": {
      "wert": null,
      "zustand": "offen"
     },
@@ -2105,6 +2173,10 @@
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
     },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
+    },
     "breite_m": {
      "wert": 16.42,
      "zustand": "bestaetigt",
@@ -2163,6 +2235,10 @@
      "zustand": "offen",
      "quelle": "plan",
      "grund": "keine BB gelesen – Abgleich PD offen"
+    },
+    "allg": {
+     "wert": null,
+     "zustand": "offen"
     },
     "breite_m": {
      "wert": 15.83,

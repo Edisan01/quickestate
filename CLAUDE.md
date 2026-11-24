@@ -10,6 +10,7 @@ Eduard Beches baut einen Rechner: Was darf ich auf diesem Wiener Grundstück bau
 - Annahmen offen nennen, keine Werte heimlich ändern. Kursblätter sind gerundet → nur gelber Hinweis.
 - **Nichts live schalten ohne Eduards OK.** Keine Passwörter, keine Konten, keine Tracking-Cookies, keine Geheimnisse im Repo, **Kurs-PDFs nicht ins Repo**.
 - Kein Kachel-Holen für ganz Wien. Planbilder nur für die Adressen, die gerade getestet werden.
+- Plankarten der Stadt (isPlan=true, flwbplmzk-Kacheln) nach `~/qe_planbilder/`, **nie ins Repo**. Max. 1 Abruf/s, User-Agent setzen (siehe „Daten der Stadt Wien").
 - Neues Wissen = Schema-Feld (`tools/pruefung/pruefschema.json`) + Testfall (`tools/pruefung/soll.json`) + Wissensbasis 23 (`tools/pruefung/wissensbasis_23.md`) + Lernwissen (`tools/pruefung/lernwissen.json`). Gemeinsamkeiten finden, nicht annehmen.
 - Neue Teile nur einbauen, wenn ein Test zeigt, dass sie helfen; sonst wieder raus (in WB 23 als „verworfen“ vermerken).
 - Lange Arbeitsblöcke, nur bei echten Entscheidungen fragen. Kein Browser/Screenshot ohne Eduards Wunsch.

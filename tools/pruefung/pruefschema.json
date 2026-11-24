@@ -40,6 +40,7 @@
     { "id": "hoehe_m", "quelle": "plan", "pflicht": "wenn_bauland" },
     { "id": "bauweise", "quelle": "plan", "pflicht": "wenn_bebaubar" },
     { "id": "bb", "quelle": "plan+plandokument_text", "regel": "Nummer in Teilfläche oder Pfeil darauf; Text aus PD dieser Adresse; mehrere möglich", "pflicht": true },
+    { "id": "allg", "quelle": "plandokument_text", "regel": "Allgemeine Vorgaben für diese Teilfläche (Dach, Erker, …), aus PD-Text", "pflicht": false },
     { "id": "breite_m", "quelle": "kataster", "pflicht": true },
     { "id": "tiefe_links_m", "quelle": "plan|kataster", "pflicht": true },
     { "id": "tiefe_rechts_m", "quelle": "plan|kataster", "pflicht": true },
