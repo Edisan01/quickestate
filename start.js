@@ -426,8 +426,11 @@ function start() {
   let wahlN = 0;                                                            // jede neue Suche macht ältere Antworten ungültig
   // „Sommerschuhgasse 3, 1230 Wien“: Stadt-Suche findet mit PLZ/Wien nur die Straße → PLZ und „Wien“ abtrennen, PLZ zum Sortieren nutzen (Eduard 18.11.)
   const adrSuche = q => { const m = q.match(/^(.*?)(?:[,\s]+(1\d{3}))?(?:[,\s]+Wien)?[,\s]*$/i), kern = m && m[1].trim() ? m[1].trim() : q, plz = m && m[2];
-    return hol(ADR(kern)).then(r => r.ok ? r.text() : Promise.reject(r.status)).then(t => { try { const L = (JSON.parse(t).features || []).filter(f => f.geometry && f.properties);
-      return plz ? L.sort((x, y) => (y.properties.PostalCode === plz) - (x.properties.PostalCode === plz)) : L; } catch { return []; } }); };
+    return hol(ADR(kern)).then(r => r.ok ? r.text() : Promise.reject(r.status)).then(t => {
+      // Stammportal-Sperre (401) liefert HTML statt JSON mit Status 200 → als Fehler behandeln, nicht als leere Liste
+      if (!t || !t.trim() || t.trim().startsWith('<')) return Promise.reject('html');
+      try { const L = (JSON.parse(t).features || []).filter(f => f.geometry && f.properties);
+      return plz ? L.sort((x, y) => (y.properties.PostalCode === plz) - (x.properties.PostalCode === plz)) : L; } catch { return Promise.reject('parse'); } }); };
   const adrText = f => f.properties.Adresse + (f.properties.PostalCode ? ', ' + f.properties.PostalCode + ' Wien' : ', Wien');
   const hatNr = f => !!f.properties.StreetNumber;
   let sugList = [], sugT = 0, sugN = 0, kgNamen = null, modus = 'adr';
@@ -473,9 +476,23 @@ function start() {
     if (!q) { gMsg.textContent = modus === 'gst' ? 'Bitte Katastralgemeinde und Grundstücksnummer eingeben, z. B. „Jedlesee 675“.' : 'Bitte eine Adresse in Wien eingeben.'; gIn.focus(); return; }
     if (modus === 'gst') { gstSuche(q); return; }
     gMsg.textContent = 'Suche …';
+    // Lokaler Fallback: für Prüfadressen aus planleser/ergebnis.json die Koordinate direkt nehmen (wenn Stadt-Dienst 401 oder leer antwortet)
+    const adrFallback = (msgFehler) => {
+      const norm = s => (s || '').toLowerCase().replace(/ß/g, 'ss').replace(/[\s,.-]+/g, '');
+      const qn = norm(q);
+      if (!qn || !PL) return false;
+      const treffer = Object.values(PL).find(e => { const n = norm(e.name); return n === qn || n.startsWith(qn) || n.includes(qn); });
+      if (!treffer || !treffer.front || !treffer.front[0]) return false;
+      const [lon, lat] = treffer.front[0];
+      const mm = /^(.*?)\s+(\d+[A-Za-z]?(?:[-/]\d+)?)(?:,\s*(\d{4}))?/.exec(treffer.name) || [];
+      const synth = { geometry: { type: 'Point', coordinates: [lon, lat] }, properties: { Adresse: treffer.name, StreetName: mm[1] || '', StreetNumber: mm[2] || '', PostalCode: mm[3] || '' } };
+      gMsg.textContent = msgFehler + ' – Prüfadresse lokal geladen.';
+      waehlen(synth); return true;
+    };
     adrSuche(q).then(L => { const f = L.find(hatNr);
-      if (!L.length) { gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
-      waehlen(f || L[0]); }).catch(() => { gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
+      if (!L.length) { if (!adrFallback('Adresse nicht gefunden')) gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
+      waehlen(f || L[0]); }).catch(() => {
+      if (!adrFallback('Stadt-Adressdienst gerade nicht erreichbar')) gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
   $('resBack').addEventListener('click', () => { ++wahlN; kartenLeeren(); M.marks = []; M.sel = null; M.akt = null; nummernZeigen(); gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
 
   // Kataster
@@ -794,10 +811,22 @@ function start() {
     return [PL_W[p.widmung] || p.widmung, p.bauklasse ? 'Bauklasse ' + p.bauklasse + (bk ? ' (normal ' + String(bk[0]).replace('.', ',') + '–' + bk[1] + ' m)' : p.bauklasse === 'VI' ? ' (über 26 m)' : '') : '',
       h ? 'hier begrenzt auf höchstens ' + p.hoehe + (bk && h < bk[1] ? ' statt ' + bk[1] + ' m' : '') : '', PL_BW[p.bauweise] || ''].filter(Boolean).join(' · '); };
   const plText = p => [p.widmung && p.widmung.replace(/^(W|GB)GV$/, '$1 GV'), p.bauklasse, p.hoehe, p.bauweise].filter(Boolean).join(' ') + (p.bb ? ' · ' + p.bb : '') + (p.bebauung ? ' · [' + p.bebauung + ']' : '');
-  /* Bauland blau · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.). Gemeinsam für Karte und Skizze. */
-  const ZART = t => t.art === 'G' ? 'zg' : t.art === 'vorgarten' ? 'zv' : t.art === 'frei' ? 'zn' : t.art === 'abtretung' ? 'za' : t.art === 'abstand' ? 'zs' : t.stadt_plan_gleich ? 'zb' : 'zx';
-  const ZTXT = { zb: 'Bauland', zg: 'Garten (G)', zv: 'Vorgarten', zn: 'Nicht bebaubar', za: 'Grundabtretung', zs: 'Abstand zum Nachbarn', zx: 'Wird noch geprüft' };
-  const ZERK = { zb: 'Hier darfst du bauen – innerhalb der Baulinien und Baufluchtlinien.', zg: 'Gärtnerisch auszugestalten: Grünfläche, hier darf kein Gebäude stehen.', zv: 'Streifen zwischen Straße und Baufluchtlinie – bleibt frei (Garten, Zugang, Zufahrt).',
+  /* Bauland blau · niedrig bebaubar hellblau (BK I mit Planhöhe) · Garten (G) grün mit Punkten · Grundabtretung rot gestreift · ungeprüft grau (Eduard 18.11.+24.11.). Gemeinsam für Karte und Skizze. */
+  // „ungeprüft" (plan._in_pruefung) behält die Flächenfarbe + gestrichelter Rand (.up).
+  // „Mischfläche" (plan._gemisch) wird immer GRAU (zx), weil Widmung unklar.
+  const ZART = t => {
+    if (t.plan && t.plan._gemisch) return 'zx';
+    if (t.art === 'G') return 'zg';
+    if (t.art === 'vorgarten') return 'zv';
+    if (t.art === 'frei') return (t.plan && (t.plan.bauklasse || t.plan.hoehe)) ? ((t.plan.bauklasse === 'I' && t.plan.hoehe) ? 'zbh' : 'zb') : 'zn';
+    if (t.art === 'abtretung') return 'za';
+    if (t.art === 'abstand') return 'zs';
+    if (t.art === 'bebaubar' && t.plan && t.plan.bauklasse === 'I' && t.plan.hoehe) return 'zbh';
+    return (t.stadt_plan_gleich || (t.plan && t.plan.widmung)) ? 'zb' : 'zx';
+  };
+  const ZUP = t => !!(t.plan && t.plan._in_pruefung);
+  const ZTXT = { zb: 'Voll bebaubar', zbh: 'Niedrig bebaubar', zg: 'Garten (G)', zv: 'Vorgarten', zn: 'Nicht bebaubar', za: 'Grundabtretung', zs: 'Abstand zum Nachbarn', zx: 'Wird noch geprüft' };
+  const ZERK = { zb: 'Hier darfst du bauen – innerhalb der Baulinien und Baufluchtlinien.', zbh: 'Hier darfst du bauen, aber nur niedrig – die Meterzahl im Plan begrenzt die Höhe (z. B. 4,5 m).', zg: 'Gärtnerisch auszugestalten: Grünfläche, hier darf kein Gebäude stehen.', zv: 'Streifen zwischen Straße und Baufluchtlinie – bleibt frei (Garten, Zugang, Zufahrt).',
     zn: 'Liegt außerhalb der Baufluchtlinien – hier darf kein Gebäude stehen.', za: 'Liegt vor der Baulinie: Dieser Streifen muss beim Bauen an die Stadt abgetreten werden (für Straße oder Gehsteig).', zs: 'Seitenstreifen innerhalb der Baufluchtlinien – offene Bauweise, hier darf kein Gebäude stehen (BO § 79 Abs. 3).', zx: 'Diesen Teil prüfen wir noch.' };
   const zKurz = t => t.art === 'abstand' ? '' : t.art === 'G' ? 'G' + (t.plan.bb ? ' ' + t.plan.bb : '') : t.art === 'abtretung' ? 'Abtretung' : t.art === 'vorgarten' ? 'Vorgarten' : t.art === 'frei' ? 'nicht bebaubar' : plText(t.plan) || '?';
   // Abstand offene Bauweise, BO § 79 Abs. 3: 6 m; BK I Heranrücken auf halbe Gebäudehöhe, mind. 3 m, Hausseite ≤ 15 m, Überstand ≤ 45 m² je Seite / 90 m² gesamt
@@ -818,7 +847,7 @@ function start() {
       + '<pattern id="' + pre + 'V" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="1.4" height="6" fill="#1E6B35" opacity=".7"/></pattern>';
     svg.append(d); }
   function zonPfade(svg, Z, D, pre) { Z.teile.forEach(t => { const k = ZART(t), d = t.poly.map(D).join('');
-      const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', 'zf ' + k); p.setAttribute('fill-rule', 'evenodd'); if (Z.clipId) p.setAttribute('clip-path', 'url(#' + Z.clipId + ')'); svg.append(p);
+      const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', 'zf ' + k + (ZUP(t) ? ' up' : '')); p.setAttribute('fill-rule', 'evenodd'); if (Z.clipId) p.setAttribute('clip-path', 'url(#' + Z.clipId + ')'); svg.append(p);
       if (k === 'za') { const q = p.cloneNode(); q.setAttribute('class', 'zm'); q.setAttribute('fill', 'url(#' + pre + (k === 'zg' ? 'G' : k === 'zv' || k === 'zs' ? 'V' : 'A') + ')'); svg.append(q); } }); }
   function zonZeichnen(svg, P, css) { const Z = M.zon, D = r => 'M' + r.map(P).join('L') + 'Z';
     zonDefs(svg, 'qeZm'); const cp = document.createElementNS(NS, 'clipPath'); cp.setAttribute('id', 'qeZonClip'); const cpp = document.createElementNS(NS, 'path');
@@ -853,7 +882,8 @@ function start() {
     e.teile.forEach(t => { const k = ZART(t); sum[k] = (sum[k] || 0) + fl(t); }); if (sum.zs && sum.zb) sum.zb -= sum.zs;
     const nb = ['zg', 'zv', 'zn', 'zs'].filter(k => sum[k]), NBN = { zg: 'Garten (G)', zv: 'Vorgarten', zn: 'hinterer Teil', zs: 'Abstand zum Nachbarn' };   // Plan nur blau/grün (Eduard 18.11.) – das Warum steht im Steckbrief
     const zl = (k, txt, erk) => { const z = document.createElement('div'); z.className = 'lz'; z.innerHTML = '<i class="sw ' + k + '"></i>'; const s_ = document.createElement('span'), b_ = document.createElement('b'); b_.textContent = txt; s_.append(b_, document.createTextNode(' – ' + erk)); z.append(s_); box.append(z); };
-    if (sum.zb) zl('zb', 'Hier darfst du bauen · ca. ' + sum.zb + ' m²', 'innerhalb der Baufluchtlinien' + (sum.zs ? ', ohne Abstand zum Nachbarn' : '') + '.');
+    if (sum.zb) zl('zb', 'Hier darfst du voll bauen · ca. ' + sum.zb + ' m²', 'innerhalb der Baufluchtlinien' + (sum.zs ? ', ohne Abstand zum Nachbarn' : '') + '.');
+    if (sum.zbh) zl('zbh', 'Hier darfst du nur niedrig bauen · ca. ' + sum.zbh + ' m²', 'die Meterzahl im Plan begrenzt die Höhe – siehe Steckbrief.');
     if (nb.length) zl('zg', 'Hier darfst du nicht bauen · ca. ' + nb.reduce((a, k) => a + sum[k], 0) + ' m²', nb.map(k => NBN[k]).join(', ') + '. Details: Zeile im Steckbrief antippen.');
     if (sum.za) zl('za', 'Grundabtretung · ca. ' + sum.za + ' m²', ZERK.za);
     if (sum.zx) zl('zx', ZTXT.zx + ' · ca. ' + sum.zx + ' m²', ZERK.zx);

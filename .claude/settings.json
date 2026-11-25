@@ -2,14 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(python3:*)",
+      "Bash(python3 -c:*)",
       "Bash(open:*)",
       "Bash(curl:*)",
+      "Bash(curl -sS:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(grep:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
       "Bash(wc:*)",
+      "Bash(sed -n:*)",
+      "Bash(cd:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)"

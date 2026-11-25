@@ -25,6 +25,7 @@ Nach jeder Aufgabe `tools/pruefung/wissensbasis_23.md` ergänzen (Befund, Entsch
 - Neue Teile nur einbauen, wenn ein Test zeigt, dass sie helfen; sonst wieder raus (in WB 23 als „verworfen“ vermerken).
 - Lange Arbeitsblöcke, nur bei echten Entscheidungen fragen. Kein Browser/Screenshot ohne Eduards Wunsch.
 - Bei Fragen zur Richtung: „Team“ = EBE-Rollen (Lena CD, Mia Brand, Jonas UI/UX, Kai Interaction, Marco Frontend, Nina Performance, Clara Content, Marcus Fach/DACH, Lisa Growth, Ben Reader-XP, Fatima Accessibility/Prüfung).
+- **Bauplatz-GNR nur aus echtem Kataster (Eduard 25.11.):** Grundstücke nur aus dem echten Kataster (BEV/Stadt Wien). Eine GNR gehört nur dann zum Bauplatz, wenn sie (a) den Adresspunkt der Hausnummer enthält oder (b) an der Straßenfront genau dieser Hausnummer liegt und mit (a) zusammenhängt. Keine GNR aus ChatGPT, Kursblättern, Notizen oder Annahmen übernehmen; fremde Listen sind nur Hinweise und müssen gegen Kataster + Adresspunkte geprüft werden. Nie einen Beleg eintragen, den es nicht gibt (z. B. „Eigentümer mündlich"), wenn Eduard ihn nicht selbst genannt hat. Nachbarhausnummern (Ecke = eigene Nummer) gehören nicht dazu.
 
 ## Speichern und online
 - Jeder Meilenstein: Prüfstand laufen lassen, dann committen und pushen.

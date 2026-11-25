@@ -412,7 +412,10 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 /* v3.69 Teilflächen: Bauland blau · Garten grün · Abtretung rot gestreift · ungeprüft grau + Legende + Skizze (Straße unten) */
 .g-ov .zf,.g-skiz .zf{stroke-width:1.2}
 .zf.zb{fill:rgba(38,104,190,.34);stroke:#1F5FAE}
+.zf.zbh{fill:rgba(127,181,230,.44);stroke:#4A8CC4}
 .zf.zg{fill:rgba(64,160,84,.34);stroke:#1E6B35}
+.zf.up{stroke-dasharray:5 3;stroke-width:2}
+.g-leg .sw.up{border-style:dashed;border-width:1.6px}
 .zf.za{fill:rgba(200,16,46,.12);stroke:#C8102E}
 .zf.zx{fill:rgba(120,120,120,.28);stroke:#666}
 .g-ov .zm,.g-skiz .zm{stroke:none}
@@ -422,6 +425,7 @@ body:not(.on-sky):has(.g-in.has-res) .topnav{opacity:0;visibility:hidden;pointer
 .g-leg .lz{display:flex;align-items:center;gap:7px}
 .g-leg .sw{display:inline-block;width:16px;height:12px;border-radius:2px;border:1.2px solid}
 .g-leg .sw.zb{background:rgba(38,104,190,.34);border-color:#1F5FAE}
+.g-leg .sw.zbh{background:rgba(127,181,230,.44);border-color:#4A8CC4}
 .g-leg .sw.zg{background:radial-gradient(circle,#1E6B35 1px,transparent 1.3px) 0 0/5px 5px,rgba(64,160,84,.34);border-color:#1E6B35}
 .g-leg .sw.za{background:repeating-linear-gradient(45deg,rgba(200,16,46,.55) 0 2px,transparent 2px 5px);border-color:#C8102E}
 .g-leg .sw.zx{background:rgba(120,120,120,.28);border-color:#666}

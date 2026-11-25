@@ -163,5 +163,62 @@ flwbplmzk-Pixel → EPSG:31256 exakt über Slippy-Map z=19 Mercator-Umkehr (x0,y
 ## soll.json-Änderungen (Protokoll)
 - **24.11. Theresiengasse 47 tf1.hof.bb:** `["BB1: 50 % bebaubar"]` → `[]`. Belege: (1) PD 7208 Hand-Anker-Overlay zeigt „G BB 2" nur im Nachbarhof, nicht in tf1; (2) Stadtkarte 01514_430-18.png zeigt im Hof „WGV I 4,5 m g" (PD 7208) ohne BB-Marke. Kurswert „BB1: 50 % bebaubar" als `kurs_hinweis` aufbewahrt. Entscheidung Eduard.
 
+## Front = alle Straßenkanten des Bauplatzes (Eduard 24.11., allgemeine Regel)
+P6 erweitern: Front ist nicht EINE Kante gegen die Haupt-Straße, sondern **alle Grundstücksgrenzen des ganzen Bauplatzes an öffentlichen Verkehrsflächen** — auch um die Ecke an einer Seitenstraße. Eckgrundstücke haben mehrere Fronten; Straßentrakt gilt an jeder Front. Länge je Front und Summe im Steckbrief; Front in der Skizze an beiden/allen Seiten als Straße.
+Testfall-Kandidat soll.json P6: Linzer Straße 22 (Front Linzer 17,1 m + Front Seitenstraße 14,8 m), nach Eduards OK ergänzen.
+`ergebnis.json` hat ab heute Feld `fronten: [{name, p:[a,b], m, _in_pruefung?}]` (zusätzlich zum bisherigen Einzel-`front` für Abwärtskompatibilität). `start.js`-Umbau auf Multi-Front ist noch offen.
+
+## Linzer Straße 22 – Netz findet nur 3 von 4 Bereichen (24.11., Prüffall)
+Planbild geholt (7×7 WMTS-Kacheln um Centroid der 3 GNR 347 + 343/1 + 338/1), `phase5.py` liefert 3 Teilflächen (Summe 2 375 m² vs. BEV 2 374 m², ±0,04 %):
+- 888 m² · bbox (842,970)→(1138,1111) · unten an Linzer Straße → **Straßentrakt GB III g**
+- 1 300 m² · bbox (843,769)→(1094,1022) · groß quer über alle 3 GNR → **Hof GBGV I 4,5 m g BB**
+- 187 m² · bbox (1077,948)→(1155,1035) · kleines Eck rechts auf 338/1 → entweder **Eckstück W III g** oder **Hof hinten W III 15 m g**
+Laut WB 23 + Eduard 23.11. + soll.json gibt es **4 Bereiche**: Straßentrakt GB III g · Eckstück rechts W III g (auf 338/1) · Hof GBGV I 4,5 m g BB · Hof hinten W III 15 m g. Ein Bereich fehlt. Vermutung: zwischen Hof GBGV I (quer über 3 GNR) und Hof hinten W III 15 m fehlt dem Netz eine rote Planlinie — oder der Eckstück-Streifen wurde nicht geschnitten.
+**Entscheidung**: Linzer 22 in der Ansicht komplett **grau („in Prüfung")** bis das Netz 4 saubere Teilflächen liefert. Marker `plan._in_pruefung` in `planleser/ergebnis.json` → `start.js` ZART → `zx`. Diagnose: `~/qe_planbilder/_overlay_linzer/01210_347+343-1+338-1_teile.png` (nächster Schritt: rote Linien im großen Hof-Bereich prüfen, evtl. `netz.py` Schwelle anpassen oder manuellen Rissscan).
+
+## Stadt-Wien OGDAddressService 401 (24.11.)
+`https://data.wien.gv.at/daten/OGDAddressService.svc/GetAddressInfo` antwortet aktuell für jede Adresse mit **HTTP 401** (Standardportal-Stammportal). Ursache vermutlich IP-Rate-Limit nach vielen Abrufen heute (Playwright + viele curl-Probes + Planbild-Kacheln). Fix in `start.js`: `adrSuche().catch()` fällt auf lokale Prüfadressen in `planleser/ergebnis.json` zurück (Koordinate aus `front[0]`, synthetisches Feature-Objekt). Normalisierung ß↔ss und Leerzeichen/Komma-tolerant. Live-Verhalten unverändert — reiner Lokal-Fallback.
+
 ## Offener Punkt „Theresiengasse Kursstand" (24.11., erledigt)
 - 762 m²/23,66 m/W III/4,5 m/Erker ≤ 0,6 m sind heutige Werte aus PD 7208 + BEV/Stadt; Kurs 672/21/W IV/5,5/keine Erker ist veraltet. Siehe Protokoll oben.
+
+## Flächenwidmungs-Viewer – Service-Kette für PD-Nummer (24.11., Befund)
+Quelle: `wien.gv.at/flaechenwidmung/public/start.aspx` + `ControlScript.ctrl` + `GetIdentifyLayerInfos.ctrl`.
+
+- **Klick-Endpunkt**: `GET /flaechenwidmung/public/ajax/MapIdentify.ctrl?ln=plandokumente&id=<CacheID>&l=&b=&iw=&ih=&ks=&mpp=&gl=&gb=&giw=&gih=&c=<checkStateHex>&T=SVG&lang=de&lts=&lta=&lkey=<cnt>` (+ `cx/cy/rad`, `px/py`, `lx/ly` je nach Klick-Typ). Response = JSONP `GisWebControl.AjaxLoaded(key, {...})`.
+- **Theme** `plandokumente` greift intern auf 2 GeoServer-Layer zu:
+  - `magwienro:SMB.RECHTSWIRK_FEST_F` – Festsetzung (aktuell gültig)
+  - `magwienro:SMB.RECHTSWIRK_ABAE_F` – Abänderung
+- **Feld `T_PNR` = PD-Nummer**. Weitere Felder: `R_GR_BESCH_KUND` (Kundmachung), `T_EST`/`T_EST_NUM`/`T_EST_SUB`/`T_EST_AKTUELL`, `T_TEILNR`/`T_TEILANZ`/`T_SMB_TEILE`, `R_NAME`, `R_SACHGEBIET`, `R_WOHNZONE`, `R_SCHUTZZONE`, `R_VERFAHRENSSTAND`.
+- **Meta-Endpunkt frei zugreifbar**: `GET /flaechenwidmung/public/GetIdentifyLayerInfos.ctrl?id=<CacheID>&lang=de&lts=&lta=` – 153 kB JS mit 67 Identify-Typen inkl. Bubble-Templates (`"Plannummer: {T_PNR}\nTyp: Festsetzung\nKundmachung: {R_GR_BESCH_KUND}"`).
+- **Upstream** (nicht öffentlich): `stp.wien.gv.at/geoserverneuo` (Namespace `magwienro`), 401 ohne Mag-Portal-Login. `data.wien.gv.at/daten/geo` WFS liefert SMB.RECHTSWIRK_FEST_F NICHT.
+- **Headless Test Theresiengasse 47 (EPSG:31256 = 728.94 / 342540.92)**: alle MapIdentify-Varianten (ln=plandokumente oder 0; frische CacheID aus start.aspx; korrekte lts/lta; Referer gesetzt; Cookies übernommen) antworten **status 200, Content-Length 0**. Grund wahrscheinlich: fehlender Map-State (initialer `CachedMap.ctrl` + `MapInfo.ctrl` nicht durchlaufen). GetIdentifyLayerInfos.ctrl dagegen liefert vollständig. → Entweder Selenium/Playwright nachbauen oder das Init-Chaining nachspielen.
+- **BauplatzWebservice** (`/BauplatzWebservice/public/`): `GetPlanDok.aspx?pnr=<nr>&…` liefert PD-PDF (bestehender Weg). `GetPlanDokByCoord.aspx` + `GetPlanDokNr.aspx` existieren (200), aber alle probierten Parameter (`x/y`, `coordX/Y`, `kg/gnr`, `adresse`, mit/ohne `crs=EPSG:31256`, GET+POST) → size 0. `BauplatzWebservice.asmx?WSDL` wird nicht ausgeliefert.
+- **Nächster Schritt**: Entweder Browser-Session (Playwright) → MapIdentify.ctrl mit echtem Klick-Punkt (Welt-Koordinate aus `OGDAddressService`) aufrufen und `T_PNR` parsen – ergibt automatisch die PD-Nr pro Adresse. Oder BauplatzWebservice-Methodennamen über Fachportal-Netzwerkspur.
+
+## Linzer Straße 22-24 – 338/4-Prüfung (25.11., Entscheidung Eduard)
+Gestern (24.11.) stand 338/4 mit `GNR_338_4_DAZU = True` und Beleg „Eigentümer mündlich 24.11. (1 Beleg) – Grundbuchauszug ausstehend" im `linzer22_ergebnis.py`. **Eduard 25.11.: NEIN, der Beleg wurde nie genannt.** Neue Prüfung auf Basis der verbindlichen Regel (siehe CLAUDE.md „Bauplatz-GNR nur aus echtem Kataster"):
+
+OGDAddressService (wieder erreichbar, 200 OK, kein 401 mehr) + BEV-Kataster `kataster/16`:
+
+| GNR   | Fläche | Enthält Adresspunkt? | Nächster Adresspunkt (Abstand)     | An Linzer-Straße-Front? | Zugehörigkeit |
+|-------|-------:|----------------------|------------------------------------|-------------------------|---------------|
+| 347   | 1 272 m² | Nr. 22-24, Nr. 22-24/1 | Nr. 22-24 (2,5 m)                 | ja (d=0,0 m)            | **22-24**     |
+| 343/1 |   519 m² | — (kein Adresspunkt im Polygon) | Nr. 22-24/2 (3,1 m), Nr. 22-24 (5,9 m) | ja (d=0,0 m) | **22-24** (Regel b: Nachbar zu 347 + Front an 22-24) |
+| 338/1 |   583 m² | Nr. 20/3 UND Nr. 22-24/2 | Nr. 22-24/2 (3,1 m)              | ja (d=0,0 m)            | **22-24** (Regel a via 22-24/2; Eck-Parzelle)      |
+| 338/4 |   332 m² | — | Nr. 20/3 (6,0 m), Nr. 20 (17,8 m), Nr. 22-24/2 (20,8 m) | ja (d=0,0 m) | **Nr. 20**  → RAUS |
+
+**Entscheidung**: `GNR_338_4_DAZU = False` fest gesetzt, Beleg-Text „Eigentümer mündlich" aus `gnr_belege` + aus dem toten Code-Zweig entfernt. Bauplatz Linzer 22-24 = 3 GNR = 2 374 m². Front Linzer Straße 56,9 m · Front Seitenstraße 14,8 m (nur Eckstück auf 338/1, ohne 338/4). Prüfstand unverändert 116/12/62.
+
+## Ungeprüfte Übernahmen aus ChatGPT (Audit 25.11., nicht geändert)
+Suche nach Werten/GNR, die ohne Kataster-/Adresspunkt-Prüfung aus ChatGPT-Antworten übernommen wurden:
+
+| Ort                                                   | Was                                                      | Status                                      |
+|-------------------------------------------------------|----------------------------------------------------------|---------------------------------------------|
+| `tools/pruefung/lernwissen.json` (10 von 14 Einträgen) | Lernmuster mit `quelle: "ChatGPT-Stand 10360f8 … Darwingasse 5/7/8"` | Als ChatGPT markiert; inhaltlich noch nicht an 9 Prüfadressen gegengeprüft |
+| `tools/pruefung/ergebnis_anreichern.py` Z. 28          | `"01657_678/9": None  # Darwingasse 3 – PD unbestätigt (ChatGPT C)` | Korrekt als offen markiert; keine Werte aktiv  |
+| `planleser/ergebnis.json` → `"01657_678/9"` (Darwingasse 3) | Steckbrief-Werte (Widmung, Teile) stammen z. T. aus ChatGPT-Vorschlag C | **Ungeprüft**; in soll.json nicht gelistet; im Prüfstand nicht abgedeckt |
+| `tools/planleser_py/kataster_detail.py`, `phase5.py`, `masse.py` | Code-Logik aus ChatGPT-Stand 10360f8 übernommen          | Kein Wert, Code läuft im Prüfstand mit         |
+| `tools/pruefung/soll.json` (Linzer 22-24)              | 4 Teilflächen erwartet („Hof hinten 15 m von Eduard bestätigt") | Ok: Beleg Eduard, nicht ChatGPT               |
+
+**Keine Treffer für**: „Eigentümer mündlich" (bisher nur in `linzer22_ergebnis.py` – heute entfernt). Keine weiteren GNR aus ChatGPT in aktiven Datendateien außer Darwingasse 3.

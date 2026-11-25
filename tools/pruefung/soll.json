@@ -6,115 +6,398 @@
     {
       "adresse": "Ybbsstraße 7, 1020",
       "plandokument": "6538",
-      "grundstueck": { "flaeche_grundbuch": 596.0, "schutzzone": false, "wohnzone": true },
-      "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
-      "pro_front": { "strassenbreite_m": 18.96, "abtretung": false },
+      "grundstueck": {
+        "flaeche_grundbuch": 596.0,
+        "schutzzone": false,
+        "wohnzone": true
+      },
+      "allgemeine_bestimmungen": [
+        "4,5 m First ü. Traufe"
+      ],
+      "pro_front": {
+        "strassenbreite_m": 18.96,
+        "abtretung": false
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "W", "bauklasse": "IV", "hoehe_m": 18.5, "bauweise": "g", "breite_m": 19.0, "tiefe_m": 12.0, "flaeche_m2": 228.0 },
-        { "art": "hof", "widmung": "G", "bb": ["BB3: 30 % frei ober- und unterirdisch"], "breite_m": 19.0, "tiefe_m": 19.5, "flaeche_m2": 370.5 }
+        {
+          "art": "strassentrakt",
+          "widmung": "W",
+          "bauklasse": "IV",
+          "hoehe_m": 18.5,
+          "bauweise": "g",
+          "breite_m": 19.0,
+          "tiefe_m": 12.0,
+          "flaeche_m2": 228.0
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "bb": [
+            "BB3: 30 % frei ober- und unterirdisch"
+          ],
+          "breite_m": 19.0,
+          "tiefe_m": 19.5,
+          "flaeche_m2": 370.5
+        }
       ],
       "summe_m2": 598.5,
-      "rechnungen": { "p76_10a_zehntel": 9.85, "p76_10a_beruecksichtigen": false, "p75_4_max_gh": 22.96, "p75_4_einschraenkung": false },
-      "hinweise": ["Abbruch: Bestätigung nötig (vor 1945 + Wohnzone)"]
+      "rechnungen": {
+        "p76_10a_zehntel": 9.85,
+        "p76_10a_beruecksichtigen": false,
+        "p75_4_max_gh": 22.96,
+        "p75_4_einschraenkung": false
+      },
+      "hinweise": [
+        "Abbruch: Bestätigung nötig (vor 1945 + Wohnzone)"
+      ]
     },
     {
       "adresse": "Leitermayergasse 50, 1180",
       "plandokument": "7318",
-      "grundstueck": { "schutzzone": false, "wohnzone": false },
-      "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
-      "pro_front": { "strassenbreite_m": 11.38, "abtretung": false },
+      "grundstueck": {
+        "schutzzone": false,
+        "wohnzone": false
+      },
+      "allgemeine_bestimmungen": [
+        "4,5 m First ü. Traufe"
+      ],
+      "pro_front": {
+        "strassenbreite_m": 11.38,
+        "abtretung": false
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 7.0, "tiefe_m": 12.0, "flaeche_m2": 84.0 },
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 9.0, "tiefe_m": 15.0, "flaeche_m2": 135.0 },
-        { "art": "hof", "widmung": "G", "bb": [], "breite_m": 7.0, "tiefe_m": 10.0, "flaeche_m2": 70.0 },
-        { "art": "hof", "widmung": "G", "bb": [], "breite_m": 9.0, "tiefe_m": 7.0, "flaeche_m2": 63.0 }
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "W",
+          "bauklasse": "III",
+          "bauweise": "g",
+          "breite_m": 7.0,
+          "tiefe_m": 12.0,
+          "flaeche_m2": 84.0
+        },
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "W",
+          "bauklasse": "III",
+          "bauweise": "g",
+          "breite_m": 9.0,
+          "tiefe_m": 15.0,
+          "flaeche_m2": 135.0
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "bb": [],
+          "breite_m": 7.0,
+          "tiefe_m": 10.0,
+          "flaeche_m2": 70.0
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "bb": [],
+          "breite_m": 9.0,
+          "tiefe_m": 7.0,
+          "flaeche_m2": 63.0
+        }
       ],
       "summe_m2": 352.0,
-      "rechnungen": { "p76_10a_beruecksichtigen": false, "p75_4_max_gh": 14.38, "p75_4_einschraenkung": true }
+      "rechnungen": {
+        "p76_10a_beruecksichtigen": false,
+        "p75_4_max_gh": 14.38,
+        "p75_4_einschraenkung": true
+      }
     },
     {
       "adresse": "Zentagasse 6, 1050",
-      "grundstueck": { "schutzzone": false, "wohnzone": false },
-      "allgemeine_bestimmungen": ["4,5 m First ü. Traufe", "keine straßenseitigen Erker"],
+      "grundstueck": {
+        "schutzzone": false,
+        "wohnzone": false
+      },
+      "allgemeine_bestimmungen": [
+        "4,5 m First ü. Traufe",
+        "keine straßenseitigen Erker"
+      ],
       "teilflaechen": [
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "IV", "bauweise": "g", "breite_m": 22.0, "tiefe_m": 12.0, "flaeche_m2": 264.0 },
-        { "art": "hof", "widmung": "G", "breite_m": 22.0, "tiefe_links_m": 9.0, "tiefe_rechts_m": 12.0, "tiefe_mittel_m": 10.5, "flaeche_m2": 231.0 }
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "W",
+          "bauklasse": "IV",
+          "bauweise": "g",
+          "breite_m": 22.0,
+          "tiefe_m": 12.0,
+          "flaeche_m2": 264.0
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "breite_m": 22.0,
+          "tiefe_links_m": 9.0,
+          "tiefe_rechts_m": 12.0,
+          "tiefe_mittel_m": 10.5,
+          "flaeche_m2": 231.0
+        }
       ],
       "summe_m2": 495.0,
-      "rechnungen": { "p76_10a_beruecksichtigen": false }
+      "rechnungen": {
+        "p76_10a_beruecksichtigen": false
+      }
     },
     {
       "adresse": "Nordmanngasse 20, 1210",
       "plandokument": "7216",
-      "grundstueck": { "flaeche_grundbuch": 536.0, "grenzkataster": false, "schutzzone": false, "wohnzone": false },
-      "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
-      "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
+      "grundstueck": {
+        "flaeche_grundbuch": 536.0,
+        "grenzkataster": false,
+        "schutzzone": false,
+        "wohnzone": false
+      },
+      "allgemeine_bestimmungen": [
+        "4,5 m First ü. Traufe"
+      ],
+      "pro_front": {
+        "strassenbreite_m": 15.17,
+        "abtretung": false
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g", "breite_m": 18.0, "tiefe_m": 10.38, "_tiefe_m": "Eduard 23.11.: im Plan keine Maßzahl, Kurs 11 m gerundet → Messung Baufluchtlinie gilt", "flaeche_m2": 198.0, "hoehe_summe_m": 20.5, "geschosse": 7 },
-        { "art": "hof", "widmung": "G", "bb": ["10 % von G unverbaut"], "breite_m": 18.0, "tiefe_m": 18.8, "flaeche_m2": 338.4, "bb_flaeche_m2": 33.84, "hoehe_summe_m": 3.5 }
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "W",
+          "bauklasse": "III",
+          "bauweise": "g",
+          "breite_m": 18.0,
+          "tiefe_m": 10.38,
+          "_tiefe_m": "Eduard 23.11.: im Plan keine Maßzahl, Kurs 11 m gerundet → Messung Baufluchtlinie gilt",
+          "flaeche_m2": 198.0,
+          "hoehe_summe_m": 20.5,
+          "geschosse": 7
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "bb": [
+            "10 % von G unverbaut"
+          ],
+          "breite_m": 18.0,
+          "tiefe_m": 18.8,
+          "flaeche_m2": 338.4,
+          "bb_flaeche_m2": 33.84,
+          "hoehe_summe_m": 3.5
+        }
       ],
       "summe_m2": 536.4,
-      "rechnungen": { "p76_10a_zehntel": 3.64, "p76_10a_beruecksichtigen": false, "p75_4_max_gh": 18.17, "p75_4_einschraenkung": false },
-      "hinweise": ["Abbruch: MA 19 (vor 1945)", "kein Geometer"]
+      "rechnungen": {
+        "p76_10a_zehntel": 3.64,
+        "p76_10a_beruecksichtigen": false,
+        "p75_4_max_gh": 18.17,
+        "p75_4_einschraenkung": false
+      },
+      "hinweise": [
+        "Abbruch: MA 19 (vor 1945)",
+        "kein Geometer"
+      ]
     },
     {
       "adresse": "Theresiengasse 47, 1180",
       "plandokument": "7208",
-      "grundstueck": { "flaeche_grundbuch": 672.0, "grenzkataster": true, "schutzzone": false, "wohnzone": false },
-      "allgemeine_bestimmungen": ["5,5 m First ü. Traufe", "straßenseitig keine Erker, Balkone, Loggien"],
-      "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
+      "grundstueck": {
+        "flaeche_grundbuch": 672.0,
+        "grenzkataster": true,
+        "schutzzone": false,
+        "wohnzone": false
+      },
+      "allgemeine_bestimmungen": [
+        "5,5 m First ü. Traufe",
+        "straßenseitig keine Erker, Balkone, Loggien"
+      ],
+      "pro_front": {
+        "strassenbreite_m": 15.17,
+        "abtretung": false
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "IV", "bauweise": "g", "breite_m": 21.0, "tiefe_m": 13.5, "flaeche_m2": 283.5, "hoehe_summe_m": 24.67, "geschosse": 8 },
-        { "art": "hof", "widmung": "W GV", "bauklasse": "I", "hoehe_m": 4.5, "bauweise": "g", "bb": [], "_kurs_hinweis": "Kursblatt BB1: 50 % bebaubar – heute PD 7208 + Stadtkarte: keine BB in tf1 (2 Belege, Eduard 24.11.)", "allg": ["Flachdach"], "breite_m": 21.0, "tiefe_m": 18.5, "flaeche_m2": 388.5, "hoehe_summe_m": 3.5 }
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "W",
+          "bauklasse": "IV",
+          "bauweise": "g",
+          "breite_m": 21.0,
+          "tiefe_m": 13.5,
+          "flaeche_m2": 283.5,
+          "hoehe_summe_m": 24.67,
+          "geschosse": 8
+        },
+        {
+          "art": "hof",
+          "widmung": "W GV",
+          "bauklasse": "I",
+          "hoehe_m": 4.5,
+          "bauweise": "g",
+          "bb": [],
+          "_kurs_hinweis": "Kursblatt BB1: 50 % bebaubar – heute PD 7208 + Stadtkarte: keine BB in tf1 (2 Belege, Eduard 24.11.)",
+          "allg": [
+            "Flachdach"
+          ],
+          "breite_m": 21.0,
+          "tiefe_m": 18.5,
+          "flaeche_m2": 388.5,
+          "hoehe_summe_m": 3.5
+        }
       ],
       "summe_m2": 672.0,
-      "rechnungen": { "p76_10a_zehntel": 17.2, "p76_10a_beruecksichtigen": true, "p75_4_max_gh": 19.17, "p75_4_einschraenkung": true },
-      "hinweise": ["Abbruch: keine MA-19-Genehmigung (nach 1945)"]
+      "rechnungen": {
+        "p76_10a_zehntel": 17.2,
+        "p76_10a_beruecksichtigen": true,
+        "p75_4_max_gh": 19.17,
+        "p75_4_einschraenkung": true
+      },
+      "hinweise": [
+        "Abbruch: keine MA-19-Genehmigung (nach 1945)"
+      ]
     },
     {
       "adresse": "Tigergasse 21, 1080",
       "plandokument": "6999",
-      "grundstueck": { "schutzzone": false, "wohnzone": true },
-      "allgemeine_bestimmungen": ["4,5 m First ü. Traufe", "keine Erker/Loggien/Balkone straßenseitig"],
-      "pro_front": { "abtretung": false, "arkade_m": 2.0, "_strassenbreite": "Soll unbekannt: Planzahl 11,38 gilt bei Nr. 19, an Nr. 21 ca. 9–10 m" },
+      "grundstueck": {
+        "schutzzone": false,
+        "wohnzone": true
+      },
+      "allgemeine_bestimmungen": [
+        "4,5 m First ü. Traufe",
+        "keine Erker/Loggien/Balkone straßenseitig"
+      ],
+      "pro_front": {
+        "abtretung": false,
+        "arkade_m": 2.0,
+        "_strassenbreite": "Soll unbekannt: Planzahl 11,38 gilt bei Nr. 19, an Nr. 21 ca. 9–10 m"
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "GB", "bauklasse": "III", "bauweise": "g" },
-        { "art": "hof", "widmung": "G", "bb": [] }
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "GB",
+          "bauklasse": "III",
+          "bauweise": "g"
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "bb": []
+        }
       ]
     },
     {
       "adresse": "Gartengasse 8, 1050",
       "plandokument": "7462",
-      "grundstueck": { "mehrere_gnr": true, "schutzzone": false, "_hinweis": "Kursstand; heute Bausperre + Wohnzone" },
-      "allgemeine_bestimmungen": ["4,5 m First ü. Traufe", "keine Loggien straßenseitig"],
-      "pro_front": { "strassenbreite_m": 13.27, "abtretung": true, "abtretung_masse": "2 × 20,5 m" },
+      "grundstueck": {
+        "mehrere_gnr": true,
+        "schutzzone": false,
+        "_hinweis": "Kursstand; heute Bausperre + Wohnzone"
+      },
+      "allgemeine_bestimmungen": [
+        "4,5 m First ü. Traufe",
+        "keine Loggien straßenseitig"
+      ],
+      "pro_front": {
+        "strassenbreite_m": 13.27,
+        "abtretung": true,
+        "abtretung_masse": "2 × 20,5 m"
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "W", "bauklasse": "III", "bauweise": "g" },
-        { "art": "hof", "widmung": "G", "bb": ["BB1 (zur Hälfte): keine unterirdischen Bauten"] }
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "W",
+          "bauklasse": "III",
+          "bauweise": "g"
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "bb": [
+            "BB1 (zur Hälfte): keine unterirdischen Bauten"
+          ]
+        }
       ]
     },
     {
       "adresse": "Gerstlgasse 18, 1210",
       "plandokument": "7294",
-      "grundstueck": { "mehrere_gnr": true, "schutzzone": false, "wohnzone": false },
-      "allgemeine_bestimmungen": ["4,5 m First ü. Traufe"],
-      "pro_front": { "strassenbreite_m": 15.17, "abtretung": false },
+      "grundstueck": {
+        "mehrere_gnr": true,
+        "schutzzone": false,
+        "wohnzone": false
+      },
+      "allgemeine_bestimmungen": [
+        "4,5 m First ü. Traufe"
+      ],
+      "pro_front": {
+        "strassenbreite_m": 15.17,
+        "abtretung": false
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "hoehe_m": "keine", "widmung": "GB", "bauklasse": "II", "bauweise": "g" },
-        { "art": "hof", "widmung": "G", "bb": ["10 % bzw. mind. 25 m² unverbaut"] }
+        {
+          "art": "strassentrakt",
+          "hoehe_m": "keine",
+          "widmung": "GB",
+          "bauklasse": "II",
+          "bauweise": "g"
+        },
+        {
+          "art": "hof",
+          "widmung": "G",
+          "bb": [
+            "10 % bzw. mind. 25 m² unverbaut"
+          ]
+        }
       ]
     },
     {
       "adresse": "Linzer Straße 22, 1140",
       "_quelle": "Eduard 23.11.2026 (Plan auf quickestate.at v410); Hof hinten 15 m von Eduard bestätigt",
       "plandokument": "6848",
-      "grundstueck": { "mehrere_gnr": true },
+      "grundstueck": {
+        "mehrere_gnr": true
+      },
       "teilflaechen": [
-        { "art": "strassentrakt", "widmung": "GB", "bauklasse": "III", "bauweise": "g", "tiefe_m": 15.0 },
-        { "art": "strassentrakt", "_rolle": "Eckstück rechts", "widmung": "W", "bauklasse": "III", "bauweise": "g" },
-        { "art": "hof", "_rolle": "Hof hinten", "widmung": "W", "bauklasse": "III", "hoehe_m": 15.0, "bauweise": "g" },
-        { "art": "hof", "widmung": "GBGV", "bauklasse": "I", "hoehe_m": 4.5, "bauweise": "g", "bb": ["BB"] }
-      ]
+        {
+          "art": "strassentrakt",
+          "widmung": "GB",
+          "bauklasse": "III",
+          "bauweise": "g",
+          "tiefe_m": 15.0
+        },
+        {
+          "art": "strassentrakt",
+          "_rolle": "Eckstück rechts",
+          "widmung": "W",
+          "bauklasse": "III",
+          "bauweise": "g"
+        },
+        {
+          "art": "hof",
+          "_rolle": "Hof hinten",
+          "widmung": "W",
+          "bauklasse": "III",
+          "hoehe_m": 15.0,
+          "bauweise": "g"
+        },
+        {
+          "art": "hof",
+          "widmung": "GBGV",
+          "bauklasse": "I",
+          "hoehe_m": 4.5,
+          "bauweise": "g",
+          "bb": [
+            "BB"
+          ]
+        }
+      ],
+      "_offen": "Netz liefert nur 3 von 4 Teilflächen (24.11.) – Grenze zwischen Hof GBGV I und Hof hinten W III nicht geschnitten. Ansicht bleibt grau (in Prüfung) bis Netz 4 Teile liefert."
     }
   ]
 }
