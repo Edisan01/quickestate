@@ -292,6 +292,15 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
   .arch{transform:none}.page h1,body>section h2{clip-path:none;transform:none}
   .bay,.trio figure,.kpi>div,.wk .w,.chips span,.am,.duo>*{opacity:1;transform:none}
   .arch img{filter:none}.trio img,.por img,.maparch img{animation:none}}
+
+/* ===== calm mode: the product leads, motion only where it helps ===== */
+.lens{display:none!important}
+.page::before,body>section::before,.page::after,body>section::after{translate:none!important;animation:none!important}
+.archwrap,.trio,.maparch,.bigarch,.arcade,.page h1,.tag,body>section h2,blockquote,.loc .walk,.fs .tbs,.end .cols{translate:none!important}
+.arch{transform:none!important}
+.trio img,.por img,.maparch img{animation:none!important}
+.arch img{animation:breathe 30s ease-in-out infinite!important}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 </style>
 </head>
 <body>
