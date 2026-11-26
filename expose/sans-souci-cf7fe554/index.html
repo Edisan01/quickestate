@@ -226,6 +226,20 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
 .duo{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);column-gap:36px;justify-items:stretch;width:min(640px,100%);margin-top:34px}.duo>.com:first-child{grid-column:1}.duo>.dl{grid-column:3}
 .duo .com{margin:0;text-decoration:none;width:100%;border-radius:0 0 50% 50%/0 0 60px 60px}.duo .dl{transition:transform .2s}.duo .dl:hover{transform:translateY(-3px)}
 @media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){.end .duo{grid-column:2;grid-row:3;width:100%}}
+
+/* ---- background accents (variant via body class) ---- */
+.page,body>section{position:relative;isolation:isolate}
+.fit{position:relative;z-index:1}
+.page,.nt{--acc:#EFE6D6;--accg:#c9a24d}
+.gal,.lt{--acc:#03203D;--accg:#a8843c}
+/* A: two corner discs, like a seal */
+.page::before,body>section::before,.page::after,body>section::after{content:"";position:absolute;width:44vh;height:44vh;border-radius:50%;background:var(--acc);z-index:0;pointer-events:none}
+.page::before,body>section::before{left:-22vh;top:-22vh}
+.page::after,body>section::after{right:-22vh;bottom:-22vh;width:30vh;height:30vh;right:-15vh;bottom:-15vh;background:#EB2F33}
+
+.page::before{width:64vh;height:64vh;left:-32vh;top:-32vh}
+.page .brand{color:#03203D}.page .brand svg circle[stroke]{stroke:#03203D}.page .brand svg g{fill:#03203D}
+@media(max-width:759px){.page::before{display:none}.page .brand{color:inherit}.page .brand svg circle[stroke]{stroke:#EFE6D6}.page .brand svg g{fill:#EFE6D6}body>section::before{display:none}.page::after,body>section::after{width:18vh;height:18vh;right:-9vh;bottom:-9vh}}
 </style>
 </head>
 <body>
