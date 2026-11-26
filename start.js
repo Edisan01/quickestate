@@ -1020,6 +1020,8 @@ function start() {
       || (o.auch && o.auch.length ? 'Zu dieser Einlage gehören mehrere Häuser. Ist das wirklich dein Bauplatz?' : '') || (g.fl > 2000 ? 'Der Bauplatz ist ungewöhnlich groß. Ist das wirklich deiner?' : '');
     if (bp) gelb.unshift(bp);
     const kopf = rot.length ? karte('rot', 'Hier wird es schwierig', rot.concat(gelb).join(' ')) : gelb.length ? karte('gelb', gelb.length === 1 ? 'Ein Punkt zum Prüfen' : gelb.length + ' Punkte zum Prüfen', '')
+      // Hotfix 26.11. (Eduard): grün nur, wenn Widmung, Schutzzone und Hochwasser wirklich abgerufen wurden – sonst grau
+      : u && (u.wid === undefined || u.schutz === undefined || u.hq === undefined) ? karte('meta', 'Noch nicht vollständig geprüft', [u.wid === undefined && 'Widmung', u.schutz === undefined && 'Schutzzone', u.hq === undefined && 'Hochwasser'].filter(Boolean).join(', ') + ' gerade nicht abrufbar – bitte später nochmal versuchen.')
       : karte('gruen', u ? 'Keine Auffälligkeiten' : 'Grundstück eindeutig gefunden', u ? 'Bauland, kein Schutzgebiet, kein Hochwasser, Grundstück eindeutig.' : 'Fläche und Grenzen stammen aus dem amtlichen Kataster.');
     if (!rot.length && gelb.length) { const ul = document.createElement('ul'); ul.className = 'g-pl'; gelb.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.append(li); }); kopf.append(ul); }
     D.append(kopf);
