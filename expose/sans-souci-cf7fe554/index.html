@@ -133,6 +133,23 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
 .rv.in{opacity:1;transform:none}
 @media(max-width:600px){.kpi{flex-wrap:wrap;row-gap:20px}.kpi div{flex:0 0 50%}.tbs,.cols{grid-template-columns:1fr}.dv{height:1px}.amen{padding:24px 3% 56px}.am span{font-size:7px;letter-spacing:.12em}.kpi b{font-size:20px}.w span{display:none}}
 @media(prefers-reduced-motion:reduce){.rv,.w{opacity:1;transform:none;transition:none}.mk{transform:translate(-50%,-50%)}}
+
+/* ---- one screen per section, alternating night / beige ---- */
+.end .bigarch{border-color:#c9a24d;outline-color:#c9a24d}.end .by{color:#c9a24d}
+.end .c1 .k{color:#c9a24d}.end .dv{background:#c9a24d}.end .por{outline-color:#c9a24d}
+.end .qr{background:#EFE6D6;outline-color:#c9a24d}.end .com{background:#EFE6D6;color:#03203D;outline-color:#c9a24d}
+.end .pdf{background:#EFE6D6;color:#03203D;outline-color:#c9a24d}.end .pdf small{color:#a8843c}
+.end .note{color:#A9C3DD}.end .sig2{color:#EFE6D6}
+.gal blockquote{margin-top:40px}.gal .amen{margin-top:44px}
+@media (min-width:760px) and (min-height:560px){
+  html{scroll-snap-type:y mandatory}
+  .page,body>section{height:100svh;min-height:0;scroll-snap-align:start;overflow:hidden;box-sizing:border-box;padding:0!important;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .fit{transform-origin:50% 50%;display:flex;flex-direction:column;align-items:center;width:100%;padding:28px max(4vw,24px);box-sizing:border-box}
+  .fit{flex-shrink:0}
+  .end .bigarch{width:300px;aspect-ratio:300/300}.end .mono{height:70px}.end .sb{margin-top:20px}.end .cols{margin-top:44px}.end .com{margin-top:26px}.end .pdf{margin-top:30px}.end .note{margin-top:18px}.end .sig2{margin-top:8px}
+  .fs .tbs{margin-top:34px}.fs .row{padding:7px 16px}.fs .k[style]{margin-top:30px!important}
+  .page .foot{margin-top:28px}
+}
 </style>
 </head>
 <body>
@@ -193,11 +210,7 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
     <figure class="big"><div class="ar"><img src="spa.jpg" alt="Spa with lap pool"></div><figcaption>SPA &amp; POOL</figcaption></figure>
     <figure><div class="ar"><img src="room.jpg" alt="Deluxe room with four-poster bed"></div><figcaption>DELUXE ROOM</figcaption></figure>
   </div>
-  <p>An established five-star luxury boutique hotel in Vienna’s cultural heart – within walking distance of the MuseumsQuartier, the Ringstraße and the Hofburg.</p>
-</section>
 
-
-<section class="lt q">
   <blockquote class="rv">“A prime, irreplaceable address –<br>at ca. € 976k per key.”</blockquote>
   <div class="inv amen rv"><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="5.289999961853027 13.600000381469727 37.41999816894531 19.059999465942383" width="35.9" height="18.3"><path d="M10.00,24.60 L11.03,27.08 L13.71,27.29 L11.67,29.04 L12.29,31.66 L10.00,30.25 L7.71,31.66 L8.33,29.04 L6.29,27.29 L8.97,27.08Z M17.00,17.10 L18.03,19.58 L20.71,19.79 L18.67,21.54 L19.29,24.16 L17.00,22.75 L14.71,24.16 L15.33,21.54 L13.29,19.79 L15.97,19.58Z M24.00,14.60 L25.03,17.08 L27.71,17.29 L25.67,19.04 L26.29,21.66 L24.00,20.25 L21.71,21.66 L22.33,19.04 L20.29,17.29 L22.97,17.08Z M31.00,17.10 L32.03,19.58 L34.71,19.79 L32.67,21.54 L33.29,24.16 L31.00,22.75 L28.71,24.16 L29.33,21.54 L27.29,19.79 L29.97,19.58Z M38.00,24.60 L39.03,27.08 L41.71,27.29 L39.67,29.04 L40.29,31.66 L38.00,30.25 L35.71,31.66 L36.33,29.04 L34.29,27.29 L36.97,27.08Z" fill="#a8843c" stroke="none"/><circle cx="24" cy="31" r="2.2" fill="#EB2F33"/></svg></div><span>FIVE STARS</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="10 12 28 26" width="30.3" height="28.2"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="25" r="9"/><circle cx="24" cy="25" r="5.5"/><path d="M11 13v8a2 2 0 0 0 2 2v14M11 13v6M13 13v6M15 13v6a2 2 0 0 1-2 2"/><path d="M37 13c-2.5 1.5-3 5-3 8h3v16"/></g><circle cx="24" cy="25" r="1.8" fill="#EB2F33"/></svg></div><span>FINE DINING</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="9 13 30 25.5" width="33.2" height="28.2"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14c4 4 4 10 0 14-4-4-4-10 0-14z"/><path d="M24 28c-6 0-11-3-13-8 5-1 10 1 13 8z"/><path d="M24 28c6 0 11-3 13-8-5-1-10 1-13 8z"/><path d="M10 36c4 2 8 2 14 0s10-2 14 0"/></g><circle cx="24" cy="10" r="2.2" fill="#EB2F33"/></svg></div><span>SPA &amp; POOL</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="11 7 26 32" width="22.5" height="27.7"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M24 8v6"/><path d="M12 22h24"/><path d="M14 22c0 6 4.5 10 10 10s10-4 10-10"/><path d="M24 32v6M18 38h12"/><path d="M14 22l-2-4M34 22l2-4M24 14l-6 8M24 14l6 8"/></g><circle cx="24" cy="8" r="2.2" fill="#EB2F33"/></svg></div><span>MEETINGS</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="9 9 30 30" width="27.9" height="27.9"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="28" height="28" rx="5"/><path d="M20 33V16h6a5 5 0 0 1 0 10h-6"/></g><circle cx="34" cy="34" r="2.4" fill="#EB2F33"/></svg></div><span>GARAGE</span></div></div>
 </section>
@@ -220,8 +233,8 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
   <div class="chips rv"><span>Lobby &amp; Lounge</span><span>Fine Dining</span><span>Bar &amp; Events</span><span>Spa · Pool · Sauna</span><span>Fitness</span><span>Meeting Rooms</span><span>Garage</span></div>
   <p class="note">All figures per seller, subject to verification.</p>
 </section>
-<section class="lt end">
-  <div class="bigarch rv"><i class="key2"></i><svg viewBox="-6 0 202 120" class="mono" aria-hidden="true"><circle cx="52" cy="58" r="38" fill="none" stroke="#03203D" stroke-width="15"/><g fill="#03203D"><circle cx="128" cy="24" r="9"/><circle cx="154" cy="24" r="9"/><circle cx="180" cy="24" r="9"/><circle cx="128" cy="58" r="9"/><circle cx="154" cy="58" r="9"/><circle cx="128" cy="92" r="9"/><circle cx="154" cy="92" r="9"/><circle cx="180" cy="92" r="9"/></g><circle cx="84" cy="90" r="12" fill="#EB2F33"/></svg><div class="sb">SEE BEYOND.</div><div class="by">Exposé by QuickEstate</div></div>
+<section class="nt end">
+  <div class="bigarch rv"><i class="key2"></i><svg viewBox="-6 0 202 120" class="mono" aria-hidden="true"><circle cx="52" cy="58" r="38" fill="none" stroke="#EFE6D6" stroke-width="15"/><g fill="#EFE6D6"><circle cx="128" cy="24" r="9"/><circle cx="154" cy="24" r="9"/><circle cx="180" cy="24" r="9"/><circle cx="128" cy="58" r="9"/><circle cx="154" cy="58" r="9"/><circle cx="128" cy="92" r="9"/><circle cx="154" cy="92" r="9"/><circle cx="180" cy="92" r="9"/></g><circle cx="84" cy="90" r="12" fill="#EB2F33"/></svg><div class="sb">SEE BEYOND.</div><div class="by">Exposé by QuickEstate</div></div>
   <div class="cols rv">
     <div class="c1"><div class="por"><img src="julian.jpg" alt="Julian Racanel"></div><div><div class="k">YOUR CONTACT</div><div class="nm">JULIAN<br>RACANEL</div><a href="tel:+4369914011977">+43 699 1401 1977</a><a href="mailto:iulian_racanel@yahoo.de">IULIAN_RACANEL@YAHOO.DE</a></div></div>
     <div class="dv"></div>
@@ -260,6 +273,12 @@ document.querySelectorAll('.bay').forEach(b=>b.addEventListener('click',()=>{con
 
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.18});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+const big=()=>matchMedia('(min-width:760px) and (min-height:560px)').matches;
+const scr=[document.querySelector('.page'),...document.querySelectorAll('body>section')];
+scr.forEach(s=>{const f=document.createElement('div');f.className='fit';while(s.firstChild)f.appendChild(s.firstChild);s.appendChild(f)});
+function fit(){scr.forEach(s=>{const f=s.firstElementChild;f.style.transform='';if(!big())return;const k=Math.min(1,s.clientHeight/f.scrollHeight,s.clientWidth/f.scrollWidth);f.style.transform=k<1?`scale(${k})`:''})}
+addEventListener('resize',fit);addEventListener('load',fit);fit();
 </script>
 </body>
 </html>
