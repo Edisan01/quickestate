@@ -223,8 +223,8 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
   .end .cols{grid-row:2;align-self:auto}.end .com{grid-row:3}.end .pdf{grid-row:4}.end .note{grid-row:5}.end .sig2{grid-row:6;align-self:auto}
 }
 
-.duo{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);column-gap:36px;justify-items:center;width:min(640px,100%);margin-top:34px}.duo>.com:first-child{grid-column:1}.duo>.dl{grid-column:3}
-.duo .com{margin:0;text-decoration:none}.duo .dl{transition:transform .2s}.duo .dl:hover{transform:translateY(-3px)}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);column-gap:36px;justify-items:stretch;width:min(640px,100%);margin-top:34px}.duo>.com:first-child{grid-column:1}.duo>.dl{grid-column:3}
+.duo .com{margin:0;text-decoration:none;width:100%;border-radius:0 0 50% 50%/0 0 60px 60px}.duo .dl{transition:transform .2s}.duo .dl:hover{transform:translateY(-3px)}
 @media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){.end .duo{grid-column:2;grid-row:3;width:100%}}
 </style>
 </head>
