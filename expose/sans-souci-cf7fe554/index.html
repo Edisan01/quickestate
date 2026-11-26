@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Hotel Sans Souci Wien · Private Exposé · QuickEstate</title>
+<style>
+/* VOICE: confidential, elegant, Viennese
+   IDEA: an evening walk past a palais – you look through its arched windows
+   PICTURE: the lit Sans Souci in a tall arch, slowly breathing (zoom in/out)
+   COLOUR and TYPE: QuickEstate night blue with a light glow, beige, gold, one red dot; Oswald + Playfair italic + script signature
+   LAYOUT: centred column – arch text, arch photo, name, arcade of four key figures, signature */
+@font-face{font-family:Oswald;font-weight:400;src:url(oswald-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Oswald;font-weight:500;src:url(oswald-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Oswald;font-weight:700;src:url(oswald-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:Playfair;font-style:italic;src:url(playfair-display-latin-400-italic.woff2) format("woff2")}
+@font-face{font-family:Script;src:url(monsieur-la-doulaise-latin-400-normal.woff2) format("woff2")}
+:root{--b:#03203D;--be:#EFE6D6;--g:#c9a24d;--r:#EB2F33;--l:#A9C3DD;--os:Oswald,"Arial Narrow",sans-serif}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;min-height:100%;background:#011426}
+body{color:var(--be);font-family:var(--os);overflow-x:clip;cursor:default}
+.page{position:relative;min-height:100svh;background:radial-gradient(ellipse 70% 55% at 50% 34%,#0d3f6e 0%,#03203D 55%,#011426 100%);display:flex;flex-direction:column;align-items:center;padding:28px max(5vw,18px) 34px;isolation:isolate}
+/* cursor lens: inverts blue to warm beige, beige to blue */
+.lens{position:fixed;left:0;top:0;width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:5;transform:translate(-500px,-500px) scale(.2);opacity:0;transition:opacity .35s}
+.lens.on{opacity:1}
+.top{width:100%;max-width:1000px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.brand{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.32em;font-weight:500}
+.brand svg{height:24px;width:auto}
+.top span.c{font-size:10px;letter-spacing:.3em;color:var(--l)}
+.archwrap{position:relative;width:min(480px,80vw);margin-top:min(80px,12vw);z-index:6}
+.archtext{position:absolute;left:-12%;top:-15%;width:124%;overflow:visible;pointer-events:none}
+.archtext text{font:400 13px var(--os);letter-spacing:.5em;fill:var(--g)}
+.arch{position:relative;aspect-ratio:480/560;border-radius:999px 999px 0 0;overflow:hidden;outline:1.5px solid var(--g);outline-offset:8px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.arch img{width:100%;height:100%;object-fit:cover;object-position:50% 60%;display:block;transform-origin:50% 62%;animation:breathe 16s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.key{position:absolute;left:50%;top:-18px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--r)}
+h1{font:700 clamp(54px,10vw,96px)/.95 var(--os);letter-spacing:.02em;margin:34px 0 0;text-align:center;position:relative;z-index:2}
+.tag{font:italic 400 21px Playfair,Georgia,serif;color:var(--g);margin-top:10px;position:relative;z-index:2}
+/* arcade: stucco windows, the palais stays put behind them while you scroll */
+.arcade{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(6px,1.4vw,12px);width:min(640px,94vw);margin-top:30px;position:relative;z-index:2}
+.bay{position:relative;aspect-ratio:150/200;cursor:pointer;outline:none}
+.bay svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.bay .veil{transition:opacity .6s}
+.bay:hover .veil,.bay:focus-visible .veil,.bay.open .veil{opacity:.35}
+.bay .t{position:absolute;left:0;right:0;top:64.0%;text-align:center;transition:transform .55s cubic-bezier(.7,0,.2,1)}
+.bay b{display:block;font-weight:500;font-size:clamp(19px,3.6vw,27px);line-height:1}
+.bay small{display:block;font-size:9px;letter-spacing:.3em;color:var(--l);margin-top:8px}
+.bay em{display:block;font:italic 400 12px/1.35 Playfair,Georgia,serif;color:var(--be);margin-top:10px;opacity:0;transform:translateY(8px);transition:opacity .45s .1s,transform .55s}
+.bay:hover .t,.bay:focus-visible .t,.bay.open .t{transform:translateY(-22%)}
+.bay:hover em,.bay:focus-visible em,.bay.open em{opacity:1;transform:none}
+.foot{width:100%;max-width:1000px;display:flex;justify-content:space-between;align-items:baseline;margin-top:auto;padding-top:40px;font-size:9px;letter-spacing:.28em;color:var(--l);position:relative;z-index:2}
+.foot .sig{font-family:Script,cursive;font-size:30px;letter-spacing:0;color:var(--be)}
+.hint{font-size:10px;letter-spacing:.24em;color:var(--l);margin-top:14px;position:relative;z-index:2}
+/* gallery: three arches, the hovered one grows */
+.gal{width:100%;background:radial-gradient(ellipse 80% 70% at 50% 40%,#f7f1e6 0%,#EFE6D6 55%,#e2d6c0 100%);color:#03203D;padding:clamp(56px,8vw,96px) max(5vw,18px);display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.gal .k{font-size:11px;letter-spacing:.42em;color:#a8843c}
+.gal h2{font:700 clamp(34px,5vw,48px)/1 var(--os);letter-spacing:.03em;margin:12px 0 40px;text-align:center}
+.trio{display:flex;align-items:flex-end;justify-content:center;gap:clamp(10px,2vw,22px);width:min(760px,100%);height:clamp(260px,46vw,400px)}
+.trio figure{margin:0;flex:1 1 0;height:66%;display:flex;flex-direction:column;transition:flex-grow .7s cubic-bezier(.6,0,.2,1),height .7s cubic-bezier(.6,0,.2,1);cursor:pointer}
+.trio figure .ar{flex:1;border-radius:999px 999px 0 0;overflow:hidden;outline:1.3px solid #a8843c;outline-offset:5px}
+.trio img{width:100%;height:100%;object-fit:cover;display:block}
+.trio figcaption{font-size:9px;letter-spacing:.3em;color:#5b6b80;text-align:center;margin-top:14px;white-space:nowrap}
+.trio figure.big{flex-grow:1.55;height:100%}
+.gal p{font:italic 400 clamp(16px,1.8vw,19px)/1.6 Playfair,Georgia,serif;max-width:560px;text-align:center;margin:44px 0 0}
+@media(hover:none){.lens{display:none}}
+@media(max-width:520px){.bay em{display:none}.top span.c{display:none}}
+@media(prefers-reduced-motion:reduce){.arch img{animation:none}.bay .t,.bay em,.bay .veil{transition:none}.lens{display:none}}
+
+.k{font-size:11px;letter-spacing:.42em;color:#a8843c;text-align:center}
+.lt{background:radial-gradient(ellipse 80% 70% at 50% 40%,#f7f1e6 0%,#EFE6D6 55%,#e2d6c0 100%);color:#03203D;padding:clamp(56px,8vw,96px) max(5vw,18px);display:flex;flex-direction:column;align-items:center}
+.nt{background:radial-gradient(ellipse 70% 55% at 50% 30%,#0d3f6e 0%,#03203D 55%,#011426 100%);color:#EFE6D6;padding:clamp(56px,8vw,96px) max(4vw,14px);display:flex;flex-direction:column;align-items:center}
+.nt .k{color:#c9a24d}
+h2{font:700 clamp(30px,5vw,48px)/1 var(--os);letter-spacing:.03em;margin:12px 0 40px;text-align:center}
+.gal{padding-bottom:0!important}
+.q{padding-top:40px}
+blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia,serif;text-align:center}
+.inv{border-radius:0 0 50% 50%/0 0 46% 46%;outline:1.3px solid #a8843c;outline-offset:6px;background:#F6F0E4;width:min(760px,100%)}
+.amen{display:flex;justify-content:space-around;padding:30px 6% 70px;margin-top:56px}
+.am{text-align:center;font-size:9px;letter-spacing:.24em}
+.am .ic{height:32px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:12px}
+.medal{width:min(760px,100%);display:flex;flex-direction:column;gap:22px}
+.maparch{position:relative;aspect-ratio:674/470;border-radius:50% 50% 0 0/53% 53% 0 0;overflow:hidden;outline:1.3px solid #c9a24d;outline-offset:6px}
+.maparch img{width:100%;height:100%;object-fit:cover;object-position:35% 60%;display:block}
+.mk{position:absolute;transform:translate(-50%,-50%) scale(0);font-style:normal;display:flex;align-items:center;justify-content:center;font:600 12px var(--os);line-height:1;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.in .mk,.mk.st{transform:translate(-50%,-50%) scale(1)}
+.mk.st{position:static;transform:none}
+.mk.n{width:22px;height:22px;border-radius:50%;background:#c9a24d;color:#03203D;border:1.5px solid #03203D}
+.mk.u{width:18px;height:18px;border-radius:4px;background:#0a3e78;border:1.2px solid #c9a24d;color:#fff;font-size:11px;font-weight:700}
+.mk.h{width:26px;height:26px;border-radius:50%;background:#EB2F33;border:2px solid #fff;color:#fff;font-size:13px}
+.maparch .mk.h{animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #EB2F3399}70%{box-shadow:0 0 0 18px #EB2F3300}100%{box-shadow:0 0 0 0 #EB2F3300}}
+.maparch .mk:nth-of-type(2){transition-delay:.15s}.maparch .mk:nth-of-type(3){transition-delay:.25s}.maparch .mk:nth-of-type(4){transition-delay:.35s}.maparch .mk:nth-of-type(5){transition-delay:.45s}.maparch .mk:nth-of-type(6){transition-delay:.55s}.maparch .mk:nth-of-type(7){transition-delay:.65s}
+.osm{position:absolute;right:10px;bottom:6px;font-size:8px;letter-spacing:.1em;color:#6b6252}
+.walk{background:#EFE6D6;color:#03203D;outline-color:#c9a24d;padding:26px 7% 90px;border-radius:0 0 50% 50%/0 0 53% 53%}
+.here{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.here span{font:italic 400 clamp(18px,2.6vw,22px) Playfair,Georgia,serif}
+.here em{font-style:normal;font-size:11px;letter-spacing:.2em;color:#a8843c}
+.wk{display:flex;margin-top:30px}
+.w{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;opacity:0;transform:translateY(14px);transition:.6s var(--d)}
+.in .w{opacity:1;transform:none}
+.w b{font:300 clamp(20px,3.4vw,28px)/1 var(--os);color:#a8843c;margin-top:12px}.w small{font-size:10px;letter-spacing:.15em}
+.w span{font:italic 400 clamp(10px,1.6vw,12.5px)/1.3 Playfair,Georgia,serif;margin-top:6px}
+.cap{text-align:center;font-size:9px;letter-spacing:.24em;color:#6b6252;margin-top:28px}
+.kpi{display:flex;justify-content:space-around;padding:30px 5% 64px}
+.kpi div{text-align:center}.kpi b{display:block;font:700 clamp(22px,4vw,34px)/1 var(--os)}.kpi span{display:block;font-size:9px;letter-spacing:.26em;color:#a8843c;margin-top:10px}
+.tbs{display:grid;grid-template-columns:1fr 1fr;gap:40px;width:min(760px,100%);margin-top:56px}
+.tb .k{margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 16px;border-radius:14px}
+.row:nth-child(even){background:#F6F0E4}
+.row span{font-size:9.5px;letter-spacing:.2em;color:#5b6b80}.row b{font:400 15px Playfair,Georgia,serif;text-align:right}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px;max-width:640px}
+.chips span{padding:8px 18px;border-radius:20px;background:#F6F0E4;font:italic 400 14px Playfair,Georgia,serif}
+.note{font:italic 400 13px Playfair,Georgia,serif;color:#5b6b80;text-align:center;margin-top:30px}
+.bigarch{position:relative;width:min(360px,80vw);aspect-ratio:360/400;border:1px solid #a8843c;outline:1.3px solid #a8843c;outline-offset:8px;border-radius:999px 999px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.key2{position:absolute;top:-25px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#EB2F33}
+.mono{height:96px;width:auto}
+.sb{font:700 clamp(34px,6vw,48px)/1 var(--os);letter-spacing:.04em;margin-top:34px}.by{font:italic 400 18px Playfair,Georgia,serif;color:#a8843c;margin-top:12px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);gap:36px;width:min(640px,100%);margin-top:70px}
+.c1{display:flex;gap:20px;align-items:flex-start}.c1 a,.c1>div>span{display:block;font-size:11px;letter-spacing:.1em;line-height:1.8;color:inherit;text-decoration:none}
+.c1 .k{text-align:left;font-size:10px;letter-spacing:.3em}
+.nm{font:700 22px/1.05 var(--os);margin:8px 0 10px}
+.por{flex:none;width:96px;height:124px;border-radius:48px 48px 0 0;overflow:hidden;outline:1.3px solid #a8843c;outline-offset:4px}.por img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.qr{flex:none;width:104px;height:104px;padding:8px;outline:1.3px solid #a8843c;outline-offset:4px}.qr svg{width:100%;height:100%;display:block}
+.dv{background:#a8843c}
+.com{width:200px;height:100px;display:flex;flex-direction:column;align-items:center;padding-top:16px;margin-top:40px;border-radius:0 0 100px 100px/0 0 70px 70px}
+.com b{font:700 30px/1 var(--os)}.com span{font-size:9px;letter-spacing:.3em;margin-top:6px}
+.pdf{margin-top:50px;display:inline-flex;gap:10px;align-items:baseline;padding:15px 30px;background:#03203D;color:#EFE6D6;text-decoration:none;font-size:13px;letter-spacing:.24em;border-radius:0 0 40px 40px/0 0 24px 24px;outline:1px solid #a8843c;outline-offset:4px;transition:transform .2s}
+.pdf small{color:#c9a24d;font-size:10px}.pdf:hover{transform:translateY(-2px)}
+.sig2{font-family:Script,cursive;font-size:34px;margin-top:20px}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media(max-width:600px){.kpi{flex-wrap:wrap;row-gap:20px}.kpi div{flex:0 0 50%}.tbs,.cols{grid-template-columns:1fr}.dv{height:1px}.amen{padding:24px 3% 56px}.am span{font-size:7px;letter-spacing:.12em}.kpi b{font-size:20px}.w span{display:none}}
+@media(prefers-reduced-motion:reduce){.rv,.w{opacity:1;transform:none;transition:none}.mk{transform:translate(-50%,-50%)}}
+</style>
+</head>
+<body>
+<div class="lens" id="lens" aria-hidden="true"></div>
+<main class="page">
+  <header class="top">
+    <div class="brand"><svg viewBox="-6 0 202 120" aria-hidden="true"><circle cx="52" cy="58" r="38" fill="none" stroke="#EFE6D6" stroke-width="15"/><g fill="#EFE6D6"><circle cx="128" cy="24" r="9"/><circle cx="154" cy="24" r="9"/><circle cx="180" cy="24" r="9"/><circle cx="128" cy="58" r="9"/><circle cx="154" cy="58" r="9"/><circle cx="128" cy="92" r="9"/><circle cx="154" cy="92" r="9"/><circle cx="180" cy="92" r="9"/></g><circle cx="84" cy="90" r="12" fill="#EB2F33"/></svg>QUICKESTATE</div>
+    <span class="c">PRIVATE EXPOSÉ · CONFIDENTIAL</span>
+  </header>
+
+  <div class="archwrap">
+    <svg class="archtext" viewBox="0 0 600 320" aria-hidden="true"><defs><path id="ap" d="M40 300 A260 260 0 0 1 560 300"/></defs><text><textPath href="#ap" startOffset="50%" text-anchor="middle">PRIVATE EXPOSÉ · VIENNA · FIVE STARS</textPath></text></svg>
+    <div class="arch"><img src="front.jpg" alt="Hotel Sans Souci, Vienna – illuminated palais façade at dusk"></div>
+    <div class="key" aria-hidden="true"></div>
+  </div>
+
+  <h1>SANS SOUCI</h1>
+  <div class="tag">See beyond the façade.</div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d3a66"/><stop offset="1" stop-color="#03203D"/></linearGradient><linearGradient id="gv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03203D" stop-opacity=".7"/><stop offset=".28" stop-color="#03203D" stop-opacity=".25"/><stop offset=".5" stop-color="#03203D" stop-opacity=".5"/><stop offset=".72" stop-color="#03203D" stop-opacity=".88"/><stop offset="1" stop-color="#03203D" stop-opacity=".97"/></linearGradient></defs></svg><div class="arcade" role="list"><div class="bay" role="listitem" tabindex="0"><svg viewBox="0 0 150 200" aria-hidden="true">
+<defs><clipPath id="cw0"><path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z"/></clipPath></defs>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="url(#gf)"/>
+<g clip-path="url(#cw0)"><image class="win" href="band.jpg" preserveAspectRatio="none"/><rect class="veil" width="150" height="200" fill="url(#gv)"/></g>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="none" stroke="#c9a24d" stroke-width="1.6"/><path d="M12 200 V110 A63 63 0 0 1 51.4 51.59 A23.6 23.6 0 0 1 98.6 51.59 A63 63 0 0 1 138 110 V200 Z" fill="none" stroke="#857a5e" stroke-width=".8"/><line x1="13" y1="116" x2="13" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="17" y1="116" x2="17" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="133" y1="116" x2="133" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="137" y1="116" x2="137" y2="192" stroke="#6f6447" stroke-width=".7"/>
+<rect x="4" y="192" width="142" height="8" fill="#0b3561" stroke="#c9a24d"/><rect x="5" y="106" width="10" height="4" fill="#c9a24d"/><rect x="135" y="106" width="10" height="4" fill="#c9a24d"/>
+<g transform="translate(57.0 19.8) scale(0.810)"><g fill="none" stroke="#c9a24d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M31.5 15.5a10.5 10.5 0 1 0 0 17"/><path d="M13 21.5h13M13 26.5h13"/></g></g><circle cx="75" cy="22.3" r="4" fill="#EB2F33"/></svg>
+<div class="t"><b>€ 80m</b><small>PRICE</small><em>€ 80,000,000<br>ca. € 976k per key</em></div></div><div class="bay" role="listitem" tabindex="0"><svg viewBox="0 0 150 200" aria-hidden="true">
+<defs><clipPath id="cw1"><path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z"/></clipPath></defs>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="url(#gf)"/>
+<g clip-path="url(#cw1)"><image class="win" href="band.jpg" preserveAspectRatio="none"/><rect class="veil" width="150" height="200" fill="url(#gv)"/></g>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="none" stroke="#c9a24d" stroke-width="1.6"/><path d="M12 200 V110 A63 63 0 0 1 51.4 51.59 A23.6 23.6 0 0 1 98.6 51.59 A63 63 0 0 1 138 110 V200 Z" fill="none" stroke="#857a5e" stroke-width=".8"/><line x1="13" y1="116" x2="13" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="17" y1="116" x2="17" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="133" y1="116" x2="133" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="137" y1="116" x2="137" y2="192" stroke="#6f6447" stroke-width=".7"/>
+<rect x="4" y="192" width="142" height="8" fill="#0b3561" stroke="#c9a24d"/><rect x="5" y="106" width="10" height="4" fill="#c9a24d"/><rect x="135" y="106" width="10" height="4" fill="#c9a24d"/>
+<g transform="translate(57.0 20.9) scale(0.750)"><g fill="none" stroke="#c9a24d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 33V16"/><path d="M8 26h32v7"/><path d="M40 26v-4a4 4 0 0 0-4-4H20v8"/><circle cx="14" cy="22" r="3"/><path d="M8 33h32"/></g></g><circle cx="75" cy="22.3" r="4" fill="#EB2F33"/></svg>
+<div class="t"><b>82</b><small>ROOMS</small><em>Rooms and suites,<br>five-star</em></div></div><div class="bay" role="listitem" tabindex="0"><svg viewBox="0 0 150 200" aria-hidden="true">
+<defs><clipPath id="cw2"><path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z"/></clipPath></defs>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="url(#gf)"/>
+<g clip-path="url(#cw2)"><image class="win" href="band.jpg" preserveAspectRatio="none"/><rect class="veil" width="150" height="200" fill="url(#gv)"/></g>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="none" stroke="#c9a24d" stroke-width="1.6"/><path d="M12 200 V110 A63 63 0 0 1 51.4 51.59 A23.6 23.6 0 0 1 98.6 51.59 A63 63 0 0 1 138 110 V200 Z" fill="none" stroke="#857a5e" stroke-width=".8"/><line x1="13" y1="116" x2="13" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="17" y1="116" x2="17" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="133" y1="116" x2="133" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="137" y1="116" x2="137" y2="192" stroke="#6f6447" stroke-width=".7"/>
+<rect x="4" y="192" width="142" height="8" fill="#0b3561" stroke="#c9a24d"/><rect x="5" y="106" width="10" height="4" fill="#c9a24d"/><rect x="135" y="106" width="10" height="4" fill="#c9a24d"/>
+<g transform="translate(51.0 13.5) scale(1.000)"><g fill="none" stroke="#c9a24d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="19" cy="31" rx="7" ry="2.6"/><path d="M12 31v-4.5c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V31"/><path d="M12 26.5V22c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v4.5"/><ellipse cx="19" cy="22" rx="7" ry="2.6"/><path d="M28 27l8-9M31 18h5v5"/></g></g><circle cx="75" cy="22.3" r="4" fill="#EB2F33"/></svg>
+<div class="t"><b>€ 3.5m</b><small>GOP P.A.</small><em>Gross operating profit<br>per year, approx.</em></div></div><div class="bay" role="listitem" tabindex="0"><svg viewBox="0 0 150 200" aria-hidden="true">
+<defs><clipPath id="cw3"><path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z"/></clipPath></defs>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="url(#gf)"/>
+<g clip-path="url(#cw3)"><image class="win" href="band.jpg" preserveAspectRatio="none"/><rect class="veil" width="150" height="200" fill="url(#gv)"/></g>
+<path d="M8 200 V110 A67 67 0 0 1 49.0 48.25 A26.0 26.0 0 0 1 101.0 48.25 A67 67 0 0 1 142 110 V200 Z" fill="none" stroke="#c9a24d" stroke-width="1.6"/><path d="M12 200 V110 A63 63 0 0 1 51.4 51.59 A23.6 23.6 0 0 1 98.6 51.59 A63 63 0 0 1 138 110 V200 Z" fill="none" stroke="#857a5e" stroke-width=".8"/><line x1="13" y1="116" x2="13" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="17" y1="116" x2="17" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="133" y1="116" x2="133" y2="192" stroke="#6f6447" stroke-width=".7"/><line x1="137" y1="116" x2="137" y2="192" stroke="#6f6447" stroke-width=".7"/>
+<rect x="4" y="192" width="142" height="8" fill="#0b3561" stroke="#c9a24d"/><rect x="5" y="106" width="10" height="4" fill="#c9a24d"/><rect x="135" y="106" width="10" height="4" fill="#c9a24d"/>
+<g transform="translate(57.6 20.1) scale(0.726)"><g fill="none" stroke="#c9a24d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 33l16-18"/><circle cx="17.5" cy="18" r="3.4"/><circle cx="30.5" cy="30" r="3.4"/><path d="M12 38h24"/></g></g><circle cx="75" cy="22.3" r="4" fill="#EB2F33"/></svg>
+<div class="t"><b>4.4 %</b><small>YIELD</small><em>GOP yield on<br>the purchase price</em></div></div></div>
+  <div class="hint">Move over the arches</div>
+
+  <footer class="foot"><span>QUICKESTATE.AT</span><span class="sig">Eduard Beches</span><span>VIENNA</span></footer>
+</main>
+<section class="gal" aria-labelledby="galh">
+  <div class="k">THE PROPERTY</div>
+  <h2 id="galh">A FIVE-STAR PALAIS</h2>
+  <div class="trio" id="trio">
+    <figure><div class="ar"><img src="suite.jpg" alt="Suite with tall windows"></div><figcaption>SUITE</figcaption></figure>
+    <figure class="big"><div class="ar"><img src="spa.jpg" alt="Spa with lap pool"></div><figcaption>SPA &amp; POOL</figcaption></figure>
+    <figure><div class="ar"><img src="room.jpg" alt="Deluxe room with four-poster bed"></div><figcaption>DELUXE ROOM</figcaption></figure>
+  </div>
+  <p>An established five-star luxury boutique hotel in Vienna’s cultural heart – within walking distance of the MuseumsQuartier, the Ringstraße and the Hofburg.</p>
+</section>
+
+
+<section class="lt q">
+  <blockquote class="rv">“A prime, irreplaceable address –<br>at ca. € 976k per key.”</blockquote>
+  <div class="inv amen rv"><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="5.289999961853027 13.600000381469727 37.41999816894531 19.059999465942383" width="35.9" height="18.3"><path d="M10.00,24.60 L11.03,27.08 L13.71,27.29 L11.67,29.04 L12.29,31.66 L10.00,30.25 L7.71,31.66 L8.33,29.04 L6.29,27.29 L8.97,27.08Z M17.00,17.10 L18.03,19.58 L20.71,19.79 L18.67,21.54 L19.29,24.16 L17.00,22.75 L14.71,24.16 L15.33,21.54 L13.29,19.79 L15.97,19.58Z M24.00,14.60 L25.03,17.08 L27.71,17.29 L25.67,19.04 L26.29,21.66 L24.00,20.25 L21.71,21.66 L22.33,19.04 L20.29,17.29 L22.97,17.08Z M31.00,17.10 L32.03,19.58 L34.71,19.79 L32.67,21.54 L33.29,24.16 L31.00,22.75 L28.71,24.16 L29.33,21.54 L27.29,19.79 L29.97,19.58Z M38.00,24.60 L39.03,27.08 L41.71,27.29 L39.67,29.04 L40.29,31.66 L38.00,30.25 L35.71,31.66 L36.33,29.04 L34.29,27.29 L36.97,27.08Z" fill="#a8843c" stroke="none"/><circle cx="24" cy="31" r="2.2" fill="#EB2F33"/></svg></div><span>FIVE STARS</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="10 12 28 26" width="30.3" height="28.2"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="25" r="9"/><circle cx="24" cy="25" r="5.5"/><path d="M11 13v8a2 2 0 0 0 2 2v14M11 13v6M13 13v6M15 13v6a2 2 0 0 1-2 2"/><path d="M37 13c-2.5 1.5-3 5-3 8h3v16"/></g><circle cx="24" cy="25" r="1.8" fill="#EB2F33"/></svg></div><span>FINE DINING</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="9 13 30 25.5" width="33.2" height="28.2"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14c4 4 4 10 0 14-4-4-4-10 0-14z"/><path d="M24 28c-6 0-11-3-13-8 5-1 10 1 13 8z"/><path d="M24 28c6 0 11-3 13-8-5-1-10 1-13 8z"/><path d="M10 36c4 2 8 2 14 0s10-2 14 0"/></g><circle cx="24" cy="10" r="2.2" fill="#EB2F33"/></svg></div><span>SPA &amp; POOL</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="11 7 26 32" width="22.5" height="27.7"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M24 8v6"/><path d="M12 22h24"/><path d="M14 22c0 6 4.5 10 10 10s10-4 10-10"/><path d="M24 32v6M18 38h12"/><path d="M14 22l-2-4M34 22l2-4M24 14l-6 8M24 14l6 8"/></g><circle cx="24" cy="8" r="2.2" fill="#EB2F33"/></svg></div><span>MEETINGS</span></div><div class="am"><div class="ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="9 9 30 30" width="27.9" height="27.9"><g fill="none" stroke="#a8843c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="28" height="28" rx="5"/><path d="M20 33V16h6a5 5 0 0 1 0 10h-6"/></g><circle cx="34" cy="34" r="2.4" fill="#EB2F33"/></svg></div><span>GARAGE</span></div></div>
+</section>
+<section class="nt loc">
+  <div class="k rv">LOCATION</div><h2 class="rv">VIENNA’S CULTURAL HEART</h2>
+  <div class="medal">
+    <div class="maparch rv"><img src="map.jpg" alt="Map of the area around Hotel Sans Souci"><i class="mk u" style="left:26.66%;top:54.98%">U</i><i class="mk n" style="left:29.90%;top:74.81%">1</i><i class="mk n" style="left:40.68%;top:69.62%">2</i><i class="mk n" style="left:48.95%;top:46.06%">3</i><i class="mk n" style="left:73.43%;top:73.94%">4</i><i class="mk n" style="left:90.80%;top:24.43%">5</i><i class="mk h" style="left:17.37%;top:61.53%">★</i><span class="osm">© OpenStreetMap contributors</span></div>
+    <div class="inv walk rv">
+      <div class="here"><i class="mk h st">★</i><span>Hotel Sans Souci</span><em>· U2 / U3 AT THE DOOR</em></div>
+      <div class="wk"><div class="w" style="--d:0ms"><i class="mk n st">1</i><b>4<small> MIN</small></b><span>MuseumsQuartier</span></div><div class="w" style="--d:90ms"><i class="mk n st">2</i><b>7<small> MIN</small></b><span>Kunsthistorisches<br>Museum</span></div><div class="w" style="--d:180ms"><i class="mk n st">3</i><b>9<small> MIN</small></b><span>Hofburg<br>Heldenplatz</span></div><div class="w" style="--d:270ms"><i class="mk n st">4</i><b>15<small> MIN</small></b><span>Vienna State<br>Opera</span></div><div class="w" style="--d:360ms"><i class="mk n st">5</i><b>21<small> MIN</small></b><span>St. Stephen’s<br>Cathedral</span></div></div>
+      <div class="cap">ON FOOT FROM THE HOTEL · AIRPORT CA. 25 MIN</div>
+    </div>
+  </div>
+</section>
+<section class="lt fs">
+  <div class="k rv">FACT SHEET</div><h2 class="rv">AT A GLANCE</h2>
+  <div class="inv kpi rv"><div><b data-n="€ 80m">€ 80m</b><span>PURCHASE PRICE</span></div><div><b data-n="82">82</b><span>ROOMS &amp; SUITES</span></div><div><b data-n="€ 3.5m">€ 3.5m</b><span>GOP P.A.</span></div><div><b data-n="4.4 %">4.4 %</b><span>GROSS YIELD</span></div></div>
+  <div class="tbs"><div class="tb rv"><div class="k">THE PROPERTY</div><div class="row"><span>ASSET</span><b>5-star boutique hotel</b></div><div class="row"><span>LOCATION</span><b>Vienna · city centre</b></div><div class="row"><span>ROOMS</span><b>82 rooms &amp; suites</b></div><div class="row"><span>PUBLIC TRANSPORT</span><b>U2 / U3 at the door</b></div><div class="row"><span>MUSEUMSQUARTIER</span><b>4 min on foot</b></div><div class="row"><span>AIRPORT</span><b>ca. 25 min by car</b></div></div><div class="tb rv"><div class="k">FINANCIALS</div><div class="row"><span>PURCHASE PRICE</span><b>€ 80,000,000</b></div><div class="row"><span>PRICE PER KEY</span><b>ca. € 976,000</b></div><div class="row"><span>REVENUE</span><b>ca. € 12m p.a.</b></div><div class="row"><span>GOP</span><b>ca. € 3.5m p.a.</b></div><div class="row"><span>GROSS YIELD (GOP)</span><b>4.4 %</b></div><div class="row"><span>BUYER’S COMMISSION</span><b>3 % + VAT</b></div></div></div>
+  <div class="k rv" style="margin-top:56px">FACILITIES</div>
+  <div class="chips rv"><span>Lobby &amp; Lounge</span><span>Fine Dining</span><span>Bar &amp; Events</span><span>Spa · Pool · Sauna</span><span>Fitness</span><span>Meeting Rooms</span><span>Garage</span></div>
+  <p class="note">All figures per seller, subject to verification.</p>
+</section>
+<section class="lt end">
+  <div class="bigarch rv"><i class="key2"></i><svg viewBox="-6 0 202 120" class="mono" aria-hidden="true"><circle cx="52" cy="58" r="38" fill="none" stroke="#03203D" stroke-width="15"/><g fill="#03203D"><circle cx="128" cy="24" r="9"/><circle cx="154" cy="24" r="9"/><circle cx="180" cy="24" r="9"/><circle cx="128" cy="58" r="9"/><circle cx="154" cy="58" r="9"/><circle cx="128" cy="92" r="9"/><circle cx="154" cy="92" r="9"/><circle cx="180" cy="92" r="9"/></g><circle cx="84" cy="90" r="12" fill="#EB2F33"/></svg><div class="sb">SEE BEYOND.</div><div class="by">Exposé by QuickEstate</div></div>
+  <div class="cols rv">
+    <div class="c1"><div class="por"><img src="julian.jpg" alt="Julian Racanel"></div><div><div class="k">YOUR CONTACT</div><div class="nm">JULIAN<br>RACANEL</div><a href="tel:+4369914011977">+43 699 1401 1977</a><a href="mailto:iulian_racanel@yahoo.de">IULIAN_RACANEL@YAHOO.DE</a></div></div>
+    <div class="dv"></div>
+    <div class="c1"><a class="qr" href="https://quickestate.at/"><svg xmlns="http://www.w3.org/2000/svg" width="174" height="174" class="segno"><path transform="scale(6)" class="qrline" stroke="#03203d" d="M0 0.5h7m2 0h4m1 0h1m3 0h3m1 0h7m-29 1h1m5 0h1m1 0h1m3 0h3m7 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h5m3 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h4m1 0h1m4 0h1m3 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m1 0h1m3 0h1m2 0h2m1 0h1m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-20 1h1m1 0h1m1 0h5m2 0h1m-19 1h1m2 0h4m1 0h3m1 0h4m1 0h3m1 0h5m-28 1h2m3 0h1m2 0h2m5 0h3m4 0h2m1 0h1m1 0h2m-29 1h5m1 0h2m1 0h1m3 0h1m2 0h2m1 0h3m1 0h2m1 0h1m1 0h1m-29 1h1m8 0h1m1 0h1m3 0h1m4 0h1m1 0h2m1 0h1m-26 1h1m1 0h1m1 0h4m1 0h1m1 0h2m3 0h1m2 0h1m1 0h2m4 0h1m-27 1h1m1 0h1m4 0h2m2 0h9m1 0h1m2 0h1m2 0h1m-28 1h4m1 0h4m2 0h1m1 0h3m2 0h1m2 0h1m2 0h2m1 0h1m-29 1h1m4 0h1m2 0h1m2 0h3m1 0h1m1 0h1m3 0h1m3 0h1m1 0h2m-28 1h2m2 0h4m5 0h1m1 0h2m1 0h1m1 0h2m4 0h1m-26 1h2m4 0h1m1 0h2m2 0h2m1 0h1m1 0h2m1 0h2m4 0h1m-29 1h5m1 0h1m1 0h1m1 0h2m1 0h2m2 0h3m4 0h1m3 0h1m-26 1h3m2 0h2m1 0h3m1 0h4m2 0h2m2 0h1m2 0h1m-29 1h3m1 0h3m2 0h1m6 0h9m3 0h1m-21 1h2m3 0h1m3 0h1m1 0h2m3 0h2m2 0h1m-29 1h7m1 0h2m2 0h1m5 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m1 0h1m2 0h1m1 0h6m3 0h2m1 0h2m-29 1h1m1 0h3m1 0h1m3 0h1m1 0h2m1 0h1m3 0h6m2 0h2m-29 1h1m1 0h3m1 0h1m3 0h1m1 0h1m2 0h1m1 0h1m1 0h2m2 0h3m1 0h1m-28 1h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m2 0h5m-29 1h1m5 0h1m2 0h2m2 0h1m4 0h1m1 0h3m2 0h1m-26 1h7m2 0h1m2 0h2m1 0h1m1 0h2m1 0h2m1 0h3m2 0h1"/></svg>
+</a><div><div class="k">SCAN · VISIT</div><div class="nm">QUICKESTATE.AT</div><a href="mailto:eb@quickestate.at">EB@QUICKESTATE.AT</a><span>VIENNA · AUSTRIA</span></div></div>
+  </div>
+  <div class="inv com rv"><b>3 %</b><span>BUYER’S COMMISSION</span></div>
+  <a class="pdf rv" href="Expose_Hotel_Sans_Souci_Wien.pdf" download>DOWNLOAD EXPOSÉ <small>PDF</small></a>
+  <p class="note">This exposé is confidential and intended solely for the addressee. Please do not forward.</p>
+  <div class="sig2">Eduard Beches</div>
+</section>
+<script>
+{
+const lens=document.getElementById('lens');
+const fine=matchMedia('(hover:hover) and (pointer:fine)').matches&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(fine){
+  let x=-500,y=-500,tx=x,ty=y,s=.2,ts=.2,raf=0;
+  const tick=()=>{x+=(tx-x)*.18;y+=(ty-y)*.18;s+=(ts-s)*.12;lens.style.transform=`translate(${x}px,${y}px) scale(${s})`;raf=requestAnimationFrame(tick)};
+  addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;ts=e.target.closest('.bay,.arch,.trio figure,.maparch,.inv,.bigarch,.por,.qr,.pdf')?0:1;lens.classList.add('on');if(!raf)tick()});
+  document.addEventListener('pointerleave',()=>lens.classList.remove('on'));
+}
+
+
+const wins=[...document.querySelectorAll('.bay')];
+const IMR=360/1119;const arc=document.querySelector('.arcade');
+// one continuous facade band spans the whole arcade; it drifts gently with scroll (parallax), same picture in every window
+function place(){const A=arc.getBoundingClientRect();const vh=innerHeight;const prog=Math.max(-1,Math.min(1,((A.top+A.height/2)-vh/2)/(vh/2)));const over=1.12;const iw=A.width*over,ih=iw*IMR;wins.forEach(b=>{const r=b.getBoundingClientRect();const s=r.width/150;const im=b.querySelector('.win');im.setAttribute('width',iw/s);im.setAttribute('height',ih/s);im.setAttribute('x',(A.left-r.left-(iw-A.width)/2)/s);im.setAttribute('y',((A.top-r.top)-(ih-A.height)/2+prog*A.height*0.06)/s)})}
+let pend=false;const req=()=>{if(!pend){pend=true;requestAnimationFrame(()=>{pend=false;place()})}};
+addEventListener('scroll',req,{passive:true});addEventListener('resize',req);place();
+const figs=[...document.querySelectorAll('#trio figure')];
+const pick=f=>{figs.forEach(x=>x.classList.toggle('big',x===f))};
+figs.forEach(f=>{f.addEventListener('pointerenter',()=>pick(f));f.addEventListener('click',()=>pick(f))});
+document.getElementById('trio').addEventListener('pointerleave',()=>pick(figs[1]));
+document.querySelectorAll('.bay').forEach(b=>b.addEventListener('click',()=>{const o=b.classList.contains('open');document.querySelectorAll('.bay').forEach(x=>x.classList.remove('open'));if(!o)b.classList.add('open')}));
+}
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.18});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
