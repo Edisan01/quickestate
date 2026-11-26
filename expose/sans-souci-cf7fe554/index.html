@@ -150,6 +150,57 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
   .fs .tbs{margin-top:34px}.fs .row{padding:7px 16px}.fs .k[style]{margin-top:30px!important}
   .page .foot{margin-top:28px}
 }
+
+/* ---- landscape screens: use the full width ---- */
+@media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){
+  .fit{display:grid;column-gap:clamp(40px,5vw,90px);align-items:center;justify-items:center;max-width:1500px;padding:30px 4vw}
+  /* cover */
+  .page .fit{grid-template-columns:1fr 1fr}
+  .page .top{grid-column:1/3;grid-row:1;max-width:none}
+  .page .archwrap{grid-column:1;grid-row:2/6;width:min(470px,100%);margin-top:50px}
+  .page h1{grid-column:2;grid-row:2;align-self:end;font-size:110px;margin:0}
+  .page .tag{grid-column:2;grid-row:3;font-size:24px}
+  .page .arcade{grid-column:2;grid-row:4;width:min(600px,100%);margin-top:26px}
+  .page .hint{grid-column:2;grid-row:5;align-self:start}
+  .page .foot{grid-column:1/3;grid-row:6;max-width:none;margin-top:30px}
+  /* property */
+  .gal .fit{grid-template-columns:1.45fr 1fr}
+  .gal .trio{grid-column:1;grid-row:1/5;width:100%;height:560px}
+  .gal .k{grid-column:2;grid-row:1;align-self:end}
+  .gal h2{grid-column:2;grid-row:2;margin:10px 0 0}
+  .gal blockquote{grid-column:2;grid-row:3;margin-top:30px}
+  .gal .amen{grid-column:2;grid-row:4;align-self:start;margin-top:40px;width:100%;flex-wrap:wrap;row-gap:22px;padding:28px 6% 56px}
+  .gal .am{flex:0 0 33%}
+  /* location */
+  .loc .fit{grid-template-columns:1fr}
+  .loc .medal{flex-direction:row;width:min(1300px,100%);gap:40px;align-items:stretch}
+  .loc .maparch{flex:1.5}
+  .loc .walk{flex:1;border-radius:0 0 50% 50%/0 0 22% 22%;padding:30px 28px 70px;display:flex;flex-direction:column;justify-content:center}
+  .loc .wk{flex-direction:column;gap:14px;margin-top:22px}
+  .loc .w{flex-direction:row;gap:14px;align-items:center;text-align:left}
+  .loc .w b{margin:0;min-width:84px}
+  .loc .w span{margin:0;font-size:14px}.loc .w span br{display:none}
+  .loc h2{margin-bottom:30px}
+  /* fact sheet */
+  .fs .fit{grid-template-columns:1fr 1.7fr}
+  .fs .fit>.k:first-child{grid-column:1;grid-row:1;align-self:end}
+  .fs h2{grid-column:1;grid-row:2;margin:10px 0 0}
+  .fs .kpi{grid-column:1;grid-row:3;flex-wrap:wrap;row-gap:22px;margin-top:30px;padding:26px 6% 56px}
+  .fs .kpi div{flex:0 0 50%}
+  .fs .tbs{grid-column:2;grid-row:1/7;margin:0;width:100%}
+  .fs .fit>.k[style]{grid-column:1;grid-row:4}
+  .fs .chips{grid-column:1;grid-row:5;align-self:start}
+  .fs .note{grid-column:1;grid-row:6;align-self:start}
+  /* contact */
+  .end .fit{grid-template-columns:1fr 1.2fr}
+  .end .bigarch{grid-column:1;grid-row:1/6;width:380px;aspect-ratio:360/420}
+  .end .mono{height:100px}.end .sb{font-size:52px}
+  .end .cols{grid-column:2;grid-row:1;margin:0;width:100%}
+  .end .com{grid-column:2;grid-row:2}
+  .end .pdf{grid-column:2;grid-row:3}
+  .end .note{grid-column:2;grid-row:4}
+  .end .sig2{grid-column:2;grid-row:5}
+}
 </style>
 </head>
 <body>
@@ -220,7 +271,7 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
     <div class="maparch rv"><img src="map.jpg" alt="Map of the area around Hotel Sans Souci"><i class="mk u" style="left:26.66%;top:54.98%">U</i><i class="mk n" style="left:29.90%;top:74.81%">1</i><i class="mk n" style="left:40.68%;top:69.62%">2</i><i class="mk n" style="left:48.95%;top:46.06%">3</i><i class="mk n" style="left:73.43%;top:73.94%">4</i><i class="mk n" style="left:90.80%;top:24.43%">5</i><i class="mk h" style="left:17.37%;top:61.53%">★</i><span class="osm">© OpenStreetMap contributors</span></div>
     <div class="inv walk rv">
       <div class="here"><i class="mk h st">★</i><span>Hotel Sans Souci</span><em>· U2 / U3 AT THE DOOR</em></div>
-      <div class="wk"><div class="w" style="--d:0ms"><i class="mk n st">1</i><b>4<small> MIN</small></b><span>MuseumsQuartier</span></div><div class="w" style="--d:90ms"><i class="mk n st">2</i><b>7<small> MIN</small></b><span>Kunsthistorisches<br>Museum</span></div><div class="w" style="--d:180ms"><i class="mk n st">3</i><b>9<small> MIN</small></b><span>Hofburg<br>Heldenplatz</span></div><div class="w" style="--d:270ms"><i class="mk n st">4</i><b>15<small> MIN</small></b><span>Vienna State<br>Opera</span></div><div class="w" style="--d:360ms"><i class="mk n st">5</i><b>21<small> MIN</small></b><span>St. Stephen’s<br>Cathedral</span></div></div>
+      <div class="wk"><div class="w" style="--d:0ms"><i class="mk n st">1</i><b>4<small> MIN</small></b><span>MuseumsQuartier</span></div><div class="w" style="--d:90ms"><i class="mk n st">2</i><b>7<small> MIN</small></b><span>Kunsthistorisches <br>Museum</span></div><div class="w" style="--d:180ms"><i class="mk n st">3</i><b>9<small> MIN</small></b><span>Hofburg <br>Heldenplatz</span></div><div class="w" style="--d:270ms"><i class="mk n st">4</i><b>15<small> MIN</small></b><span>Vienna State <br>Opera</span></div><div class="w" style="--d:360ms"><i class="mk n st">5</i><b>21<small> MIN</small></b><span>St. Stephen’s <br>Cathedral</span></div></div>
       <div class="cap">ON FOOT FROM THE HOTEL · AIRPORT CA. 25 MIN</div>
     </div>
   </div>
@@ -277,7 +328,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 const big=()=>matchMedia('(min-width:760px) and (min-height:560px)').matches;
 const scr=[document.querySelector('.page'),...document.querySelectorAll('body>section')];
 scr.forEach(s=>{const f=document.createElement('div');f.className='fit';while(s.firstChild)f.appendChild(s.firstChild);s.appendChild(f)});
-function fit(){scr.forEach(s=>{const f=s.firstElementChild;f.style.transform='';if(!big())return;const k=Math.min(1,s.clientHeight/f.scrollHeight,s.clientWidth/f.scrollWidth);f.style.transform=k<1?`scale(${k})`:''})}
+function fit(){scr.forEach(s=>{const f=s.firstElementChild;f.style.transform='';if(!big())return;const k=Math.min(1.3,s.clientHeight/f.scrollHeight,s.clientWidth/f.scrollWidth);f.style.transform=k!==1?`scale(${k})`:''})}
 addEventListener('resize',fit);addEventListener('load',fit);fit();
 </script>
 </body>
