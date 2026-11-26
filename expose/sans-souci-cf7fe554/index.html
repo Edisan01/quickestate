@@ -222,6 +222,10 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
   .end .bigarch{grid-row:1/8}
   .end .cols{grid-row:2;align-self:auto}.end .com{grid-row:3}.end .pdf{grid-row:4}.end .note{grid-row:5}.end .sig2{grid-row:6;align-self:auto}
 }
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);column-gap:36px;justify-items:center;width:min(640px,100%);margin-top:34px}.duo>.com:first-child{grid-column:1}.duo>.dl{grid-column:3}
+.duo .com{margin:0;text-decoration:none}.duo .dl{transition:transform .2s}.duo .dl:hover{transform:translateY(-3px)}
+@media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){.end .duo{grid-column:2;grid-row:3;width:100%}}
 </style>
 </head>
 <body>
@@ -313,8 +317,7 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
     <div class="c1"><a class="qr" href="https://quickestate.at/"><svg xmlns="http://www.w3.org/2000/svg" width="174" height="174" class="segno"><path transform="scale(6)" class="qrline" stroke="#03203d" d="M0 0.5h7m2 0h4m1 0h1m3 0h3m1 0h7m-29 1h1m5 0h1m1 0h1m3 0h3m7 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h5m3 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h4m1 0h1m4 0h1m3 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m1 0h1m3 0h1m2 0h2m1 0h1m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-20 1h1m1 0h1m1 0h5m2 0h1m-19 1h1m2 0h4m1 0h3m1 0h4m1 0h3m1 0h5m-28 1h2m3 0h1m2 0h2m5 0h3m4 0h2m1 0h1m1 0h2m-29 1h5m1 0h2m1 0h1m3 0h1m2 0h2m1 0h3m1 0h2m1 0h1m1 0h1m-29 1h1m8 0h1m1 0h1m3 0h1m4 0h1m1 0h2m1 0h1m-26 1h1m1 0h1m1 0h4m1 0h1m1 0h2m3 0h1m2 0h1m1 0h2m4 0h1m-27 1h1m1 0h1m4 0h2m2 0h9m1 0h1m2 0h1m2 0h1m-28 1h4m1 0h4m2 0h1m1 0h3m2 0h1m2 0h1m2 0h2m1 0h1m-29 1h1m4 0h1m2 0h1m2 0h3m1 0h1m1 0h1m3 0h1m3 0h1m1 0h2m-28 1h2m2 0h4m5 0h1m1 0h2m1 0h1m1 0h2m4 0h1m-26 1h2m4 0h1m1 0h2m2 0h2m1 0h1m1 0h2m1 0h2m4 0h1m-29 1h5m1 0h1m1 0h1m1 0h2m1 0h2m2 0h3m4 0h1m3 0h1m-26 1h3m2 0h2m1 0h3m1 0h4m2 0h2m2 0h1m2 0h1m-29 1h3m1 0h3m2 0h1m6 0h9m3 0h1m-21 1h2m3 0h1m3 0h1m1 0h2m3 0h2m2 0h1m-29 1h7m1 0h2m2 0h1m5 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m1 0h1m2 0h1m1 0h6m3 0h2m1 0h2m-29 1h1m1 0h3m1 0h1m3 0h1m1 0h2m1 0h1m3 0h6m2 0h2m-29 1h1m1 0h3m1 0h1m3 0h1m1 0h1m2 0h1m1 0h1m1 0h2m2 0h3m1 0h1m-28 1h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m2 0h5m-29 1h1m5 0h1m2 0h2m2 0h1m4 0h1m1 0h3m2 0h1m-26 1h7m2 0h1m2 0h2m1 0h1m1 0h2m1 0h2m1 0h3m2 0h1"/></svg>
 </a><div><div class="k">SCAN · VISIT</div><div class="nm">QUICKESTATE.AT</div><a href="mailto:eb@quickestate.at">EB@QUICKESTATE.AT</a><span>VIENNA · AUSTRIA</span></div></div>
   </div>
-  <div class="inv com rv"><b>3 %</b><span>BUYER’S COMMISSION</span></div>
-  <a class="pdf rv" href="Expose_Hotel_Sans_Souci_Wien.pdf" download>DOWNLOAD EXPOSÉ <small>PDF</small></a>
+  <div class="duo rv"><div class="inv com"><b>3 %</b><span>BUYER’S COMMISSION</span></div><a class="inv com dl" href="Expose_Hotel_Sans_Souci_Wien.pdf" download><b>PDF</b><span>DOWNLOAD EXPOSÉ</span></a></div>
   <p class="note">This exposé is confidential and intended solely for the addressee. Please do not forward.</p>
   <div class="sig2">Eduard Beches</div>
 </section>
