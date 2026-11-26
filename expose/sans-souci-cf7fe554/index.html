@@ -201,6 +201,27 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
   .end .note{grid-column:2;grid-row:4}
   .end .sig2{grid-column:2;grid-row:5}
 }
+
+@media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){
+  /* location like property: picture left, title + list right */
+  .loc .fit{grid-template-columns:1.45fr 1fr}
+  .loc .medal{display:contents}
+  .loc .maparch{grid-column:1;grid-row:1/4;width:100%;align-self:center}
+  .loc .fit>.k{grid-column:2;grid-row:1;align-self:end}
+  .loc h2{grid-column:2;grid-row:2;margin:10px 0 0;text-align:center}
+  .loc .walk{grid-column:2;grid-row:3;align-self:start;width:100%;margin-top:30px;border-radius:0 0 50% 50%/0 0 24% 24%;padding:26px 28px 64px}
+  /* contact: arch left as big as the cover arch, details centred right */
+  .end .bigarch{width:430px;aspect-ratio:480/560}
+  .end .mono{height:110px}.end .sb{font-size:56px}
+  .end .fit{align-content:center;row-gap:0}
+  .end .cols{align-self:end}.end .sig2{align-self:start}
+}
+
+@media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){
+  .end .fit{grid-template-rows:1fr repeat(5,auto) 1fr}
+  .end .bigarch{grid-row:1/8}
+  .end .cols{grid-row:2;align-self:auto}.end .com{grid-row:3}.end .pdf{grid-row:4}.end .note{grid-row:5}.end .sig2{grid-row:6;align-self:auto}
+}
 </style>
 </head>
 <body>
