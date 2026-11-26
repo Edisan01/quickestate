@@ -292,6 +292,38 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
   .arch{transform:none}.page h1,body>section h2{clip-path:none;transform:none}
   .bay,.trio figure,.kpi>div,.wk .w,.chips span,.am,.duo>*{opacity:1;transform:none}
   .arch img{filter:none}.trio img,.por img,.maparch img{animation:none}}
+
+/* ================= SCREEN CHOREOGRAPHY =================
+   screens stack like cards: the next one slides over, the old one sinks back.
+   every screen enters its own way: from the side, by zoom, through an iris */
+@media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){
+  .page,body>section,body>section.gal{position:sticky;top:0;transform-origin:50% 0;will-change:scale,filter}
+  .page{z-index:1}.gal{z-index:2}.loc{z-index:3}.fs{z-index:4}.end{z-index:5}
+  body>section{box-shadow:0 -40px 80px rgba(1,20,38,.35)}
+  /* 2 · property: pictures sweep in from the left, words from the right */
+  .gal .trio figure{transform:translateX(-140px) scale(.96)}
+  .gal blockquote.rv,.gal .amen.rv{transform:translateX(120px)}
+  .gal .k{opacity:0;transform:translateX(60px);transition:opacity .8s .1s,transform 1s cubic-bezier(.2,.8,.2,1) .1s}
+  .gal.on .k{opacity:1;transform:none}
+  /* 3 · location: the map opens like an iris from the hotel's star, the list slides in */
+  .loc .maparch.rv{opacity:1;transform:scale(1.12);clip-path:circle(0% at 22% 62%);transition:clip-path 1.6s cubic-bezier(.7,0,.2,1),transform 1.8s cubic-bezier(.2,.8,.2,1)}
+  .loc.on .maparch.rv{clip-path:circle(150% at 22% 62%);transform:none}
+  .loc .walk.rv{transform:translateX(160px);transition-delay:.5s}
+  .loc .wk .w{transform:translateX(60px)}
+  .loc.on .wk .w{transition-delay:calc(.7s + var(--i,0)*.1s)}
+  /* 4 · fact sheet: figures from the left, tables from the right, rows tick in */
+  .fs .kpi.rv{transform:translateX(-140px)}
+  .fs .tb.rv{transform:translateX(140px)}.fs .tb.rv+.tb.rv{transition-delay:.15s}
+  .fs .row{opacity:0;translate:30px 0;transition:opacity .5s,translate .7s cubic-bezier(.2,.8,.2,1)}
+  .fs .tb.in .row{opacity:1;translate:0 0}
+  /* 5 · contact: the big arch zooms back into place, details slide in */
+  .end .bigarch.rv{transform:scale(1.35);opacity:0;transition:transform 1.4s cubic-bezier(.2,.8,.2,1),opacity 1s}
+  .end .bigarch.rv.in{transform:none;opacity:1}
+  .end .cols.rv{transform:translateX(140px);transition-delay:.3s}
+  /* cover on load: the palais comes forward */
+  .page .archwrap{animation:comeforward 1.6s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes comeforward{from{opacity:0;transform:scale(1.18)}}
+}
 </style>
 </head>
 <body>
@@ -434,6 +466,14 @@ requestAnimationFrame(frame);
 function count(s){if(s.dataset.c)return;s.dataset.c=1;s.querySelectorAll('.kpi b,.bay b,.com b').forEach(b=>{const t=b.textContent,m=t.match(/[\d.]+/);if(!m)return;const n=parseFloat(m[0]),d=(m[0].split('.')[1]||'').length,t0=performance.now(),D=1400;
  const step=now=>{const k=Math.min(1,(now-t0)/D),v=n*(1-Math.pow(1-k,3));b.textContent=t.replace(m[0],v.toFixed(d));if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
 })();
+
+/* ===== card stack: the screen being covered sinks back and dims; rows get their stagger index ===== */
+document.querySelectorAll('.fs .tb').forEach(t=>t.querySelectorAll('.row').forEach((r,i)=>r.style.transitionDelay=(.35+i*.07)+'s'));
+document.querySelectorAll('.loc .wk .w').forEach((w,i)=>w.style.setProperty('--i',i));
+(()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+function stack(){const vh=innerHeight,on=big();scr.forEach((s,i)=>{const n=scr[i+1];if(!on||!n){s.style.scale='';s.style.filter='';return}
+ const c=Math.max(0,Math.min(1,1-n.getBoundingClientRect().top/vh));s.style.scale=c?(1-.08*c).toFixed(4):'';s.style.filter=c?`brightness(${(1-.45*c).toFixed(3)})`:''});requestAnimationFrame(stack)}
+requestAnimationFrame(stack)})();
 </script>
 </body>
 </html>
