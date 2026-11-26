@@ -244,6 +244,54 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
 .fs::before{top:auto;bottom:-22vh}.fs::after{width:24vh;height:24vh;bottom:auto;top:-12vh}
 .end::after{width:24vh;height:24vh;right:-12vh;bottom:-12vh}
 @media(max-width:759px){.page::before{display:none}.page .brand{color:inherit}.page .brand svg circle[stroke]{stroke:#EFE6D6}.page .brand svg g{fill:#EFE6D6}body>section::before{display:none}.page::after,body>section::after{width:18vh;height:18vh;right:-9vh;bottom:-9vh}}
+
+@media (min-width:1000px) and (min-height:560px) and (min-aspect-ratio:13/10){.page h1{white-space:nowrap;font-size:min(110px,7.4vw)}}
+/* ================= MOTION & DEPTH =================
+   three layers per screen: far (discs) · mid (pictures) · near (type)
+   --p = scroll position of the screen (-1..1), --mx/--my = pointer (-1..1) */
+:root{--mx:0;--my:0}
+.page,body>section{--p:0}
+/* far layer: discs drift slowest, pop in when the screen arrives */
+.page::before,body>section::before,.page::after,body>section::after{
+  translate:calc(var(--mx)*-34px) calc(var(--p)*-140px + var(--my)*-34px);
+  scale:.15;opacity:0;transition:scale 1.1s cubic-bezier(.2,1.5,.35,1),opacity .6s}
+.page::after,body>section::after{translate:calc(var(--mx)*-60px) calc(var(--p)*-220px + var(--my)*-60px);transition-delay:.15s}
+.on::before,.on::after{scale:1;opacity:1}
+.page::before,body>section::before{animation:float 14s ease-in-out infinite alternate}
+.page::after,body>section::after{animation:float 11s ease-in-out infinite alternate-reverse}
+@keyframes float{to{transform:translate(2.5vh,-3vh)}}
+/* mid layer: pictures */
+.archwrap,.trio,.maparch,.bigarch,.arcade{translate:calc(var(--mx)*14px) calc(var(--p)*60px + var(--my)*14px)}
+.arch,.trio figure .ar,.maparch,.bigarch{transform-style:preserve-3d}
+.arch{transform:perspective(1100px) rotateY(calc(var(--mx)*5deg)) rotateX(calc(var(--my)*-4deg));transition:transform .2s linear}
+/* near layer: type */
+.page h1,.tag,body>section h2,blockquote,.loc .walk,.fs .tbs,.end .cols{translate:calc(var(--mx)*-6px) calc(var(--p)*-24px + var(--my)*-6px)}
+/* entrance: headings rise out of a mask */
+.page h1,body>section h2{clip-path:inset(-10% 0 100% 0);transform:translateY(46px);transition:clip-path 1s cubic-bezier(.2,.8,.2,1) .15s,transform 1s cubic-bezier(.2,.8,.2,1) .15s}
+.on h1,.on h2{clip-path:inset(-10% 0 -10% 0);transform:none}
+/* entrance: arches grow from their base, one after another */
+.bay,.trio figure,.kpi>div,.wk .w,.chips span,.am,.duo>*{opacity:0;transform:translateY(34px) scale(.94);transition:opacity .7s,transform .9s cubic-bezier(.2,1.3,.35,1)}
+.on .bay,.on .trio figure,.on .kpi>div,.on .wk .w,.on .chips span,.on .am,.on .duo>*{opacity:1;transform:none}
+.on .bay:nth-child(2),.on .trio figure:nth-child(2),.on .kpi>div:nth-child(2),.on .wk .w:nth-child(2),.on .chips span:nth-child(2),.on .am:nth-child(2),.on .duo>*:nth-child(2){transition-delay:.12s}
+.on .bay:nth-child(3),.on .trio figure:nth-child(3),.on .kpi>div:nth-child(3),.on .wk .w:nth-child(3),.on .chips span:nth-child(3),.on .am:nth-child(3){transition-delay:.24s}
+.on .bay:nth-child(4),.on .kpi>div:nth-child(4),.on .wk .w:nth-child(4),.on .chips span:nth-child(4),.on .am:nth-child(4){transition-delay:.36s}
+.on .wk .w:nth-child(5),.on .chips span:nth-child(5),.on .am:nth-child(5){transition-delay:.48s}
+.on .chips span:nth-child(6){transition-delay:.6s}.on .chips span:nth-child(7){transition-delay:.72s}
+.trio figure{transition:opacity .7s,transform .9s cubic-bezier(.2,1.3,.35,1),flex-grow .7s cubic-bezier(.6,0,.2,1),height .7s cubic-bezier(.6,0,.2,1)}
+.arch img{filter:blur(8px);transition:filter 1.4s}.on .arch img{filter:none}
+/* pictures keep breathing slowly */
+.trio img,.por img{animation:kb 22s ease-in-out infinite alternate}
+.maparch img{animation:kb 40s ease-in-out infinite alternate}
+@keyframes kb{to{transform:scale(1.1) translate(-1.5%,-1%)}}
+/* depth: soft shadows under the floating pictures */
+.trio figure .ar,.maparch,.bigarch,.por,.qr{box-shadow:0 30px 60px -20px rgba(1,20,38,.45)}
+.nt .maparch,.end .bigarch{box-shadow:0 40px 80px -20px rgba(0,0,0,.6)}
+@media(prefers-reduced-motion:reduce){
+  .page::before,body>section::before,.page::after,body>section::after{animation:none;scale:1;opacity:1;translate:none}
+  .archwrap,.trio,.maparch,.bigarch,.arcade,.page h1,.tag,body>section h2,blockquote,.loc .walk,.fs .tbs,.end .cols{translate:none}
+  .arch{transform:none}.page h1,body>section h2{clip-path:none;transform:none}
+  .bay,.trio figure,.kpi>div,.wk .w,.chips span,.am,.duo>*{opacity:1;transform:none}
+  .arch img{filter:none}.trio img,.por img,.maparch img{animation:none}}
 </style>
 </head>
 <body>
@@ -372,6 +420,20 @@ const scr=[document.querySelector('.page'),...document.querySelectorAll('body>se
 scr.forEach(s=>{const f=document.createElement('div');f.className='fit';while(s.firstChild)f.appendChild(s.firstChild);s.appendChild(f)});
 function fit(){scr.forEach(s=>{const f=s.firstElementChild;f.style.transform='';if(!big())return;const k=Math.min(1.3,s.clientHeight/f.scrollHeight,s.clientWidth/f.scrollWidth);f.style.transform=k!==1?`scale(${k})`:''})}
 addEventListener('resize',fit);addEventListener('load',fit);fit();
+
+/* ===== motion engine: scroll depth, pointer depth, arrivals, counters ===== */
+(()=>{const R=matchMedia('(prefers-reduced-motion: reduce)').matches;const root=document.documentElement;
+const on=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');count(e.target)}}),{threshold:.35});
+scr.forEach(s=>on.observe(s));if(R){scr.forEach(s=>s.classList.add('on'));return}
+let mx=0,my=0,tx=0,ty=0;
+if(matchMedia('(hover:hover)').matches)addEventListener('pointermove',e=>{tx=e.clientX/innerWidth*2-1;ty=e.clientY/innerHeight*2-1},{passive:true});
+function frame(){mx+=(tx-mx)*.06;my+=(ty-my)*.06;root.style.setProperty('--mx',mx.toFixed(3));root.style.setProperty('--my',my.toFixed(3));
+ const vh=innerHeight;scr.forEach(s=>{const r=s.getBoundingClientRect();if(r.bottom<-vh||r.top>2*vh)return;let p=(r.top+r.height/2-vh/2)/vh;p=Math.max(-1,Math.min(1,p));s.style.setProperty('--p',p.toFixed(3))});
+ requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+function count(s){if(s.dataset.c)return;s.dataset.c=1;s.querySelectorAll('.kpi b,.bay b,.com b').forEach(b=>{const t=b.textContent,m=t.match(/[\d.]+/);if(!m)return;const n=parseFloat(m[0]),d=(m[0].split('.')[1]||'').length,t0=performance.now(),D=1400;
+ const step=now=>{const k=Math.min(1,(now-t0)/D),v=n*(1-Math.pow(1-k,3));b.textContent=t.replace(m[0],v.toFixed(d));if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
+})();
 </script>
 </body>
 </html>
