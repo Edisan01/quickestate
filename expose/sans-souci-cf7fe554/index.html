@@ -237,8 +237,12 @@ blockquote{margin:0;font:italic 400 clamp(22px,3.4vw,32px)/1.35 Playfair,Georgia
 .page::before,body>section::before{left:-22vh;top:-22vh}
 .page::after,body>section::after{right:-22vh;bottom:-22vh;width:30vh;height:30vh;right:-15vh;bottom:-15vh;background:#EB2F33}
 
-.page::before{width:64vh;height:64vh;left:-32vh;top:-32vh}
-.page .brand{color:#03203D}.page .brand svg circle[stroke]{stroke:#03203D}.page .brand svg g{fill:#03203D}
+/* each screen places its discs differently */
+.page::before{width:40vh;height:40vh;left:-20vh;top:calc(50% - 20vh)}
+.gal::before{left:auto;top:auto;right:-22vh;bottom:-22vh}.gal::after{width:24vh;height:24vh;right:auto;bottom:auto;left:-12vh;top:-12vh}
+.loc::before{left:auto;right:-22vh}.loc::after{width:24vh;height:24vh;right:auto;left:-12vh;bottom:-12vh}
+.fs::before{top:auto;bottom:-22vh}.fs::after{width:24vh;height:24vh;bottom:auto;top:-12vh}
+.end::after{width:24vh;height:24vh;right:-12vh;bottom:-12vh}
 @media(max-width:759px){.page::before{display:none}.page .brand{color:inherit}.page .brand svg circle[stroke]{stroke:#EFE6D6}.page .brand svg g{fill:#EFE6D6}body>section::before{display:none}.page::after,body>section::after{width:18vh;height:18vh;right:-9vh;bottom:-9vh}}
 </style>
 </head>
