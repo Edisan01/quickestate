@@ -61,7 +61,7 @@ h2{font-family:var(--cond);text-transform:uppercase;font-weight:700;letter-spaci
 .top div:nth-child(4) b{color:#fff;border-bottom:3px solid var(--red);display:block;width:fit-content}
 .urteil{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 22px;margin:-20px 0 20px;font-weight:700;font-size:16px;border:1px solid var(--sand);border-top:0}
 .urteil.ok{background:#e3efe6;color:#1f5a38}.urteil.nein{background:#fbe5e5;color:#9e1c1f}.urteil.leer{background:var(--hellq)}
-.urteil label{font-weight:400;font-size:14px;white-space:nowrap;color:var(--blue)}
+.urteil .eing{display:flex;gap:14px;flex-wrap:nowrap;flex-shrink:0}.urteil .eing input.s{width:64px}.urteil label{font-weight:400;font-size:14px;white-space:nowrap;color:var(--blue)}
 .sec,.card,details.sec{background:var(--hellq);border:1px solid var(--sand)}
 .sec .card{background:transparent}
 th{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:12px;color:var(--muted);font-weight:700}
@@ -114,7 +114,7 @@ table.rt{font-size:13.5px}table.rt td{padding:3px 0;text-align:left}table.rt td:
  .wrap{padding:0 16px 40px}h1{font-size:32px}
  .grid1,.grid2,.two{grid-template-columns:1fr!important}
  .hero{grid-template-columns:1fr 1fr}.hero>div{border-right:0;border-bottom:1px solid rgba(239,230,214,.15)}.hero .w,.hero input#kpTop{font-size:24px}
- .urteil{flex-direction:column;align-items:flex-start}
+ .urteil{flex-direction:column;align-items:flex-start}.urteil .eing{flex-wrap:wrap!important}
  .liste .g{grid-template-columns:1fr 1fr}
  details.sec{padding:0 12px}details.sec>summary{font-size:15px;gap:10px}
  details.sec table{display:block;overflow-x:auto;white-space:nowrap}
@@ -129,7 +129,7 @@ table.rt{font-size:13.5px}table.rt td{padding:3px 0;text-align:left}table.rt td:
 <div><div class="k">Max. Kaufpreis (Ziel <span id="zrT">4</span> %)</div><div class="w" id="t_max">–</div><div class="s" id="t_maxs"></div></div>
 <div><div class="k">Rendite</div><div class="w" id="t_ren">–</div><div class="s" id="t_rens">auf GIK inkl. Gewinn</div></div>
 </div>
-<div class="urteil leer" id="urteil"><span id="u_txt"></span><label>Ziel-Rendite <input class="s" id="zr" value="4"> %</label></div>
+<div class="urteil leer" id="urteil"><span id="u_txt"></span><span class="eing"><label>Baukosten <input class="s" id="bkoTop" value="3000" inputmode="numeric"> €/m²</label> <label>Zins <input class="s" id="zTop" value="2,85"> %</label> <label>Ziel-Rendite <input class="s" id="zr" value="4"> %</label></span></div>
 <div class="grid1">
 <div>
 <table class="kt">
@@ -406,7 +406,8 @@ function calc(){
  set('zi1',e(zi));set('pf1',e(pf));set('be1',e(be));set('sf1',e(sf));set('ges1',e(sb+sf));
  calc2(sn,sf,mo,k1);
 }
-document.querySelectorAll('input:not(#kpTop)').forEach(i=>i.addEventListener('input',calc));
+document.querySelectorAll('input:not(#kpTop):not(#bkoTop):not(#zTop)').forEach(i=>i.addEventListener('input',calc));
+[['bkoTop',['bko']],['zTop',['z1','z2']]].forEach(([t,ids])=>{const x=document.getElementById(t);x.addEventListener('input',()=>{ids.forEach(i=>{document.getElementById(i).value=x.value});calc()});ids.forEach(i=>document.getElementById(i).addEventListener('input',ev=>{if(i===ids[0])x.value=ev.target.value}))});
 document.getElementById('kpTop').addEventListener('input',ev=>{const k=document.getElementById('kp');k.value=ev.target.value.replace(/\s/g,'');calc()});calc();
 </script>
 <script>

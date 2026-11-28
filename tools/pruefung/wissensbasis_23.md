@@ -171,4 +171,5 @@ flwbplmzk-Pixel → EPSG:31256 exakt über Slippy-Map z=19 Mercator-Umkehr (x0,y
 - Prüfung: Rechenlogik mit Kurs-Eingaben L50 nachgerechnet – alle Werte gleich (±1 € Rundung, Rendite 3,13 %, Deckung 52,96 %); Ankauf/Kredit 1 mit Gerstlgasse 18 gleich.
 - Entscheidungen Eduard 27./28.11.: Baukosten 3.000 €/m² oberirdisch, Garage ½; Ablöse 16.200 €/Stellplatz; Fahrräder 2/Wohnung (§ 119a (3) BO, 2,40 m² bzw. Lastenrad 4,00 m²); Einlagerung 0; Notar 1 %; Kredit 2 Standard 2 Jahre; Ziel-Rendite 4 %. Zinssatz vorbelegt mit Kurswert 2,85 % (änderbar). Mieten 17–20 €/m² = Annahme, Bestätigung offen.
 - Statische Seite, kein Server; Prüfstand unberührt (keine Leser-Änderung).
+- Eingaben oben neben Ziel-Rendite: Baukosten €/m² (Garage automatisch ½) und Zinssatz (Kredit 1+2), synchron mit den Feldern in der Rechnung (Eduard 28.11. 08:21).
 - Ausnahme Planbild (Eduard 28.11.): plan.png (aus flwbplmzk, Stadt Wien OGD CC BY 4.0, Quelle auf der Seite) für dieses Beispiel bewusst im Repo. Regel „Plankarten nie ins Repo" gilt sonst weiter.
