@@ -476,7 +476,7 @@ function start() {
     adrSuche(q).then(L => { const f = L.find(hatNr);
       if (!L.length) { gMsg.textContent = 'Diese Adresse habe ich in Wien nicht gefunden – Schreibweise prüfen (z. B. „Gerstlgasse 18“).'; return; }
       waehlen(f || L[0]); }).catch(() => { gMsg.textContent = 'Die Adresssuche der Stadt Wien ist gerade nicht erreichbar – bitte gleich nochmal versuchen.'; }); });
-  $('resBack').addEventListener('click', () => { ++wahlN; kartenLeeren(); M.marks = []; M.sel = null; M.akt = null; nummernZeigen(); gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
+  $('resBack').addEventListener('click', () => { const bb = $('resBsp'); if (bb) { bb.hidden = true; const c = document.querySelector('#gateRes .g-cols'); if (c) c.style.display = ''; } ++wahlN; kartenLeeren(); M.marks = []; M.sel = null; M.akt = null; nummernZeigen(); gBox.classList.remove('has-res'); gRes.hidden = true; gIn.value = ''; gMsg.textContent = ''; gIn.focus({ preventScroll: true }); });
 
   // Kataster
   const KZ = 16, katC = new Map();
@@ -966,7 +966,13 @@ function start() {
     fetch(url).then(r => r.text()).then(t => { const L_ = [...t.matchAll(/<FIELDS\b([^>]*)>/g)].map(m => { const a = k => (m[1].match(new RegExp('\\b' + k + '="([^"]*)"')) || [])[1] || ''; return { nr: a('PLANNUMMER').trim(), art: a('PLANTYP_TXT'), dat: a('KUNDMACHUNG') }; }).filter(x => /^\d{3,5}[A-Z]?$/.test(x.nr));
       const v = pd.querySelector('.q-val'), bb = pd.querySelector('.q-bb'); if (!L_.length) { pd.remove(); return; } v.textContent = L_.map(x => x.nr).join(' + '); bb.textContent = L_.map(x => (x.art || 'Festsetzung') + (x.dat ? ' vom ' + x.dat : '')).join(' · '); })
       .catch(() => pd.remove()); }
-  const zeigeInfo = (g, o = {}) => { const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
+  const BSP = [{ kg: '1657', gnr: '651/12', url: '/beispiel/hochstettergasse-4/?embed=1' }];   // fertig durchgerechnete Beispiele (Eduard 28.11.)
+  const bspCheck = g => { const T = g.teile || [g], cols = document.querySelector('#gateRes .g-cols'), b = $('resBsp'); if (!cols || !b) return;
+    const hit = T.length === 1 && BSP.find(x => x.gnr === T[0].gnr && String(T[0].kg).replace(/^0+/, '') === x.kg);
+    if (hit) { if (b.dataset.u !== hit.url) { b.innerHTML = '<iframe src="' + hit.url + '" title="Steckbrief – komplett durchgerechnet" loading="lazy"></iframe>'; b.dataset.u = hit.url; } b.hidden = false; cols.style.display = 'none'; }
+    else { b.hidden = true; cols.style.display = ''; } };
+  addEventListener('message', e => { if (e.origin !== location.origin || !e.data || e.data.qeH == null) return; const f = document.querySelector('#resBsp iframe'); if (f) f.style.height = e.data.qeH + 'px'; });
+  const zeigeInfo = (g, o = {}) => { bspCheck(g); const K = (M.kg || {})[g.kg] || g.kg, n = g.teile ? g.teile.length : 1, L = $('resFakten'), D = $('resDeut'), u = g.umf; g.infoO = o; kartenLeeren(); $('resInfo').textContent = '';
     const gelb = [], rot = [];
     const zG = { zonen: (g.teile || [g]).flatMap(t => t.polys), kreise: (g.teile || [g]).map(t => [proben({ polys: t.polys })[0]]) }, alleP = (g.teile || [g]).flatMap(t => t.polys.flatMap(pg => pg[0]));
     const ca = g.amtl === false ? 'ca. ' : '', flQ = g.amtl === false ? ' Fläche aus den Grenzen errechnet – amtlicher Wert gerade nicht abrufbar.' : ' Fläche laut Grundbuch.';
