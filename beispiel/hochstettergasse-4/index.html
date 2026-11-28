@@ -299,7 +299,23 @@ addEventListener("DOMContentLoaded",()=>{send();new ResizeObserver(send).observe
 <tr><td>Reparatur-Rücklage (WEG)</td><td>1 262,29</td><td>0,90</td><td>× 12</td><td id="rr"></td></tr>
 <tr class="sum big"><td>nachhaltige Miete pro Jahr</td><td colspan="3"></td><td id="nm"></td></tr>
 <tr class="big"><td>Rendite auf GIK inkl. Gewinn</td><td colspan="3"></td><td id="ren"></td></tr>
-</table></details><details class="sec"><summary><span><span class="num">9</span>Halten statt verkaufen</span><span class="v" data-v="h_dr" data-s=" Deckung"></span></summary>
+</table></details><details class="sec"><summary><span><span class="num">8b</span>Verkaufen</span><span class="v" id="vk_sum"></span></summary>
+<h2>a) Verkauf an Endkunden (Preise brutto)</h2>
+<table><tr><th></th><th>m2 / Stk</th><th>€/m2 bzw. €/Stk</th><th>brutto</th></tr><tbody id="vkRows"></tbody>
+<tr class="sum"><td>Erlös gesamt</td><td colspan="2" id="vk_avg"></td><td id="vk_er"></td></tr>
+<tr><td>GIK brutto (Ankauf + Errichtung + Finanzierung)</td><td colspan="2"></td><td id="vk_gik"></td></tr>
+<tr class="sum big"><td>Gewinn</td><td colspan="2"></td><td id="vk_gw"></td></tr>
+<tr><th></th><th>gesamt</th><th>pro Jahr</th><th></th></tr>
+<tr><td>Rendite auf GIK</td><td id="vk_r1"></td><td id="vk_r1j"></td><td></td></tr>
+<tr><td>Rendite auf Eigenkapital</td><td id="vk_r2"></td><td id="vk_r2j"></td><td></td></tr>
+</table>
+<h2>b) Vermieten und an Investor verkaufen</h2>
+<table><tr><th>Vermietungs-Rendite des Investors</th><th>2,50%</th><th>2,75%</th><th>3,00%</th><th><input class="s" id="ivr" value="3,50"> %</th></tr>
+<tr><td>Kaufpreis (Jahresmiete ÷ Rendite)</td><td id="iv0"></td><td id="iv1"></td><td id="iv2"></td><td id="iv3"></td></tr>
+<tr class="sum"><td>Gewinn (Kaufpreis − GIK netto)</td><td id="ig0"></td><td id="ig1"></td><td id="ig2"></td><td id="ig3"></td></tr>
+</table>
+<div class="leg">Verkauf an Endkunden: Wohnungsverkauf ist umsatzsteuerfrei, daher Kosten brutto gegen Erlös brutto (wie Kurs Gerstlgasse 18). Investor: Kaufpreis = nachhaltige Jahresmiete ÷ Rendite, Gewinn gegen GIK netto. Gelbe Preise = Annahme, änderbar.</div>
+</details><details class="sec"><summary><span><span class="num">9</span>Halten statt verkaufen</span><span class="v" data-v="h_dr" data-s=" Deckung"></span></summary>
 <table>
 <tr><td>Miete pro Jahr (nachhaltig)</td><td></td><td id="h_m"></td></tr>
 <tr><td>Restkredit (Kredit 1 + Kredit 2)</td><td></td><td id="h_rk"></td></tr>
@@ -322,7 +338,7 @@ addEventListener("DOMContentLoaded",()=>{send();new ResizeObserver(send).observe
 <div>Kaufpreis inkl. Nebenkosten<b id="L_an">–</b></div><div>Gesamte Baukosten<b id="L_bk">–</b></div><div>Kredit Ankauf<b id="L_k1">–</b></div><div>Kredit Baukosten<b id="L_k2">–</b></div>
 <div>Eigenmittel gesamt<b id="L_ek">–</b></div><div>GIK + Gewinn<b id="L_gik">–</b></div><div>Kosten je m² Nutzfläche<b id="L_m2">–</b></div><div>Projektdauer<b id="L_mo">–</b></div>
 <div>Miete netto von–bis<b id="L_mi">–</b></div><div>Miete pro Jahr (nachhaltig)<b id="L_nm">–</b></div><div class="rot">Rendite<b id="L_ren">–</b></div><div>Deckungsrate Kredit<b id="L_dr">–</b></div>
-<div>Max. Kaufpreis<b id="L_max">–</b></div><div>Max. je m² Nutzfläche<b id="L_maxm">–</b></div><div>Max. je m² Grund<b id="L_maxg">–</b></div><div>Ziel-Rendite<b id="L_zr">–</b></div>
+<div>Verkaufserlös Endkunden<b id="L_ver">–</b></div><div class="rot">Gewinn bei Verkauf<b id="L_vgw">–</b></div><div>Ø Verkaufspreis<b id="L_vavg">–</b></div><div>Rendite Verkauf p.a.<b id="L_vr">–</b></div><div>Max. Kaufpreis<b id="L_max">–</b></div><div>Max. je m² Nutzfläche<b id="L_maxm">–</b></div><div>Max. je m² Grund<b id="L_maxg">–</b></div><div>Ziel-Rendite<b id="L_zr">–</b></div>
 </div></div>
 <script>
 let _busy=false;
@@ -330,7 +346,17 @@ function residual(){if(_busy)return;_busy=true;const k=document.getElementById('
  k.value='0';calc();const r0=window._ren;let res=-1;
  if(r0>=tg){let lo=0,hi=1e8;for(let i=0;i<50;i++){const m=Math.round((lo+hi)/2);k.value=String(m);calc();if(window._ren>=tg)lo=m;else hi=m}res=lo}
  k.value=orig;calc();_busy=false;return [res,r0,tg]}
-function summary(){if(_busy)return;const t=i=>document.getElementById(i).textContent,S=(i,v)=>{document.getElementById(i).textContent=v};
+
+const VK=[8500,8300,8100,7900,7700,7500,7300,7500];
+
+function verkauf(){if(!document.getElementById('vk0')){document.getElementById('vkRows').innerHTML=ER.slice(0,-1).map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1].toLocaleString('de-AT',{minimumFractionDigits:2})}</td><td><input class="s" id="vk${i}" value="${VK[i]}" style="width:80px"></td><td id="vb${i}"></td></tr>`).join('')+`<tr><td>Stellplätze</td><td>6</td><td><input class="s" id="vkp" value="35000" style="width:80px"></td><td id="vbp"></td></tr>`;
+document.querySelectorAll('#vkRows input,#ivr').forEach(x=>x.addEventListener('input',calc));}const T=i=>Number(document.getElementById(i).textContent.replace(/\s/g,'').replace('−','-'))||0,S=(i,v)=>{document.getElementById(i).textContent=v},pr=v=>(v*100).toFixed(2).replace('.',',')+' %';
+ let er=0,m2=0;ER.slice(0,-1).forEach((r,i)=>{const v=r[1]*num('vk'+i);er+=v;m2+=r[1];S('vb'+i,e(v))});const pk=6*num('vkp');er+=pk;S('vbp',e(pk));
+ const gb=T('s_b')+T('se_b')+T('sf1')+T('sf2'),gw=er-gb,ek=num('ek')+T('ekb'),j=(num('m_plan')+num('m_bew')+num('m_bau')+num('m_fert'))/12||1;
+ S('vk_er',e(er));S('vk_avg','Ø '+e((er-pk)/m2)+' €/m²');S('vk_gik',e(gb));S('vk_gw',e(gw));S('vk_r1',pr(gw/gb));S('vk_r1j',pr(gw/gb/j));S('vk_r2',ek?pr(gw/ek):'–');S('vk_r2j',ek?pr(gw/ek/j):'–');
+ S('vk_sum','Gewinn '+e(gw)+' €');const nm=T('nm'),gn=T('gik');[0.025,0.0275,0.03,num('ivr')/100].forEach((r,i)=>{const kp=r?nm/r:0;S('iv'+i,e(kp));S('ig'+i,e(kp-gn))});
+ return {er,gw}}
+function summary(){if(_busy)return;const VKR=verkauf();const t=i=>document.getElementById(i).textContent,S=(i,v)=>{document.getElementById(i).textContent=v};
  document.querySelectorAll('[data-v]').forEach(el=>{el.textContent=t(el.dataset.v)+(el.dataset.s||'')});
  const [res,r0,tg]=residual();const W=1262.29,G=338.60,kp=num('kp'),ren=window._ren,f=v=>e(v)+' €',pr=v=>(v*100).toFixed(2).replace('.',',')+' %';
  S('zrT',String(num('zr')).replace('.',','));S('t_ren',pr(ren));
@@ -348,7 +374,7 @@ function summary(){if(_busy)return;const t=i=>document.getElementById(i).textCon
  S('L_m2',e(Number(t('gikg').replace(/\s/g,''))/W)+' €');S('L_mo',t('mo1')+' Monate');
  const ms=ER.slice(0,-1).map((r,i)=>num('mi'+i));S('L_mi',Math.min(...ms).toFixed(2).replace('.',',')+' – '+Math.max(...ms).toFixed(2).replace('.',',')+' €/m²');
  S('L_nm',t('nm')+' €');S('L_ren',pr(ren));S('L_dr',t('h_dr'));
- S('L_max',res<0?'nicht erreichbar':f(res));S('L_maxm',res<0?'–':e(res/W)+' €');S('L_maxg',res<0?'–':e(res/G)+' €');S('L_zr',pr(tg));
+ S('L_max',res<0?'nicht erreichbar':f(res));S('L_maxm',res<0?'–':e(res/W)+' €');S('L_maxg',res<0?'–':e(res/G)+' €');S('L_zr',pr(tg));S('L_ver',e(VKR.er)+' €');S('L_vgw',e(VKR.gw)+' €');S('L_vavg',t('vk_avg').replace('Ø ',''));S('L_vr',t('vk_r1j'));
  const top=document.getElementById('kpTop');if(document.activeElement!==top)top.value=kp?e(kp):'0'}
 document.addEventListener('DOMContentLoaded',()=>{});
 </script>
