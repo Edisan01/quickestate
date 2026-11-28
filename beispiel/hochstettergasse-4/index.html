@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Beispiel Hochstettergasse 4, 1020 Wien: Widmung, Nutzfläche, Baukosten, Finanzierung, Miete, Rendite und maximaler Grundstückspreis – komplett durchgerechnet.">
+<link rel="canonical" href="https://quickestate.at/beispiel/hochstettergasse-4/">
+<style>
+:root{--bg:#efe7d8;--ink:#14213d;--muted:#6b6457;--line:#d6ccb8;--fix:#e9e2d3;--in:#fffbe6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,Helvetica,Arial,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:36px 32px 48px}
+.kick{letter-spacing:.25em;font-size:11px;font-weight:700}
+h1{font:italic 400 38px/1.1 Georgia,serif;margin:10px 0 22px}
+h2{font-size:13px;letter-spacing:.12em;margin:30px 0 8px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right}
+td:first-child,th:first-child{text-align:left}
+th{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.06em}
+.sum td{font-weight:700;border-top:2px solid var(--ink)}
+.big td{font-weight:700;font-size:16px}
+input{width:120px;text-align:right;font:inherit;padding:4px 6px;border:1.5px solid #c9a227;background:var(--in);border-radius:3px}
+input.s{width:70px}
+.fix{color:var(--muted);font-size:12px}
+.card{background:#fff;border:1px solid var(--line);padding:18px 20px}
+.zp{display:grid;grid-template-columns:150px 1fr;row-gap:8px;align-items:center;font-size:13.5px}
+.bar{height:22px;position:relative}
+.seg{position:absolute;top:0;height:22px;border-radius:3px;font-size:11px;color:#fff;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.leg{margin:12px 0 0;font-size:12.5px;color:#5c5648;line-height:1.7}.leg b{color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+footer{margin-top:30px;border-top:1px solid var(--line);padding-top:12px;font-size:11px;color:var(--muted)}
+</style><style>
+.top{position:sticky;top:0;z-index:5;background:#14213d;color:#fff;margin:0 -32px 22px;padding:12px 32px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.top div{font-size:11px;letter-spacing:.06em;opacity:.8}.top b{display:block;font-size:20px;letter-spacing:0;opacity:1;font-variant-numeric:tabular-nums}
+.sec{background:#fff;border:1px solid var(--line);padding:6px 22px 18px;margin:0 0 18px}
+.sec h2{margin-top:16px}.sec .card{border:none;padding:0}
+.num{display:inline-block;background:#14213d;color:#fff;border-radius:3px;padding:1px 7px;margin-right:8px}
+.gelb{display:inline-block;width:12px;height:12px;background:var(--in);border:1.5px solid #c9a227;vertical-align:-1px}
+.tabs{display:flex;gap:6px;margin:0 0 16px}.tabs button{font:600 13px Inter,Arial;padding:9px 16px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;border-radius:3px}
+.tabs button.on{background:#14213d;color:#fff;border-color:#14213d}
+details.sec{padding:0 22px}details.sec>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:15px 0;font-weight:700;font-size:15px}
+details.sec>summary::-webkit-details-marker{display:none}details.sec>summary .v{font-variant-numeric:tabular-nums}
+details.sec>summary:after{content:"＋";margin-left:14px;color:var(--muted)}details.sec[open]>summary:after{content:"－"}
+details.sec[open]{padding-bottom:18px}
+</style><style>
+@font-face{font-family:"QE Cond";src:url(/fonts/oswald-latin-700-normal.woff2) format("woff2"),url(/fonts/oswald-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"QE Ital";src:url(/fonts/playfair-display-latin-400-italic.woff2) format("woff2"),url(/fonts/playfair-display-latin-400-italic.woff2) format("woff2");font-style:italic;font-display:swap}
+:root{--beige:#EFE6D6;--hellq:#F7F2E8;--sand:#DCCDB4;--blue:#03203D;--stone:#639CC5;--red:#EB2F33;--gelbq:#D9A21B;
+ --bg:var(--beige);--ink:var(--blue);--line:var(--sand);--muted:#5d6676;--in:#fff;
+ --cond:"QE Cond","Arial Narrow",sans-serif;--ital:"QE Ital",Georgia,serif;--sans:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+html{background:var(--beige)}body{background:var(--beige);color:var(--blue);font-family:var(--sans);font-size:15px}
+.wrap{max-width:1240px;padding:0 48px 48px}
+.kopf{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--sand);margin-bottom:26px}
+.kopf .m{font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-size:16px}
+.kopf .m i{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--red);margin-left:3px}
+.kopf .beta{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:13px;color:var(--red);border:1px solid var(--red);padding:3px 10px}
+.kick{font-family:var(--cond);text-transform:uppercase;letter-spacing:.24em;font-size:13px;font-weight:700}
+h1{font-family:var(--ital);font-style:italic;font-weight:400;font-size:46px;margin:6px 0 22px}
+h2{font-family:var(--cond);text-transform:uppercase;font-weight:700;letter-spacing:.06em;font-size:17px;line-height:1}
+.num{background:var(--blue);color:var(--beige);font-family:var(--cond);border-radius:0;padding:2px 8px}
+.top{background:var(--blue);color:var(--beige);margin:0 0 20px;padding:16px 22px}
+.top div{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:12px;opacity:.75}
+.top b{font-family:var(--sans);font-size:22px;opacity:1;color:var(--beige)}
+.top div:nth-child(4) b{color:#fff;border-bottom:3px solid var(--red);display:block;width:fit-content}
+.urteil{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 22px;margin:-20px 0 20px;font-weight:700;font-size:16px;border:1px solid var(--sand);border-top:0}
+.urteil.ok{background:#e3efe6;color:#1f5a38}.urteil.nein{background:#fbe5e5;color:#9e1c1f}.urteil.leer{background:var(--hellq)}
+.urteil label{font-weight:400;font-size:14px;white-space:nowrap;color:var(--blue)}
+.sec,.card,details.sec{background:var(--hellq);border:1px solid var(--sand)}
+.sec .card{background:transparent}
+th{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:12px;color:var(--muted);font-weight:700}
+td,th{border-bottom:1px solid var(--sand)}.sum td{border-top:2px solid var(--blue)}
+input{border:1.5px solid var(--gelbq);background:#fff;border-radius:0;color:var(--blue)}
+.gelb{background:#fff;border:1.5px solid var(--gelbq)}
+.leg,.fix{color:var(--muted)}
+.tabs button{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-weight:700;border-radius:0;background:var(--hellq);border-color:var(--sand)}
+.tabs button.on{background:var(--blue);color:var(--beige);border-color:var(--blue)}
+details.sec>summary{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:17px}
+details.sec>summary .v{margin-left:auto;font-family:var(--sans);text-transform:none;letter-spacing:0}
+details.sec>summary:after{color:var(--red)}
+footer{border-top:1px solid var(--sand)}
+</style><style>
+.grid1{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-bottom:26px}
+.grid1 .card{background:#fff;border:1px solid var(--sand);padding:10px}.grid1 .card img{width:100%;display:block}
+table.kt td{text-align:left;padding:8px 6px}td.l{color:var(--muted)}td.v{font-weight:600}
+.i{display:inline-block;width:15px;height:15px;border:1px solid #b9b0a0;border-radius:50%;font:600 10px/13px Georgia,serif;text-align:center;color:var(--muted);margin-left:6px}
+.sub td{font-weight:700}.cap{font-size:11px;color:var(--muted);margin-top:6px}
+.lg{display:flex;gap:18px;font-size:12px;margin-top:8px}.lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px;border:1px solid #1c2f52}
+.grid2{display:grid;grid-template-columns:2.1fr 1fr;gap:24px;align-items:stretch}
+.grid2 .col{display:flex;flex-direction:column}.grid2 .card{flex:1;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--sand);padding:12px}
+.grid2 .card img{width:100%;object-fit:contain}
+.bt{font-size:12.5px;font-weight:700;letter-spacing:.05em;margin-bottom:4px}.bt span{font-weight:400;color:var(--muted)}
+table.rt{font-size:13.5px}table.rt td{padding:3px 0;text-align:left}table.rt td:last-child{text-align:right}table.rt tr.e td{font-weight:700;border-top:1.5px solid var(--blue)}
+.hero{display:grid;grid-template-columns:1fr 1.5fr 1fr 1fr;gap:0;background:var(--blue);color:var(--beige);margin:0 0 0}
+.hero>div{padding:18px 22px;border-right:1px solid rgba(239,230,214,.15)}.hero>div:last-child{border:0}
+.hero .k{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:12px;opacity:.75}
+.hero .w{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.15;margin-top:4px}
+.hero .s{font-size:12px;opacity:.8;margin-top:4px}
+.hero input#kpTop{width:100%;font:700 30px/1.15 var(--sans);background:transparent;color:#fff;border:0;border-bottom:2px solid var(--gelbq);padding:2px 0;text-align:left}
+.hero .kp.ok{background:#1f5a38}.hero .kp.nein{background:#9e1c1f}
+.urteil{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 22px;margin:0 0 26px;font-weight:700;font-size:16px;border:1px solid var(--sand);border-top:0}
+.urteil.ok{background:#e3efe6;color:#1f5a38}.urteil.nein{background:#fbe5e5;color:#9e1c1f}.urteil.leer{background:var(--hellq)}
+.urteil label{font-weight:400;font-size:14px;white-space:nowrap;color:var(--blue)}
+.sek{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:14px;margin:34px 0 12px;color:var(--muted)}
+.liste{background:var(--blue);color:var(--beige);padding:24px 26px;margin-top:30px}
+.liste h2{color:var(--beige);margin:0 0 14px}
+.liste .g{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 26px}
+.liste .g div{border-top:1px solid rgba(239,230,214,.25);padding-top:8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11.5px;opacity:.85}
+.liste .g b{display:block;font-family:var(--sans);text-transform:none;letter-spacing:0;font-size:20px;opacity:1;margin-top:3px;font-variant-numeric:tabular-nums}
+.liste .g div.rot b{color:#fff;border-bottom:3px solid var(--red);width:fit-content}
+</style><style>
+[data-hl]{cursor:pointer;transition:background .15s}[data-hl].on{background:rgba(99,156,197,.18)}
+.hl{transition:fill .2s,stroke .2s,stroke-width .2s}
+.hl.on{stroke:#EB2F33!important;stroke-width:4!important}#hl-trakt.on{fill:#7fa6e0}#hl-hof.on{fill:#8fd194}
+</style><style>
+.tw{overflow-x:auto}
+@media (max-width:860px){
+ .wrap{padding:0 16px 40px}h1{font-size:32px}
+ .grid1,.grid2,.two{grid-template-columns:1fr!important}
+ .hero{grid-template-columns:1fr 1fr}.hero>div{border-right:0;border-bottom:1px solid rgba(239,230,214,.15)}.hero .w,.hero input#kpTop{font-size:24px}
+ .urteil{flex-direction:column;align-items:flex-start}
+ .liste .g{grid-template-columns:1fr 1fr}
+ details.sec{padding:0 12px}details.sec>summary{font-size:15px;gap:10px}
+ details.sec table{display:block;overflow-x:auto;white-space:nowrap}
+ .zp{grid-template-columns:110px 1fr}
+}
+</style></head><body><div class="wrap"><header class="kopf"><a class="m" href="/" style="text-decoration:none;color:inherit">QuickEstate<i></i></a><span class="beta">Beta</span></header>
+<div class="kick">Baurechner · Wien · Steckbrief</div>
+<h1>Hochstettergasse 4, 1020 Wien</h1>
+<div class="hero">
+<div><div class="k">Nutzfläche</div><div class="w">1.262 m²</div><div class="s">15 Wohnungen · EG + 5 Stock + 2 DG</div></div>
+<div class="kp" id="kpBox"><div class="k">Kaufpreis</div><input id="kpTop" value="0" inputmode="numeric" aria-label="Kaufpreis eintragen"><div class="s" id="kpS">Angebotspreis eintragen</div></div>
+<div><div class="k">Max. Kaufpreis (Ziel <span id="zrT">4</span> %)</div><div class="w" id="t_max">–</div><div class="s" id="t_maxs"></div></div>
+<div><div class="k">Rendite</div><div class="w" id="t_ren">–</div><div class="s" id="t_rens">auf GIK inkl. Gewinn</div></div>
+</div>
+<div class="urteil leer" id="urteil"><span id="u_txt"></span><label>Ziel-Rendite <input class="s" id="zr" value="4"> %</label></div>
+<div class="grid1">
+<div>
+<table class="kt">
+<tr><td class="l">Adresse</td><td class="v" colspan="3">1020, Hochstettergasse 4<span class="i">i</span></td></tr>
+<tr><td class="l">Angebot von</td><td class="v">–</td><td class="l">Bestand</td><td class="v">–</td></tr>
+<tr data-hl="trakt"><td class="l">Widmung Straßentrakt</td><td class="v">W IV g<span class="i">i</span></td><td class="l">Besondere Bestimmungen</td><td class="v">4,5m First ü. Traufe<span class="i">i</span></td></tr>
+<tr data-hl="hof"><td class="l">Widmung Hoffläche</td><td class="v">G<span class="i">i</span></td><td class="l">Besondere Bestimmungen</td><td class="v">keine</td></tr>
+<tr><td class="l">Schutzzone</td><td class="v">Nein</td><td class="l">Wohnzone</td><td class="v">Nein</td></tr>
+<tr><td class="l">Straßenbreite</td><td class="v">15,17<span class="i">i</span></td><td class="l">Grundstück abtreten</td><td class="v">Nein</td></tr>
+</table>
+
+<h2>1) Fläche</h2>
+<table class="n kt2">
+<tr data-hl="trakt"><th>a) Straßentrakt</th><th>Breite</th><th>Tiefe</th><th>Summe</th></tr>
+<tr data-hl="trakt"><td>Straßentrakt 12m</td><td>17,15</td><td>12,00</td><td>206,60</td></tr>
+<tr class="sub"><td></td><td></td><td></td><td>206,60</td></tr>
+<tr data-hl="hof"><th>b) Hoffläche</th><th>Breite</th><th>Tiefe</th><th>Summe</th></tr>
+<tr data-hl="hof"><td>Hoffläche</td><td>17,15</td><td>7,66</td><td>131,60</td></tr>
+<tr class="sub"><td></td><td></td><td></td><td>131,60</td></tr>
+<tr class="sum" data-hl="trakt hof"><td>Gesamt</td><td></td><td></td><td>338,60</td></tr>
+</table>
+
+<h2>c) Check §76(10a) WBO</h2>
+<table><tr><td class="v">ist unter 500m2 und muss daher nicht berücksichtigt werden<span class="i">i</span></td></tr></table>
+
+<h2>d) Check §75(4) WBO</h2>
+<table class="n kt2">
+<tr><th>Straße</th><th>zuzüglich</th><th>max GH</th><th></th><th>Widmung</th></tr>
+<tr class="sub"><td>15,17</td><td>4,00</td><td>19,17</td><td>kleiner als</td><td>21,00<span class="i">i</span></td></tr>
+</table>
+</div>
+
+<div>
+<div class="card"><img src="plan.png" alt="Flächenwidmungsplan PD 8166 – Hochstettergasse 4"><div class="cap">Flächenwidmungs- und Bebauungsplan · PD 8166</div></div>
+<div class="card" style="margin-top:18px"><svg role="img" aria-label="Skizze Grundstück" style="width:100%;height:auto;display:block" viewBox="0 0 608 612" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Helvetica,Arial,sans-serif" xmlns:c2pa="http://c2pa.org/manifest">
+<rect x="0" y="534.1" width="608" height="58" fill="#e4ddd0"/>
+<text x="303.9" y="570.1" text-anchor="middle" font-size="13" letter-spacing="2" fill="#6b6457">HOCHSTETTERGASSE · Straßenbreite 15,17</text>
+<polygon id="hl-trakt" class="hl" points="101.0,534.1 509.8,532.8 511.7,244.3 97.5,245.0" fill="#b9cbe9" stroke="#1c2f52" stroke-width="1.5"/>
+<polygon id="hl-hof" class="hl" points="97.5,245.0 511.7,244.3 512.8,74.3 95.0,50.0" fill="#bfe3c0" stroke="#1c2f52" stroke-width="1.5"/>
+<polygon points="101.0,534.1 509.7,534.1 512.8,74.3 95.0,50.0" fill="none" stroke="#1c4fd0" stroke-width="3"/>
+<text x="303.9" y="385.0" text-anchor="middle" font-size="16" font-weight="700" fill="#14213d">W IV g</text><text x="303.9" y="405.0" text-anchor="middle" font-size="16" fill="#14213d">206,60 m²</text>
+<text x="303.9" y="149.4" text-anchor="middle" font-size="16" font-weight="700" fill="#14213d">G</text><text x="303.9" y="169.4" text-anchor="middle" font-size="16" fill="#14213d">131,60 m²</text>
+<text x="305.4" y="527.4" text-anchor="middle" font-size="13" font-weight="600" fill="#14213d">Front 17,03</text><text x="304.6" y="238.6" text-anchor="middle" font-size="13" fill="#14213d">17,26</text><text transform="translate(89.2,389.5) rotate(-90)" text-anchor="middle" font-size="13" fill="#14213d">Trakttiefe 12,00</text><text x="303.9" y="54.2" text-anchor="middle" font-size="13" fill="#14213d">17,44</text><text transform="translate(86.3,147.5) rotate(-90)" text-anchor="middle" font-size="13" fill="#14213d">8,13</text><text transform="translate(522.2,159.3) rotate(90)" text-anchor="middle" font-size="13" fill="#14213d">7,08</text>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTplMDZlZmI4MS01ZGMxLTRiOTgtYWVlOC01Zjk3NjY2MDQ3ZDUAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaB3k4sE75dpcl8heThQ0mVQAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDo0NzIxYzMyYS1kOTdhLTRmOTctOTI1Yi0yY2I4NjAyMjM4MDRscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoUT7Cevr2fKGIuq246iXypgAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggBCvOaP88x+ezKkvR+HHe8rifS2eschQ4uCj/iO0pL2mkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaId2VZ6IGzBq+s5OgZoXgf4AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIJopPrQNTPZpRBx36FkyK0DNIbyp+P31Ls3Tf+SdlvjPZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GQbqZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmUwNmVmYjgxLTVkYzEtNGI5OC1hZWU4LTVmOTc2NjYwNDdkNS9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjJiODM0ZWFkLTY4NzQtNGQ3Mi04YzU0LWI5YzNjNzVlZmM5M3JjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCAEK85o/zzH57MqS9H4cd7yuJ9LZ6xyFDi4KP+I7SkvaaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFgg9vFe/CY9lzTPZig8Jhsv64OIpDamFb7I9D+1ek+qTWiiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggC5uFarhIkwiaeBlspINAhErCyHV1ZfkN33miREbNkG90Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQP7gtPW44qt3s9rkZ0pse9T1QD7w0m/pXZfMIhS6oqA7A/aE79Byc7P59k4A242KzFca70HpSpowF1YoqQ9MDM0=</c2pa:manifest></metadata></svg>
+<div class="lg"><span data-hl="trakt"><i style="background:#b9cbe9"></i>bebaubar (Straßentrakt)</span><span data-hl="hof"><i style="background:#bfe3c0"></i>G – Garten (Hof)</span></div></div>
+</div>
+</div>
+
+<div class="sek">So wird gerechnet</div><div class="leg"><span class="gelb"></span> Gelb = selbst eintragen. Alles andere ist fix hinterlegt (Kurs + Gesetz) und rechnet sofort mit. Auf eine Zeile klicken öffnet die Rechnung.</div><details class="sec"><summary><span><span class="num">3</span>Skizze Gebäudehöhe · Balkone und Erker</span><span class="v">EG + 5 Stock + 2 DG · First 23,60 m</span></summary><div class="grid2">
+<div class="col"><h2>3) Skizze Gebäudehöhe</h2><div class="card"><img src="schnitt.svg" alt="Skizze Gebäudehöhe"></div></div>
+<div class="col"><h2>Balkone und Erker</h2>
+<div class="card" style="flex-direction:column;align-items:stretch;justify-content:space-between"><div><div class="bt">BALKONE HOF <span>§ 84 (2)</span></div><table class="rt"><tr><td>Fassade Hof</td><td>17,26 m</td></tr><tr><td>davon erlaubt 50 %</td><td>8,63 m</td></tr><tr><td>2 Balkone je 4,32 × 2,50</td><td>21,58 m²</td></tr><tr><td>zählt zu 50 %</td><td>× 0,50</td></tr><tr class="e"><td>je Geschoß</td><td>10,79 m²</td></tr></table></div><img src="draufsicht.svg" alt="Balkone und Erker" style="max-height:250px"><div><div class="bt">ERKER STRASSE <span>§ 83 (2)</span></div><table class="rt"><tr><td>Fassade Straße</td><td>17,03 m</td></tr><tr><td>davon erlaubt ⅓</td><td>5,68 m</td></tr><tr><td>2 Erker je 2,84 × 1,00</td><td>5,68 m²</td></tr><tr><td>zählt zu 100 %</td><td>× 1,00</td></tr><tr class="e"><td>je Geschoß</td><td>5,68 m²</td></tr></table></div></div></div>
+</div>
+
+<div class="leg"><b>Gehsteigniveau ±0,00</b> Bezugshöhe, alle Höhen werden ab hier gemessen · <b>FOK</b> Fußbodenoberkante (Höhe des fertigen Bodens über dem Gehsteig) · <b>OK</b> Oberkante · <b>GH</b> Gebäudehöhe · <b>KG</b> Keller · <b>EG</b> Erdgeschoß · <b>OG</b> Obergeschoß (Stock) · <b>DG</b> Dachgeschoß · <b>Raumhöhe</b> Boden bis Decke im Raum · <b>Decke</b> Stärke der Geschoßdecke · <b>G</b> Gärtnerisch auszugestaltende Fläche (Garten) · <b>Gründach</b> Erdschicht über der Garage, darauf der Garten</div>
+</details><details class="sec"><summary><span><span class="num">4a</span>Nutzfläche über EG</span><span class="v">1 165,41 m²</span></summary><table>
+<tr><th>a)</th><th>brutto m2</th><th>Faktor</th><th></th><th>Erker</th><th>Balkone</th><th>m2</th><th>m2/WE</th><th>WE</th></tr>
+<tr><td>2.DG</td><td>206,60</td><td>65%</td><td>134,29</td><td></td><td>–</td><td>134,29</td><td>67,15</td><td>2</td></tr>
+<tr><td>1.DG</td><td>206,60</td><td>74%</td><td>152,88</td><td></td><td>10,79</td><td>163,67</td><td>81,84</td><td>2</td></tr>
+<tr><td>5.Stock</td><td>206,60</td><td>76%</td><td>157,02</td><td>5,68</td><td>10,79</td><td>173,49</td><td>86,75</td><td>2</td></tr>
+<tr><td>4.Stock</td><td>206,60</td><td>76%</td><td>157,02</td><td>5,68</td><td>10,79</td><td>173,49</td><td>86,75</td><td>2</td></tr>
+<tr><td>3.Stock</td><td>206,60</td><td>76%</td><td>157,02</td><td>5,68</td><td>10,79</td><td>173,49</td><td>86,75</td><td>2</td></tr>
+<tr><td>2.Stock</td><td>206,60</td><td>76%</td><td>157,02</td><td>5,68</td><td>10,79</td><td>173,49</td><td>86,75</td><td>2</td></tr>
+<tr><td>1.Stock</td><td>206,60</td><td>76%</td><td>157,02</td><td>5,68</td><td>10,79</td><td>173,49</td><td>86,75</td><td>2</td></tr>
+<tr class="sum"><td></td><td></td><td></td><td>1.072,27</td><td></td><td></td><td>1.165,41</td><td></td><td>14 Wohnungen</td></tr>
+</table>
+<table style="margin-top:14px">
+<tr><th>a1)</th><th>Fassade</th><th>Prozent</th><th>Breite</th><th>Tiefe</th><th>Fläche</th><th>Faktor</th><th></th></tr>
+<tr><td>§83 (2) Erker Straße</td><td>17,03</td><td>33,33%</td><td>5,68</td><td>1,00</td><td>5,68</td><td>100%</td><td>5,68</td></tr>
+<tr><th>a2)</th><th>Fassade</th><th>Prozent</th><th>Breite</th><th>Tiefe</th><th>Fläche</th><th>Faktor</th><th></th></tr>
+<tr><td>§84 (2) Balkone Hof</td><td>17,26</td><td>50%</td><td>8,63</td><td>2,50</td><td>21,58</td><td>50%</td><td>10,79</td></tr>
+</table>
+</details><details class="sec"><summary><span><span class="num">4b</span>Erdgeschoß</span><span class="v">96,88 m²</span></summary>
+<table><tr><th>b) Erdgeschoß</th><th></th><th>m2</th></tr>
+<tr><td>Erdgeschoß brutto</td><td></td><td>206,60</td></tr>
+<tr><td>Netto-Nutzfläche</td><td>74%</td><td>152,88</td></tr>
+<tr><td>Aufzug KFZ (inkl. Einfahrt)</td><td></td><td>−40,00</td></tr>
+<tr><td>Müllraum</td><td></td><td>−6,00</td></tr>
+<tr><td>Kinderwagen</td><td></td><td>−10,00</td></tr>
+<tr class="sum"><td>Rest Wohnen netto</td><td></td><td>96,88</td></tr>
+<tr><td style="padding-top:18px">Wohnnutzfläche gesamt (a + b)</td><td></td><td style="padding-top:18px">1.262,29</td></tr>
+<tr><td>Stellplätze Pflicht (je volle 100 m²)</td><td></td><td>12</td></tr>
+<tr><td>Fahrradplätze Pflicht (2 × 15 WE)</td><td>3 Lastenrad</td><td>30</td></tr>
+</table></details><details class="sec"><summary><span><span class="num">4c</span>Garage · Stellplätze · Fahrräder</span><span class="v">6 Stellplätze</span></summary><table><tr><th>c) Garage</th><th></th><th>m2</th></tr>
+<tr><td>Trakt 206,60 + Hof 131,60</td><td></td><td>338,20</td></tr>
+<tr><td>Außenwände 73,82 lfm</td><td>× 0,50</td><td>−36,91</td></tr>
+<tr><td>Stützen</td><td></td><td>−5,00</td></tr>
+<tr><td>Aufzug KFZ</td><td></td><td>−20,00</td></tr>
+<tr><td>Stiegenhaus</td><td></td><td>−25,00</td></tr>
+<tr><td>Haustechnik</td><td></td><td>−15,00</td></tr>
+<tr><td>Fahrräder 27 × 2,40 + Lastenrad 3 × 4,00</td><td>§119a (3) BO</td><td>−76,80</td></tr>
+<tr><td>Einlagerungsräume</td><td>nicht mehr nötig</td><td>0,00</td></tr>
+<tr class="sum"><td>Garage netto</td><td></td><td>159,49</td></tr>
+<tr><td>÷ 25 m2 je Stellplatz</td><td>6,38</td><td>6</td></tr>
+<tr><td>Pflicht 12 − möglich 6 = Ablöse</td><td></td><td>6</td></tr>
+</table></details><details class="sec"><summary><span><span class="num">5</span>Zeitplan</span><span class="v" data-v="mo1" data-s=" Monate"></span></summary>
+<div class="card">
+<div class="zp" id="zp"></div>
+<div class="leg">Monate eintragen: Planung <input class="s" id="m_plan" value="18"> · Bewilligung <input class="s" id="m_bew" value="3"> · Bauzeit <input class="s" id="m_bau" value="18"> · bis Einnahmen <input class="s" id="m_fert" value="6"></div>
+</div></details><details class="sec"><summary><span><span class="num">6</span>Ankauf</span><span class="v" data-v="s_b" data-s=" €"></span></summary>
+<table>
+<tr><th>a)</th><th>Prozent</th><th>netto</th><th>Ust</th><th>brutto</th></tr>
+<tr><td>Liegenschaft (Kaufpreis)</td><td></td><td><input id="kp" value="0"></td><td>0</td><td id="kp_b"></td></tr>
+<tr><td>Kaufvertrag / Gegenleistung</td><td></td><td><input id="kv" value="0"></td><td id="kv_u"></td><td id="kv_b"></td></tr>
+<tr class="sum"><td>Kaufpreis inkl. Gegenleistung</td><td></td><td id="s1_n"></td><td id="s1_u"></td><td id="s1_b"></td></tr>
+<tr><td>Makler</td><td>3,00%</td><td id="mk_n"></td><td id="mk_u"></td><td id="mk_b"></td></tr>
+<tr><td>Grunderwerbsteuer (GrESt)</td><td>3,50%</td><td id="ge_n"></td><td>0</td><td id="ge_b"></td></tr>
+<tr><td>Grundbuch-Eintragung</td><td>1,10%</td><td id="gb_n"></td><td>0</td><td id="gb_b"></td></tr>
+<tr><td>Notar &amp; Treuhand</td><td>1,00%</td><td id="no_n"></td><td id="no_u"></td><td id="no_b"></td></tr>
+<tr class="sum big"><td>Summe Ankauf</td><td id="s_p"></td><td id="s_n"></td><td id="s_u"></td><td id="s_b"></td></tr>
+<tr><td>b) Eigenmittel Kauf</td><td id="ek_p"></td><td colspan="2"></td><td><input id="ek" value="0"></td></tr>
+<tr class="sum"><td>Kredit 1 (Grundstück)</td><td></td><td colspan="2"></td><td id="k1"></td></tr>
+</table></details><details class="sec"><summary><span><span class="num">6c</span>Kredit 1 – Grundstück</span><span class="v" data-v="k1" data-s=" €"></span></summary>
+<table>
+<tr><th></th><th>Zinssatz</th><th>Jahre</th><th>Betrag</th><th>Monate</th></tr>
+<tr><td>Kredit 1</td><td><input class="s" id="z1" value="2,85"> %</td><td id="j1"></td><td id="b1"></td><td id="mo1"></td></tr>
+<tr><td>Zinsen</td><td colspan="3"></td><td id="zi1"></td></tr>
+<tr><th></th><th>Prozent</th><th>Gebühr</th><th></th><th></th></tr>
+<tr><td>Pfandrechtseintrag</td><td>130%</td><td>1,20%</td><td></td><td id="pf1"></td></tr>
+<tr><td>Bearbeitungsgebühr Bank</td><td>1,00%</td><td></td><td></td><td id="be1"></td></tr>
+<tr class="sum big"><td>Summe Finanzierung Ankauf</td><td colspan="3"></td><td id="sf1"></td></tr>
+<tr><td style="padding-top:16px">Ankauf + Finanzierung gesamt</td><td colspan="3"></td><td id="ges1" style="padding-top:16px;font-weight:700"></td></tr>
+</table>
+<div class="leg">Gelb = selbst eintragen. Alles andere ist fix hinterlegt und rechnet automatisch mit.<br>Laufzeit Kredit 1 = Ankauf bis Einnahmen (Zeitplan). Kredit 2 (Baukosten, Faktor 0,5) siehe 7g.</div></details><details class="sec"><summary><span><span class="num">7</span>Herstellungskosten</span><span class="v" data-v="se_n" data-s=" €"></span></summary>
+<table id="t7">
+<tr><th></th><th>m2 bzw. m3</th><th>€/m2</th><th>netto</th><th>Ust</th><th>brutto</th></tr>
+<tr><td>Abbruch Bestand (m3)</td><td><input class="s" id="abm3" value="0"></td><td>25</td><td id="r_ab_n"></td><td id="r_ab_u"></td><td id="r_ab_b"></td></tr>
+<tr><td>Auto-Lift</td><td></td><td></td><td id="r_al_n"></td><td id="r_al_u"></td><td id="r_al_b"></td></tr>
+<tr><td>Baukosten oberirdisch (Wohnnutzfläche a+b)</td><td>1 262,29</td><td><input class="s" id="bko" value="3000"></td><td id="r_bo_n"></td><td id="r_bo_u"></td><td id="r_bo_b"></td></tr>
+<tr><td>Baukosten Garage (netto)</td><td>159,49</td><td id="bku_t"></td><td id="r_bg_n"></td><td id="r_bg_u"></td><td id="r_bg_b"></td></tr>
+<tr class="sum"><td>a) Summe Bauwerkskosten</td><td></td><td></td><td id="sa_n"></td><td id="sa_u"></td><td id="sa_b"></td></tr>
+<tr><td>Bepflanzung Gründach (Hof)</td><td>131,60</td><td>200</td><td id="r_gd_n"></td><td id="r_gd_u"></td><td id="r_gd_b"></td></tr>
+<tr class="sum"><td>b) Summe Baukosten</td><td></td><td></td><td id="sb_n"></td><td id="sb_u"></td><td id="sb_b"></td></tr>
+<tr><td>Bauträger-Kosten</td><td>5,00%</td><td></td><td id="r_bt_n"></td><td id="r_bt_u"></td><td id="r_bt_b"></td></tr>
+<tr><td>c) Baunebenkosten (Architekt, ÖBA, Statik, Versicherung …)</td><td>17,00%</td><td></td><td id="r_bn_n"></td><td id="r_bn_u"></td><td id="r_bn_b"></td></tr>
+<tr><td>Vermarktung</td><td>3,00%</td><td></td><td id="r_vm_n"></td><td id="r_vm_u"></td><td id="r_vm_b"></td></tr>
+<tr><td>d) Ablöse Stellplätze (Pflicht 12 − möglich 6)</td><td>6</td><td>16 200</td><td id="r_as_n"></td><td>0</td><td id="r_as_b"></td></tr>
+<tr class="sum big"><td>e) Summe Errichtungskosten</td><td></td><td></td><td id="se_n"></td><td id="se_u"></td><td id="se_b"></td></tr>
+<tr><td>f) Eigenmittel Bau</td><td>20,00%</td><td></td><td id="ekb"></td><td></td><td></td></tr>
+</table></details><details class="sec"><summary><span><span class="num">7g</span>Kredit 2 – Baukosten</span><span class="v" data-v="b2" data-s=" €"></span></summary>
+<table>
+<tr><th></th><th>Zinssatz</th><th>Jahre</th><th>Betrag</th><th>Faktor</th><th>Monate</th></tr>
+<tr><td>Kredit 2</td><td><input class="s" id="z2" value="2,85"> %</td><td><input class="s" id="j2in" value="2"></td><td id="b2"></td><td>0,5</td><td id="mo2"></td></tr>
+<tr><td>Zinsen</td><td colspan="4"></td><td id="zi2"></td></tr>
+<tr><td>Pfandrechtseintrag</td><td>130%</td><td>1,20%</td><td colspan="2"></td><td id="pf2"></td></tr>
+<tr><td>Bearbeitungsgebühr Bank</td><td>1,00%</td><td colspan="3"></td><td id="be2"></td></tr>
+<tr class="sum"><td>h) Summe Finanzierungskosten Bau</td><td colspan="4"></td><td id="sf2"></td></tr>
+</table></details><details class="sec"><summary><span><span class="num">7i</span>Gesamtinvestition (GIK) + Gewinn</span><span class="v" data-v="gikg" data-s=" €"></span></summary>
+<table>
+<tr><th></th><th></th><th>netto</th></tr>
+<tr><td>Ankauf (6)</td><td></td><td id="g_an"></td></tr>
+<tr><td>Finanzierung Ankauf (Kredit 1)</td><td></td><td id="g_f1"></td></tr>
+<tr><td>Errichtung (7e)</td><td></td><td id="g_er"></td></tr>
+<tr><td>Finanzierung Bau (Kredit 2)</td><td></td><td id="g_f2"></td></tr>
+<tr class="sum"><td>i) Summe GIK</td><td></td><td id="gik"></td></tr>
+<tr><td>Gewinn Bauträger (auf Errichtung 7e)</td><td>6,50%</td><td id="gew"></td></tr>
+<tr class="sum big"><td>GIK + Gewinn</td><td></td><td id="gikg"></td></tr>
+</table></details><details class="sec"><summary><span><span class="num">8</span>Ertrag</span><span class="v" data-v="nm" data-s=" € / Jahr"></span></summary>
+<table>
+<tr><th></th><th>m2 / Stk</th><th>€/m2</th><th>pro Monat</th><th>pro Jahr</th></tr>
+<tbody id="ert"></tbody>
+<tr class="sum"><td>Miete pro Jahr</td><td colspan="3"></td><td id="mj"></td></tr>
+<tr><td>Mietausfall</td><td>3%</td><td colspan="2"></td><td id="ma"></td></tr>
+<tr><td>Reparatur-Rücklage (WEG)</td><td>1 262,29</td><td>0,90</td><td>× 12</td><td id="rr"></td></tr>
+<tr class="sum big"><td>nachhaltige Miete pro Jahr</td><td colspan="3"></td><td id="nm"></td></tr>
+<tr class="big"><td>Rendite auf GIK inkl. Gewinn</td><td colspan="3"></td><td id="ren"></td></tr>
+</table></details><details class="sec"><summary><span><span class="num">9</span>Halten statt verkaufen</span><span class="v" data-v="h_dr" data-s=" Deckung"></span></summary>
+<table>
+<tr><td>Miete pro Jahr (nachhaltig)</td><td></td><td id="h_m"></td></tr>
+<tr><td>Restkredit (Kredit 1 + Kredit 2)</td><td></td><td id="h_rk"></td></tr>
+<tr><td>Zinsen pro Jahr (Zinssatz Kredit 2)</td><td></td><td id="h_zi"></td></tr>
+<tr><td>Tilgung</td><td><input class="s" id="tj" value="20"> Jahre</td><td id="h_ti"></td></tr>
+<tr class="sum"><td>Kreditaufwand pro Jahr</td><td></td><td id="h_ka"></td></tr>
+<tr><td>Abschreibung pro Jahr (auf Errichtung)</td><td>1,50%</td><td id="h_af"></td></tr>
+<tr><td>Mietgewinn (Miete − Abschreibung)</td><td></td><td id="h_mg"></td></tr>
+<tr><td>KöSt</td><td>25%</td><td id="h_ks"></td></tr>
+<tr><td>Miete nach KöSt</td><td></td><td id="h_mk"></td></tr>
+<tr class="sum big"><td>Deckungsrate Kredit</td><td></td><td id="h_dr"></td></tr>
+</table></details><details class="sec" open><summary><span><span class="num">10</span>Zusammenfassung</span><span class="v" ></span></summary>
+<div class="card" style="font-size:14px;line-height:1.7">
+<p id="zus" style="margin:0 0 10px"></p>
+<p style="margin:0 0 10px"><b>Steuerliche Komponente:</b> Wenn man die 10 % Ust von den Mieten abführt, braucht man die 20 % Ust beim Bauen nicht zu zahlen (Vorsteuerabzug). Daher ist alles netto gerechnet.</p>
+<p style="margin:0"><b>Baubeschreibung:</b> Wohnhausanlage mit 15 Wohnungen (14 in 1.–5. Stock und Dachgeschoß, 1 Gartenwohnung im Erdgeschoß) sowie 6 Garagenplätzen, die über einen KFZ-Aufzug erschlossen werden. 30 Fahrradplätze (davon 3 für Lastenräder). Erker straßenseitig, Balkone hofseitig, 2 Dachgeschoße unter 45°-Dach, Garten auf begrüntem Garagendach.</p>
+</div></details>
+<div class="liste"><h2>Ergebnis auf einen Blick</h2><div class="g">
+<div>Nutzfläche<b>1 262,29 m²</b></div><div>Wohnungen<b>15</b></div><div>Stellplätze möglich / Pflicht<b>6 / 12</b></div><div>Fahrradplätze<b>30</b></div>
+<div>Kaufpreis inkl. Nebenkosten<b id="L_an">–</b></div><div>Gesamte Baukosten<b id="L_bk">–</b></div><div>Kredit Ankauf<b id="L_k1">–</b></div><div>Kredit Baukosten<b id="L_k2">–</b></div>
+<div>Eigenmittel gesamt<b id="L_ek">–</b></div><div>GIK + Gewinn<b id="L_gik">–</b></div><div>Kosten je m² Nutzfläche<b id="L_m2">–</b></div><div>Projektdauer<b id="L_mo">–</b></div>
+<div>Miete netto von–bis<b id="L_mi">–</b></div><div>Miete pro Jahr (nachhaltig)<b id="L_nm">–</b></div><div class="rot">Rendite<b id="L_ren">–</b></div><div>Deckungsrate Kredit<b id="L_dr">–</b></div>
+<div>Max. Kaufpreis<b id="L_max">–</b></div><div>Max. je m² Nutzfläche<b id="L_maxm">–</b></div><div>Max. je m² Grund<b id="L_maxg">–</b></div><div>Ziel-Rendite<b id="L_zr">–</b></div>
+</div></div>
+<script>
+let _busy=false;
+function residual(){if(_busy)return;_busy=true;const k=document.getElementById('kp'),orig=k.value,tg=num('zr')/100;
+ k.value='0';calc();const r0=window._ren;let res=-1;
+ if(r0>=tg){let lo=0,hi=1e8;for(let i=0;i<50;i++){const m=Math.round((lo+hi)/2);k.value=String(m);calc();if(window._ren>=tg)lo=m;else hi=m}res=lo}
+ k.value=orig;calc();_busy=false;return [res,r0,tg]}
+function summary(){if(_busy)return;const t=i=>document.getElementById(i).textContent,S=(i,v)=>{document.getElementById(i).textContent=v};
+ document.querySelectorAll('[data-v]').forEach(el=>{el.textContent=t(el.dataset.v)+(el.dataset.s||'')});
+ const [res,r0,tg]=residual();const W=1262.29,G=338.60,kp=num('kp'),ren=window._ren,f=v=>e(v)+' €',pr=v=>(v*100).toFixed(2).replace('.',',')+' %';
+ S('zrT',String(num('zr')).replace('.',','));S('t_ren',pr(ren));
+ S('t_max',res<0?'nicht erreichbar':f(res));S('t_maxs',res<0?'':e(res/W)+' €/m² Nutzfläche · '+e(res/G)+' €/m² Grund');
+ let tx,c;
+ if(res<0){tx='Ziel '+pr(tg)+' ist auch ohne Grundstückskosten nicht erreichbar (max. '+pr(r0)+').';c='nein'}
+ else if(!kp){tx='Bis '+f(res)+' Kaufpreis wird die Ziel-Rendite von '+pr(tg)+' erreicht. Angebotspreis oben eintragen.';c='leer'}
+ else if(ren>=tg){tx='✓ Kauf lohnt sich: Rendite '+pr(ren)+' ≥ Ziel '+pr(tg)+'. Spielraum bis max. '+f(res)+'.';c='ok'}
+ else{tx='✗ Kauf lohnt sich nicht: Rendite '+pr(ren)+' < Ziel '+pr(tg)+'. Höchstens '+f(res)+' zahlen ('+f(kp-res)+' zu viel).';c='nein'}
+ S('u_txt',tx);document.getElementById('urteil').className='urteil '+c;document.getElementById('kpBox').className='kp '+(kp?c:'');
+ S('kpS',kp?(c==='ok'?'unter dem Maximum':'über dem Maximum'):'Angebotspreis eintragen');
+ const ek=num('ek')+num('ekb'.replace('ekb','ek'))*0;
+ S('L_an',t('s_b')+' €');S('L_bk',t('se_n')+' €');S('L_k1',t('k1')+' €');S('L_k2',t('b2')+' €');
+ S('L_ek',e(num('ek')+Number(t('ekb').replace(/\s/g,'')))+' €');S('L_gik',t('gikg')+' €');
+ S('L_m2',e(Number(t('gikg').replace(/\s/g,''))/W)+' €');S('L_mo',t('mo1')+' Monate');
+ const ms=ER.slice(0,-1).map((r,i)=>num('mi'+i));S('L_mi',Math.min(...ms).toFixed(2).replace('.',',')+' – '+Math.max(...ms).toFixed(2).replace('.',',')+' €/m²');
+ S('L_nm',t('nm')+' €');S('L_ren',pr(ren));S('L_dr',t('h_dr'));
+ S('L_max',res<0?'nicht erreichbar':f(res));S('L_maxm',res<0?'–':e(res/W)+' €');S('L_maxg',res<0?'–':e(res/G)+' €');S('L_zr',pr(tg));
+ const top=document.getElementById('kpTop');if(document.activeElement!==top)top.value=kp?e(kp):'0'}
+document.addEventListener('DOMContentLoaded',()=>{});
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const num=id=>{const v=parseFloat(String($(id).value).replace(/\s/g,'').replace(/\./g,'').replace(',','.'));return isNaN(v)?0:v};
+const e=v=>Math.round(v).toLocaleString('de-AT').replace(/\./g,' ');
+const p=v=>v.toFixed(2).replace('.',',')+'%';
+const set=(id,v)=>{$(id).textContent=v};
+function zeitplan(){
+ const pl=num('m_plan'),bw=num('m_bew'),bau=num('m_bau'),fe=num('m_fert'),tot=pl+bw+bau+fe||1;
+ const rows=[['Planung',0,pl,'#6b7a99'],['Bewilligung',pl,bw,'#8a7f63'],['Bau',pl+bw,bau,'#1c4fd0'],['bis Einnahmen',pl+bw+bau,fe,'#2e7d32'],
+  ['Kredit 1 Grundstück',0,tot,'#14213d'],['Kredit 2 Bau',pl+bw,Math.round(num('j2in')*12),'#c0392b']];
+ let h='';for(const [n,s,d,c] of rows){h+=`<div>${n}</div><div class="bar"><div class="seg" style="left:${s/tot*100}%;width:${d/tot*100}%;background:${c}">${d} Monate</div></div>`}
+ h+=`<div><b>Gesamt</b></div><div><b>${tot} Monate</b> (Ankauf → Einnahmen)</div>`;$('zp').innerHTML=h;return tot}
+
+const ER=[['2.DG',134.29,20],['1.DG',152.88,19.5],['5.Stock',162.70,19],['4.Stock',162.70,18.5],['3.Stock',162.70,18],['2.Stock',162.70,17.5],['1.Stock',162.70,17],['EG (Garten)',96.88,17.5],['KG Stellplätze',6,80]];
+document.getElementById('ert').innerHTML=ER.map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1].toLocaleString('de-AT',{minimumFractionDigits:r[0].startsWith('KG')?0:2})}</td><td><input class="s" id="mi${i}" value="${String(r[2]).replace('.',',')}"></td><td id="mm${i}"></td><td id="my${i}"></td></tr>`).join('');
+function row(k,n,u){set('r_'+k+'_n',e(n));if($('r_'+k+'_u'))set('r_'+k+'_u',e(u));set('r_'+k+'_b',e(n+u));return [n,u]}
+function calc2(an_n,f1,mo,k1v){
+ const bko=num('bko'),bku=bko/2;set('bku_t',e(bku));
+ const W=1262.29,G=159.49;
+ const rs=[row('ab',num('abm3')*25,num('abm3')*25*0.2),row('al',100000,20000),row('bo',W*bko,W*bko*0.2),row('bg',G*bku,G*bku*0.2)];
+ let an=rs.reduce((a,r)=>a+r[0],0),au=rs.reduce((a,r)=>a+r[1],0);set('sa_n',e(an));set('sa_u',e(au));set('sa_b',e(an+au));
+ const gd=row('gd',131.60*200,131.60*200*0.2);const bn=an+gd[0],bu=au+gd[1];set('sb_n',e(bn));set('sb_u',e(bu));set('sb_b',e(bn+bu));
+ const x=[row('bt',bn*0.05,bn*0.01),row('bn',bn*0.17,bn*0.034),row('vm',bn*0.03,bn*0.006)];
+ const as=6*16200;set('r_as_n',e(as));set('r_as_b',e(as));
+ const en=bn+x.reduce((a,r)=>a+r[0],0)+as,eu=bu+x.reduce((a,r)=>a+r[1],0);set('se_n',e(en));set('se_u',e(eu));set('se_b',e(en+eu));
+ const ekb=en*0.2;set('ekb',e(ekb));
+ const j2=num('j2in'),m2=Math.round(j2*12),k2=en-ekb,z2=num('z2')/100;
+ set('b2',e(k2));set('mo2',m2);
+ const zi=k2*z2*j2*0.5,pf=k2*1.3*0.012,be=k2*0.01,sf2=zi+pf+be;set('zi2',e(zi));set('pf2',e(pf));set('be2',e(be));set('sf2',e(sf2));
+ const gik=an_n+f1+en+sf2,gw=en*0.065;set('g_an',e(an_n));set('g_f1',e(f1));set('g_er',e(en));set('g_f2',e(sf2));set('gik',e(gik));set('gew',e(gw));set('gikg',e(gik+gw));
+ let mj=0;ER.forEach((r,i)=>{const mm=r[1]*num('mi'+i);mj+=mm*12;set('mm'+i,mm.toFixed(2).replace('.',','));set('my'+i,e(mm*12))});
+ const ma=mj*0.03,rr=W*0.9*12,nm=mj-ma-rr;set('mj',e(mj));set('ma','−'+e(ma));set('rr','−'+e(rr));set('nm',e(nm));
+ set('ren',(gik+gw)?(nm/(gik+gw)*100).toFixed(2).replace('.',',')+'%':'–');
+ const rk=k1v+k2,zj=rk*z2,ti=rk/(num('tj')||1),ka=zj+ti,af=en*0.015,mg=nm-af,ks=Math.max(mg,0)*0.25,mk=nm-ks,dr=ka?mk/ka*100:0;
+ set('h_m',e(nm));set('h_rk',e(rk));set('h_zi',e(zj));set('h_ti',e(ti));set('h_ka',e(ka));set('h_af',e(af));set('h_mg',e(mg));set('h_ks',e(ks));set('h_mk',e(mk));set('h_dr',ka?dr.toFixed(2).replace('.',',')+'%':'–');
+ const ren=(gik+gw)?nm/(gik+gw)*100:0; window._ren=ren/100;
+ set('zus',num('kp')>0?`Bei einem Kaufpreis von ${e(num('kp'))} € ergibt sich eine Rendite von ${ren.toFixed(2).replace('.',',')} % auf GIK inkl. Gewinn. Die Miete nach KöSt deckt ${dr.toFixed(0)} % des Kreditaufwands (Zinsen + Tilgung ${num('tj')} Jahre).`:'Kaufpreis eintragen (6a) – dann steht hier die Rendite und ob die Miete den Kredit trägt. Ohne Grundstück: Rendite '+ren.toFixed(2).replace('.',',')+' %.');
+ if(window.summary)summary();
+}
+
+function calc(){
+ const mo=zeitplan();
+ const kp=num('kp'),kv=num('kv'),kvu=kv*0.2;
+ const s1n=kp+kv,s1u=kvu,s1b=s1n+s1u;
+ set('kp_b',e(kp));set('kv_u',e(kvu));set('kv_b',e(kv+kvu));set('s1_n',e(s1n));set('s1_u',e(s1u));set('s1_b',e(s1b));
+ const mk=s1b*0.03,ge=s1b*0.035,gb=s1b*0.011,no=s1b*0.01;
+ set('mk_n',e(mk));set('mk_u',e(mk*0.2));set('mk_b',e(mk*1.2));set('ge_n',e(ge));set('ge_b',e(ge));set('gb_n',e(gb));set('gb_b',e(gb));
+ set('no_n',e(no));set('no_u',e(no*0.2));set('no_b',e(no*1.2));
+ const sn=s1n+mk+ge+gb+no,su=s1u+mk*0.2+no*0.2,sb=sn+su;
+ set('s_p','8,60%');set('s_n',e(sn));set('s_u',e(su));set('s_b',e(sb));
+ const ek=num('ek');set('ek_p',sb?p(ek/sb*100):'–');
+ const k1=Math.max(sb-ek,0);set('k1',e(k1));
+ const z=num('z1')/100,j=mo/12;set('j1',j.toFixed(2).replace('.',','));set('b1',e(k1));set('mo1',mo);
+ const zi=k1*z*j,pf=k1*1.3*0.012,be=k1*0.01,sf=zi+pf+be;
+ set('zi1',e(zi));set('pf1',e(pf));set('be1',e(be));set('sf1',e(sf));set('ges1',e(sb+sf));
+ calc2(sn,sf,mo,k1);
+}
+document.querySelectorAll('input:not(#kpTop)').forEach(i=>i.addEventListener('input',calc));
+document.getElementById('kpTop').addEventListener('input',ev=>{const k=document.getElementById('kp');k.value=ev.target.value.replace(/\s/g,'');calc()});calc();
+</script>
+<script>
+(function(){const rows=document.querySelectorAll('[data-hl]');
+ function set(keys,on){keys.forEach(k=>{const p=document.getElementById('hl-'+k);if(p)p.classList.toggle('on',on)});
+  rows.forEach(r=>{if(r.dataset.hl.split(' ').some(k=>keys.includes(k)))r.classList.toggle('on',on)})}
+ let fixed=null;
+ rows.forEach(r=>{const k=r.dataset.hl.split(' ');
+  r.addEventListener('mouseenter',()=>{if(!fixed)set(k,true)});r.addEventListener('mouseleave',()=>{if(!fixed)set(k,false)});
+  r.addEventListener('click',()=>{const same=fixed&&fixed.join()==k.join();if(fixed)set(fixed,false);fixed=same?null:k;if(fixed)set(fixed,true)})});
+ ['trakt','hof'].forEach(k=>{const p=document.getElementById('hl-'+k);if(p){p.style.cursor='pointer';p.addEventListener('mouseenter',()=>{if(!fixed)set([k],true)});p.addEventListener('mouseleave',()=>{if(!fixed)set([k],false)})}})})();
+</script></body></html>

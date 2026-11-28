@@ -165,3 +165,10 @@ flwbplmzk-Pixel → EPSG:31256 exakt über Slippy-Map z=19 Mercator-Umkehr (x0,y
 
 ## Offener Punkt „Theresiengasse Kursstand" (24.11., erledigt)
 - 762 m²/23,66 m/W III/4,5 m/Erker ≤ 0,6 m sind heutige Werte aus PD 7208 + BEV/Stadt; Kurs 672/21/W IV/5,5/keine Erker ist veraltet. Siehe Protokoll oben.
+
+## 28.11.2026 – Fertiges Beispiel Hochstettergasse 4 online (/beispiel/hochstettergasse-4/)
+- Befund: Muster nach Kursblatt L50 komplett: Steckbrief (S. 1), Skizze Gebäudehöhe + Balkone/Erker, Nutzfläche a/a1/a2/b/c, Zeitplan, Ankauf, Kredit 1, Herstellung, Kredit 2, GIK, Ertrag, Halten, Zusammenfassung, Residualwert (Ziel-Rendite 4 %).
+- Prüfung: Rechenlogik mit Kurs-Eingaben L50 nachgerechnet – alle Werte gleich (±1 € Rundung, Rendite 3,13 %, Deckung 52,96 %); Ankauf/Kredit 1 mit Gerstlgasse 18 gleich.
+- Entscheidungen Eduard 27./28.11.: Baukosten 3.000 €/m² oberirdisch, Garage ½; Ablöse 16.200 €/Stellplatz; Fahrräder 2/Wohnung (§ 119a (3) BO, 2,40 m² bzw. Lastenrad 4,00 m²); Einlagerung 0; Notar 1 %; Kredit 2 Standard 2 Jahre; Ziel-Rendite 4 %. Zinssatz vorbelegt mit Kurswert 2,85 % (änderbar). Mieten 17–20 €/m² = Annahme, Bestätigung offen.
+- Statische Seite, kein Server; Prüfstand unberührt (keine Leser-Änderung).
+- Ausnahme Planbild (Eduard 28.11.): plan.png (aus flwbplmzk, Stadt Wien OGD CC BY 4.0, Quelle auf der Seite) für dieses Beispiel bewusst im Repo. Regel „Plankarten nie ins Repo" gilt sonst weiter.
